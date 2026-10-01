@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Urban Sky Shield | Tamil Nadu Light Pollution Map</title>
+
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#050816;
+  color:white;
+}
+
+header{
+  padding:18px 20px;
+  background:linear-gradient(135deg,#07152f,#111a3d);
+  border-bottom:1px solid #263b72;
+}
+
+h1{
+  margin:0;
+  font-size:25px;
+  color:#66e6ff;
+}
+
+.subtitle{
+  margin-top:6px;
+  color:#c9d5ff;
+  font-size:14px;
+}
+
+.badge{
+  display:inline-block;
+  margin-top:10px;
+  padding:6px 10px;
+  border-radius:20px;
+  background:#102b55;
+  color:#72e9ff;
+  font-size:12px;
+}
+
+#map{
+  height:72vh;
+  width:100%;
+}
+
+.panel{
+  position:absolute;
+  z-index:1000;
+  top:95px;
+  left:15px;
+  width:270px;
+  background:rgba(5,10,28,.94);
+  border:1px solid #31508c;
+  border-radius:14px;
+  padding:14px;
+  box-shadow:0 8px 30px rgba(0,0,0,.45);
+}
+
+.panel h2{
+  margin:0 0 10px;
+  font-size:16px;
+  color:#71eaff;
+}
+
+.panel input{
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #415a91;
+  background:#0b1430;
+  color:white;
+  outline:none;
+}
+
+.panel button{
+  width:100%;
+  margin-top:8px;
+  padding:10px;
+  border:0;
+  border-radius:8px;
+  background:#13b9d8;
+  color:#001018;
+  font-weight:bold;
+}
+
+.legend{
+  line-height:18px;
+  color:#ddd;
+  font-size:12px;
+}
+
+.legend i{
+  width:14px;
+  height:14px;
+  float:left;
+  margin-right:7px;
+  border-radius:3px;
+}
+
+.info{
+  padding:15px 20px;
+  background:#080e22;
+  border-top:1px solid #263b72;
+  color:#cbd6f5;
+  font-size:12px;
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip{
+  background:#081126;
+  color:white;
+}
+
+@media(max-width:600px){
+  .panel{
+    width:230px;
+    top:105px;
+  }
+
+  #map{
+    height:70vh;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>URBAN SKY SHIELD</h1>
+  <div class="subtitle">
+    AI-Assisted Light Pollution Mapping & Dark-Sky Protection
+  </div>
+  <div class="badge">
+    TAMIL NADU • INTERACTIVE RESEARCH MAP
+  </div>
+</header>
+
+<div id="map"></div>
+
+<div class="panel">
+
+  <h2>🔭 Explore Tamil Nadu Night Sky</h2>
+
+  <input
+    id="search"
+    type="text"
+    placeholder="Search city e.g. Chennai"
+  />
+
+  <button onclick="searchPlace()">
+    SEARCH LOCATION
+  </button>
+
+  <br>
+
+  <div class="legend">
+    <b>Light Pollution Zones</b><br><br>
+
+    <i style="background:#ff3030"></i>
+    Very High<br>
+
+    <i style="background:#ff8c00"></i>
+    High<br>
+
+    <i style="background:#ffd92f"></i>
+    Moderate<br>
+
+    <i style="background:#35d07f"></i>
+    Lower<br>
+
+    <i style="background:#168cff"></i>
+    Darker region
+  </div>
+
+</div>
+
+<div class="info">
+  <b>Data note:</b>
+  NASA VIIRS nighttime-light imagery is used as a satellite-based
+  indicator of artificial night lighting. It is a light-emission
+  proxy and should not be treated as a direct measurement of sky
+  brightness or Bortle class.
+  <br><br>
+  <b>Research status:</b>
+  Interactive demonstration / proposed research framework.
+  Ground measurements are required for final validation.
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+
+const map = L.map('map').setView([11.1271,78.6569],7);
+
+const osm = L.tileLayer(
+  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  {
+    maxZoom:19,
+    attribution:'© OpenStreetMap contributors'
+  }
+).addTo(map);
+
+
+/* Tamil Nadu reference cities */
+
+const cities = [
+
+  {
+    name:"Chennai",
+    lat:13.0827,
+    lon:80.2707,
+    level:"Very High"
+  },
+
+  {
+    name:"Coimbatore",
+    lat:11.0168,
+    lon:76.9558,
+    level:"High"
+  },
+
+  {
+    name:"Madurai",
+    lat:9.9252,
+    lon:78.1198,
+    level:"High"
+  },
+
+  {
+    name:"Tiruchirappalli",
+    lat:10.7905,
+    lon:78.7047,
+    level:"High"
+  },
+
+  {
+    name:"Salem",
+    lat:11.6643,
+    lon:78.1460,
+    level:"High"
+  },
+
+  {
+    name:"Tirunelveli",
+    lat:8.7139,
+    lon:77.7567,
+    level:"Moderate"
+  },
+
+  {
+    name:"Vellore",
+    lat:12.9165,
+    lon:79.1325,
+    level:"High"
+  },
+
+  {
+    name:"Thanjavur",
+    lat:10.7870,
+    lon:79.1378,
+    level:"Moderate"
+  },
+
+  {
+    name:"Kanyakumari",
+    lat:8.0883,
+    lon:77.5385,
+    level:"Lower"
+  }
+
+];
+
+
+/* Reference planning zones
+   These are NOT measured results. */
+
+const zoneStyle = {
+  "Very High":{
+    color:"#ff3030",
+    fillColor:"#ff3030"
+  },
+  "High":{
+    color:"#ff8c00",
+    fillColor:"#ff8c00"
+  },
+  "Moderate":{
+    color:"#ffd92f",
+    fillColor:"#ffd92f"
+  },
+  "Lower":{
+    color:"#35d07f",
+    fillColor:"#35d07f"
+  }
+};
+
+cities.forEach(city=>{
+
+  const style = zoneStyle[city.level];
+
+  L.circle(
+    [city.lat,city.lon],
+    {
+      radius:18000,
+      color:style.color,
+      fillColor:style.fillColor,
+      fillOpacity:.18,
+      weight:2
+    }
+  )
+  .addTo(map)
+  .bindPopup(
+    `<b>${city.name}</b><br>
+     Light-pollution planning category:
+     <b>${city.level}</b><br><br>
+     Satellite/field validation required for
+     final research classification.`
+  );
+
+  L.marker([city.lat,city.lon])
+    .addTo(map)
+    .bindTooltip(city.name);
+});
+
+
+/* NASA VIIRS night-light layer */
+
+const nasaVIIRS = L.tileLayer(
+  'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_SNPP_DayNightBand_ENCC/default/2025-01-01/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg',
+  {
+    opacity:.65,
+    maxZoom:9,
+    attribution:'NASA Earthdata / GIBS / VIIRS'
+  }
+);
+
+
+/* Layer control */
+
+const baseMaps = {
+  "Street Map":osm
+};
+
+const overlays = {
+  "NASA VIIRS Night Lights":nasaVIIRS
+};
+
+L.control.layers(baseMaps,overlays).addTo(map);
+
+
+/* Search */
+
+function searchPlace(){
+
+  const text =
+    document.getElementById("search")
+    .value
+    .trim()
+    .toLowerCase();
+
+  if(!text){
+    alert("Enter a Tamil Nadu location.");
+    return;
+  }
+
+  const found = cities.find(
+    c => c.name.toLowerCase().includes(text)
+  );
+
+  if(found){
+
+    map.setView(
+      [found.lat,found.lon],
+      11
+    );
+
+    L.popup()
+      .setLatLng([found.lat,found.lon])
+      .setContent(
+        `<b>${found.name}</b><br>
+         Planning category: <b>${found.level}</b>`
+      )
+      .openOn(map);
+
+  }else{
+
+    alert(
+      "Location not in the quick-search list. Use the map to zoom and explore Tamil Nadu."
+    );
+
+  }
+
+}
+
+
+/* Enter key search */
+
+document
+.getElementById("search")
+.addEventListener("keydown",function(e){
+
+  if(e.key==="Enter"){
+    searchPlace();
+  }
+
+});
+
+</script>
+
+</body>
+  </html>
