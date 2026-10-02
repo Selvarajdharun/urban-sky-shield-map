@@ -12,6 +12,7 @@
 >
 
 <style>
+
 *{
   box-sizing:border-box;
 }
@@ -24,12 +25,12 @@ body{
   height:100%;
   overflow:hidden;
   font-family:Arial,Helvetica,sans-serif;
+  background:#071522;
 }
 
 body{
   display:flex;
   flex-direction:column;
-  background:#071522;
 }
 
 /* ================= HEADER ================= */
@@ -60,7 +61,7 @@ body{
 
 .search-area{
   flex:1;
-  max-width:760px;
+  max-width:780px;
   display:flex;
   gap:7px;
 }
@@ -112,22 +113,26 @@ body{
   border-radius:50%;
   background:#1683ff;
   border:3px solid white;
+
   box-shadow:
     0 0 0 6px rgba(22,131,255,.20),
     0 2px 8px rgba(0,0,0,.45);
 }
 
-/* ================= CUSTOM LOCATION BUTTON ================= */
+/* ================= LOCATION BUTTON ================= */
 
 .location-control{
   background:white;
   width:42px;
   height:42px;
   border-radius:8px;
+
   display:flex;
   align-items:center;
   justify-content:center;
+
   box-shadow:0 2px 8px rgba(0,0,0,.3);
+
   cursor:pointer;
   font-size:20px;
 }
@@ -136,14 +141,39 @@ body{
   background:#f2f2f2;
 }
 
+/* ================= STATUS PANEL ================= */
+
+.status-control{
+  background:rgba(7,21,34,.92);
+  color:white;
+  padding:8px 11px;
+  border-radius:8px;
+  box-shadow:0 2px 10px rgba(0,0,0,.35);
+
+  font-size:11px;
+  line-height:16px;
+}
+
+.status-title{
+  color:#43d9ff;
+  font-weight:800;
+  margin-bottom:2px;
+}
+
 /* ================= LEGEND ================= */
 
 .legend{
   background:rgba(255,255,255,.97);
+
   padding:12px 14px;
+
   border-radius:10px;
-  box-shadow:0 2px 12px rgba(0,0,0,.3);
+
+  box-shadow:
+    0 2px 12px rgba(0,0,0,.3);
+
   color:#17202a;
+
   font-size:12px;
   line-height:20px;
 }
@@ -169,18 +199,36 @@ body{
 
 .legend-note{
   border-top:1px solid #ddd;
+
   margin-top:6px;
   padding-top:5px;
+
   font-size:10px;
   color:#555;
 }
 
-/* ================= POPUP ================= */
+/* ================= DARK SKY MARKER ================= */
 
-.popup-title{
-  font-size:15px;
-  font-weight:bold;
-  margin-bottom:5px;
+.darksky-marker{
+  width:26px;
+  height:26px;
+
+  border-radius:50%;
+
+  background:#1683ff;
+
+  border:3px solid white;
+
+  box-shadow:
+    0 0 0 5px rgba(30,136,229,.20),
+    0 2px 7px rgba(0,0,0,.35);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  color:white;
+  font-size:13px;
 }
 
 /* ================= MOBILE ================= */
@@ -190,7 +238,9 @@ body{
   .header{
     height:105px;
     min-height:105px;
+
     flex-wrap:wrap;
+
     padding:8px;
     gap:6px;
   }
@@ -224,9 +274,16 @@ body{
   .legend-title{
     font-size:12px;
   }
+
+  .status-control{
+    font-size:9px;
+    line-height:13px;
+  }
 }
+
 </style>
 </head>
+
 
 <body>
 
@@ -276,297 +333,409 @@ body{
 <script>
 
 /* =========================================================
-   MAP INITIALIZATION
+   1. MAP
 ========================================================= */
 
-const map = L.map("map", {
+const map = L.map("map",{
+
   zoomControl:false,
+
   minZoom:5,
+
   maxZoom:19
+
 }).setView(
+
   [11.1271,78.6569],
-  7
+
+  8
+
 );
 
 
 /* =========================================================
-   NORMAL OPENSTREETMAP
+   2. NORMAL MAP
 ========================================================= */
 
 const normalMap = L.tileLayer(
+
   "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+
   {
+
     maxZoom:19,
+
     attribution:
       '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+
   }
+
 );
 
 normalMap.addTo(map);
 
 
 /* =========================================================
-   SATELLITE
+   3. SATELLITE
 ========================================================= */
 
 const satelliteMap = L.tileLayer(
+
   "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+
   {
+
     maxZoom:19,
+
     attribution:"Tiles &copy; Esri"
+
   }
+
 );
 
 
 /* =========================================================
-   LIGHT POLLUTION
+   4. POLLUTION LAYER
 ========================================================= */
 
 const pollutionLayer = L.layerGroup();
 
 
 function addPollution(
+
   lat,
   lon,
   radius,
   color,
   place,
   level
+
 ){
 
   const circle = L.circle(
+
     [lat,lon],
+
     {
+
       radius:radius,
+
       color:color,
+
       fillColor:color,
-      fillOpacity:.24,
+
+      fillOpacity:.23,
+
       weight:2
+
     }
+
   );
 
+
   circle.bindPopup(`
-    <div class="popup-title">
-      ${place}
+
+    <div style="font-family:Arial">
+
+      <div style="
+        font-size:16px;
+        font-weight:800;
+        margin-bottom:7px;
+      ">
+
+        💡 ${place}
+
+      </div>
+
+      <b>Lighting Pressure:</b>
+      ${level}
+
+      <br><br>
+
+      <b>Dark-sky planning:</b>
+      ${
+        level.includes("Very Low") ||
+        level.includes("Low")
+        ? "Potential area"
+        : "Lighting management area"
+      }
+
+      <br><br>
+
+      <small style="color:#555">
+
+        Conceptual planning visualization.
+        Not a ground-measured Bortle value.
+
+      </small>
+
     </div>
 
-    <b>Lighting level:</b>
-    ${level}
-
-    <br><br>
-
-    <small>
-      Conceptual planning visualization.
-      Not a ground-measured Bortle value.
-    </small>
   `);
 
+
   pollutionLayer.addLayer(circle);
+
 }
 
 
 /* =========================================================
-   VERY HIGH
+   5. VERY HIGH
 ========================================================= */
 
 addPollution(
+
   13.0827,
   80.2707,
   30000,
   "#e53935",
   "Chennai Metropolitan Region",
   "Very High"
+
 );
 
+
 addPollution(
+
   11.0168,
   76.9558,
   22000,
   "#e53935",
   "Coimbatore",
   "Very High"
+
 );
 
+
 addPollution(
+
   9.9252,
   78.1198,
   20000,
   "#e53935",
   "Madurai",
   "Very High"
+
 );
 
+
 addPollution(
+
   12.9165,
   79.1325,
   18000,
   "#e53935",
   "Vellore",
   "Very High"
+
 );
 
 
 /* =========================================================
-   HIGH
+   6. HIGH
 ========================================================= */
 
 addPollution(
+
   10.7905,
   78.7047,
   18000,
   "#fb8c00",
   "Tiruchirappalli",
   "High"
+
 );
 
+
 addPollution(
+
   11.6643,
   78.1460,
   18000,
   "#fb8c00",
   "Salem",
   "High"
+
 );
 
+
 addPollution(
+
   10.7867,
   79.1378,
   15000,
   "#fb8c00",
   "Thanjavur",
   "High"
+
 );
 
+
 addPollution(
+
   8.7139,
   77.7567,
   15000,
   "#fb8c00",
   "Tirunelveli",
   "High"
+
 );
 
+
 addPollution(
+
   11.1085,
   77.3411,
   15000,
   "#fb8c00",
   "Tiruppur",
   "High"
+
 );
 
 
 /* =========================================================
-   MODERATE
+   7. MODERATE
 ========================================================= */
 
 addPollution(
+
   11.3410,
   77.7172,
   16000,
   "#fdd835",
   "Erode",
   "Moderate"
+
 );
 
+
 addPollution(
+
   10.9601,
   78.0766,
   14000,
   "#fdd835",
   "Karur",
   "Moderate"
+
 );
 
+
 addPollution(
+
   10.3624,
   77.9695,
   14000,
   "#fdd835",
   "Dindigul",
   "Moderate"
+
 );
 
+
 addPollution(
+
   9.2881,
   79.3129,
   15000,
   "#fdd835",
   "Ramanathapuram",
   "Moderate"
+
 );
 
+
 addPollution(
+
   8.7642,
   78.1348,
   15000,
   "#fdd835",
   "Thoothukudi",
   "Moderate"
+
 );
 
 
 /* =========================================================
-   LOW
+   8. LOW
 ========================================================= */
 
 addPollution(
+
   11.4102,
   76.6950,
   26000,
   "#43a047",
   "Nilgiris / Ooty",
   "Low"
+
 );
 
+
 addPollution(
+
   12.2253,
   79.0747,
   17000,
   "#43a047",
   "Tiruvannamalai",
   "Low"
+
 );
 
+
 addPollution(
+
   8.0883,
   77.5385,
   18000,
   "#43a047",
   "Kanyakumari Interior",
   "Low"
+
 );
 
 
 /* =========================================================
-   VERY LOW / DARK SKY POTENTIAL
+   9. VERY LOW / DARK SKY
 ========================================================= */
 
 addPollution(
+
   11.45,
   76.40,
   35000,
   "#1e88e5",
   "Nilgiri Interior",
   "Very Low / Dark-sky potential"
+
 );
 
+
 addPollution(
+
   10.00,
   78.00,
   30000,
   "#1e88e5",
   "Southern Interior",
   "Very Low / Dark-sky potential"
+
 );
 
+
 addPollution(
+
   10.75,
   79.35,
   30000,
   "#1e88e5",
   "Delta Rural Region",
   "Very Low / Dark-sky potential"
+
 );
 
 
@@ -574,163 +743,180 @@ pollutionLayer.addTo(map);
 
 
 /* =========================================================
-   TRAFFIC DEMO LAYER
+   10. DARK-SKY POTENTIAL MARKERS
 ========================================================= */
 
-const trafficLayer = L.layerGroup();
+const darkSkyLayer = L.layerGroup();
 
 
-function addTraffic(
-  points,
-  color,
-  name
+function addDarkSky(
+
+  lat,
+  lon,
+  name,
+  description
+
 ){
 
-  const road = L.polyline(
-    points,
-    {
-      color:color,
-      weight:6,
-      opacity:.78
-    }
-  );
+  const icon = L.divIcon({
 
-  road.bindPopup(`
-    <b>🚦 Traffic Visualization</b>
-    <br><br>
-    ${name}
-    <br><br>
-    <small>
-      Demonstration layer only.
-      Not live traffic data.
-    </small>
+    className:"",
+
+    html:
+      '<div class="darksky-marker">★</div>',
+
+    iconSize:[26,26],
+
+    iconAnchor:[13,13]
+
+  });
+
+
+  const marker =
+    L.marker(
+
+      [lat,lon],
+
+      {
+        icon:icon
+      }
+
+    );
+
+
+  marker.bindPopup(`
+
+    <div style="font-family:Arial">
+
+      <b style="
+        font-size:16px;
+        color:#1683ff;
+      ">
+
+        🌌 ${name}
+
+      </b>
+
+      <br><br>
+
+      ${description}
+
+      <br><br>
+
+      <small>
+
+        Dark-sky potential marker.
+        Site suitability should be validated
+        using actual night-sky observations.
+
+      </small>
+
+    </div>
+
   `);
 
-  trafficLayer.addLayer(road);
+
+  darkSkyLayer.addLayer(marker);
+
 }
 
 
-/* Chennai corridors */
+addDarkSky(
 
-addTraffic(
-  [
-    [13.0827,80.2707],
-    [13.0475,80.2090],
-    [12.9850,80.2180]
-  ],
-  "#e53935",
-  "Chennai urban corridor"
-);
+  11.4102,
+  76.6950,
 
-addTraffic(
-  [
-    [13.0827,80.2707],
-    [13.1200,80.1900],
-    [13.1700,80.1300]
-  ],
-  "#fb8c00",
-  "Chennai western corridor"
-);
+  "Nilgiris / Ooty",
 
-addTraffic(
-  [
-    [13.0827,80.2707],
-    [12.9500,80.2500],
-    [12.8500,80.2300]
-  ],
-  "#fdd835",
-  "Chennai southern corridor"
+  "Lower conceptual lighting-pressure area."
+
 );
 
 
-/* Chennai - Vellore */
+addDarkSky(
 
-addTraffic(
-  [
-    [13.0827,80.2707],
-    [12.9165,79.1325]
-  ],
-  "#e53935",
-  "Chennai - Vellore corridor"
+  12.2253,
+  79.0747,
+
+  "Tiruvannamalai",
+
+  "Potential lower-light region."
+
 );
 
 
-/* Chennai - Trichy */
+addDarkSky(
 
-addTraffic(
-  [
-    [13.0827,80.2707],
-    [12.5000,79.9000],
-    [11.9000,79.7000],
-    [10.7905,78.7047]
-  ],
-  "#fb8c00",
-  "Chennai - Trichy corridor"
+  8.0883,
+  77.5385,
+
+  "Kanyakumari Interior",
+
+  "Potential lower-light region."
+
 );
 
 
-/* Coimbatore - Salem */
-
-addTraffic(
-  [
-    [11.0168,76.9558],
-    [11.2500,77.0000],
-    [11.6643,78.1460]
-  ],
-  "#fb8c00",
-  "Coimbatore - Salem corridor"
-);
-
-
-/* Madurai - Trichy */
-
-addTraffic(
-  [
-    [9.9252,78.1198],
-    [10.3500,78.5000],
-    [10.7905,78.7047]
-  ],
-  "#fdd835",
-  "Madurai - Trichy corridor"
-);
+darkSkyLayer.addTo(map);
 
 
 /* =========================================================
-   ZOOM CONTROL
+   11. ZOOM CONTROL
 ========================================================= */
 
 L.control.zoom({
+
   position:"topright"
+
 }).addTo(map);
 
 
 /* =========================================================
-   LAYER CONTROL
+   12. LAYER CONTROL
 ========================================================= */
 
 L.control.layers(
+
   {
-    "🗺️ Normal Map":normalMap,
-    "🛰️ Satellite":satelliteMap
+
+    "🗺️ Normal Map":
+      normalMap,
+
+    "🛰️ Satellite":
+      satelliteMap
+
   },
+
   {
-    "💡 Light Pollution":pollutionLayer,
-    "🚦 Traffic":trafficLayer
+
+    "💡 Light Pollution":
+      pollutionLayer,
+
+    "🌌 Dark-sky Potential":
+      darkSkyLayer
+
   },
+
   {
+
     collapsed:false,
+
     position:"topright"
+
   }
+
 ).addTo(map);
 
 
 /* =========================================================
-   LEGEND
+   13. LEGEND
 ========================================================= */
 
 const legend =
 L.control({
+
   position:"bottomright"
+
 });
 
 
@@ -742,6 +928,7 @@ legend.onAdd=function(){
       "legend"
     );
 
+
   div.innerHTML=`
 
     <div class="legend-title">
@@ -749,58 +936,92 @@ legend.onAdd=function(){
     </div>
 
     <div class="legend-row">
+
       <span
         class="legend-dot"
         style="background:#e53935"
       ></span>
+
       Very High
+
     </div>
 
     <div class="legend-row">
+
       <span
         class="legend-dot"
         style="background:#fb8c00"
       ></span>
+
       High
+
     </div>
 
     <div class="legend-row">
+
       <span
         class="legend-dot"
         style="background:#fdd835"
       ></span>
+
       Moderate
+
     </div>
 
     <div class="legend-row">
+
       <span
         class="legend-dot"
         style="background:#43a047"
       ></span>
+
       Low
+
     </div>
 
     <div class="legend-row">
+
       <span
         class="legend-dot"
         style="background:#1e88e5"
       ></span>
+
       Very Low / Dark-sky
+
     </div>
 
     <div class="legend-note">
+
       Conceptual planning visualization
+
     </div>
+
   `;
 
+
   return div;
+
 };
+
 
 legend.addTo(map);
 
 
 /* =========================================================
-   CURRENT LOCATION CONTROL
+   14. SCALE
+========================================================= */
+
+L.control.scale({
+
+  position:"bottomleft",
+
+  imperial:false
+
+}).addTo(map);
+
+
+/* =========================================================
+   15. LOCATION BUTTON
 ========================================================= */
 
 const LocationControl =
@@ -810,6 +1031,7 @@ L.Control.extend({
     position:"topright"
   },
 
+
   onAdd:function(){
 
     const container =
@@ -818,10 +1040,12 @@ L.Control.extend({
         "location-control"
       );
 
+
     container.innerHTML="📍";
 
     container.title=
       "Find my current location";
+
 
     container.onclick=
       function(){
@@ -830,11 +1054,14 @@ L.Control.extend({
 
       };
 
+
     L.DomEvent.disableClickPropagation(
       container
     );
 
+
     return container;
+
   }
 
 });
@@ -846,10 +1073,110 @@ map.addControl(
 
 
 /* =========================================================
-   CURRENT LOCATION
+   16. STATUS PANEL
+========================================================= */
+
+const statusControl =
+L.control({
+
+  position:"topleft"
+
+});
+
+
+statusControl.onAdd=function(){
+
+  const div =
+    L.DomUtil.create(
+      "div",
+      "status-control"
+    );
+
+
+  div.id="mapStatus";
+
+
+  div.innerHTML=`
+
+    <div class="status-title">
+      URBAN SKY SHIELD
+    </div>
+
+    Tamil Nadu
+
+  `;
+
+
+  return div;
+
+};
+
+
+statusControl.addTo(map);
+
+
+/* =========================================================
+   17. UPDATE MAP STATUS
+========================================================= */
+
+function updateStatus(){
+
+  const center =
+    map.getCenter();
+
+
+  const zoom =
+    map.getZoom();
+
+
+  const status =
+    document.getElementById(
+      "mapStatus"
+    );
+
+
+  if(status){
+
+    status.innerHTML=`
+
+      <div class="status-title">
+        URBAN SKY SHIELD
+      </div>
+
+      Lat:
+      ${center.lat.toFixed(4)}
+
+      <br>
+
+      Lon:
+      ${center.lng.toFixed(4)}
+
+      <br>
+
+      Zoom:
+      ${zoom}
+
+    `;
+
+  }
+
+}
+
+
+map.on(
+  "moveend",
+  updateStatus
+);
+
+updateStatus();
+
+
+/* =========================================================
+   18. CURRENT LOCATION
 ========================================================= */
 
 let currentMarker=null;
+
 let accuracyCircle=null;
 
 
@@ -862,6 +1189,7 @@ function getMyLocation(){
     );
 
     return;
+
   }
 
 
@@ -872,33 +1200,43 @@ function getMyLocation(){
       const lat =
         position.coords.latitude;
 
+
       const lon =
         position.coords.longitude;
+
 
       const accuracy =
         position.coords.accuracy;
 
 
       map.setView(
+
         [lat,lon],
+
         17,
+
         {
           animate:true
         }
+
       );
 
 
       if(currentMarker){
+
         map.removeLayer(
           currentMarker
         );
+
       }
 
 
       if(accuracyCircle){
+
         map.removeLayer(
           accuracyCircle
         );
+
       }
 
 
@@ -925,36 +1263,57 @@ function getMyLocation(){
 
       currentMarker =
         L.marker(
+
           [lat,lon],
+
           {
             icon:icon
           }
+
         )
+
         .addTo(map);
 
 
       accuracyCircle =
         L.circle(
+
           [lat,lon],
+
           {
+
             radius:accuracy,
+
             color:"#1683ff",
+
             fillColor:"#1683ff",
+
             fillOpacity:.12,
+
             weight:1
+
           }
+
         )
+
         .addTo(map);
 
 
       currentMarker
+
         .bindPopup(`
+
           <b>📍 Your Current Location</b>
+
           <br><br>
+
           GPS accuracy:
           approximately
-          ${Math.round(accuracy)} m
+          ${Math.round(accuracy)}
+          metres
+
         `)
+
         .openPopup();
 
 
@@ -965,13 +1324,19 @@ function getMyLocation(){
 
     },
 
+
     function(error){
 
       if(error.code===1){
 
         alert(
+
           "Location permission denied.\n\n" +
-          "Please allow Location permission in Chrome."
+
+          "Please allow Location permission " +
+
+          "for Chrome and try again."
+
         );
 
       }
@@ -994,10 +1359,15 @@ function getMyLocation(){
 
     },
 
+
     {
+
       enableHighAccuracy:true,
+
       timeout:15000,
+
       maximumAge:0
+
     }
 
   );
@@ -1006,24 +1376,35 @@ function getMyLocation(){
 
 
 /* =========================================================
-   REVERSE GEOCODING
+   19. REVERSE LOCATION
 ========================================================= */
 
 async function reverseLocation(
+
   lat,
   lon
+
 ){
 
   try{
 
     const response =
       await fetch(
+
         "https://nominatim.openstreetmap.org/reverse" +
+
         "?format=json" +
-        "&lat="+encodeURIComponent(lat) +
-        "&lon="+encodeURIComponent(lon) +
+
+        "&lat="+
+        encodeURIComponent(lat) +
+
+        "&lon="+
+        encodeURIComponent(lon) +
+
         "&zoom=18" +
+
         "&addressdetails=1"
+
       );
 
 
@@ -1032,9 +1413,13 @@ async function reverseLocation(
 
 
     if(
+
       currentMarker &&
+
       data &&
+
       data.address
+
     ){
 
       const address =
@@ -1043,32 +1428,48 @@ async function reverseLocation(
 
       const road =
         address.road ||
+
         address.pedestrian ||
+
         address.neighbourhood ||
+
         "Location";
 
 
       const city =
         address.city ||
+
         address.town ||
+
         address.village ||
+
         address.suburb ||
+
         "";
 
 
       currentMarker.bindPopup(`
+
         <b>📍 Current Location</b>
+
         <br><br>
+
         <b>${road}</b>
+
         <br>
+
         ${city}
+
         <br>
+
         ${address.state || "Tamil Nadu"}
+
       `);
 
     }
 
   }
+
   catch(error){
 
     console.log(
@@ -1081,7 +1482,7 @@ async function reverseLocation(
 
 
 /* =========================================================
-   SEARCH
+   20. SEARCH
 ========================================================= */
 
 let searchMarker=null;
@@ -1091,10 +1492,13 @@ async function searchPlace(){
 
   const query =
     document
+
       .getElementById(
         "searchBox"
       )
+
       .value
+
       .trim();
 
 
@@ -1105,6 +1509,7 @@ async function searchPlace(){
     );
 
     return;
+
   }
 
 
@@ -1112,12 +1517,18 @@ async function searchPlace(){
 
     const response =
       await fetch(
+
         "https://nominatim.openstreetmap.org/search" +
+
         "?format=json" +
+
         "&q="+
-        encodeURIComponent(query)+
+        encodeURIComponent(query) +
+
         "&limit=1" +
+
         "&countrycodes=in"
+
       );
 
 
@@ -1132,6 +1543,7 @@ async function searchPlace(){
       );
 
       return;
+
     }
 
 
@@ -1152,11 +1564,15 @@ async function searchPlace(){
 
 
     map.setView(
+
       [lat,lon],
+
       15,
+
       {
         animate:true
       }
+
     );
 
 
@@ -1170,18 +1586,27 @@ async function searchPlace(){
 
 
     searchMarker =
+
       L.marker(
         [lat,lon]
       )
+
       .addTo(map)
-      .bindPopup(
-        "<b>"+
-        place.display_name+
-        "</b>"
-      )
+
+      .bindPopup(`
+
+        <b>🔎 Search Result</b>
+
+        <br><br>
+
+        ${place.display_name}
+
+      `)
+
       .openPopup();
 
   }
+
   catch(error){
 
     alert(
@@ -1196,48 +1621,61 @@ async function searchPlace(){
 
 
 /* =========================================================
-   ENTER KEY SEARCH
+   21. ENTER KEY
 ========================================================= */
 
 document
+
   .getElementById(
     "searchBox"
   )
+
   .addEventListener(
+
     "keydown",
+
     function(event){
 
-      if(event.key==="Enter"){
+      if(
+        event.key==="Enter"
+      ){
 
         searchPlace();
 
       }
 
     }
+
   );
 
 
 /* =========================================================
-   MAP SIZE FIX
+   22. MAP RESIZE
 ========================================================= */
 
 setTimeout(
+
   function(){
 
     map.invalidateSize();
 
   },
+
   500
+
 );
 
 
 window.addEventListener(
+
   "resize",
+
   function(){
 
     map.invalidateSize();
 
   }
+
 );
 
 
