@@ -2,601 +2,1081 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
 <title>Urban Sky Shield | Tamil Nadu</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 <style>
 *{box-sizing:border-box}
+
 html,body{
- margin:0;height:100%;overflow:hidden;
- font-family:Inter,Arial,sans-serif;
- background:#06121a;color:#eefaff
+ margin:0;
+ width:100%;
+ height:100%;
+ overflow:hidden;
+ font-family:Inter,Roboto,Arial,sans-serif;
+ background:#eaf4f6;
+ color:#10212a;
 }
-
-#top{
- height:58px;
- background:linear-gradient(90deg,#06131c,#081e2b);
- border-bottom:1px solid #1b4a5e;
- display:flex;align-items:center;gap:8px;
- padding:8px 11px;
- position:relative;z-index:3000
-}
-
-.brand{
- font-weight:900;font-size:15px;
- letter-spacing:.6px;white-space:nowrap
-}
-.brand b{color:#27d6ff}
-
-.badge{
- font-size:7px;color:#7deaff;
- border:1px solid #27647a;
- padding:4px 6px;border-radius:10px;
- white-space:nowrap
-}
-
-#search{
- height:34px;flex:1;max-width:360px;
- border:0;border-radius:18px;
- padding:0 14px;outline:0
-}
-
-.btn{
- height:34px;
- border:1px solid #28566a;
- background:#08384d;color:#fff;
- border-radius:18px;
- padding:0 12px;
- font-size:10px;font-weight:700;
- cursor:pointer
-}
-
-.btn:hover{background:#0d536e}
-.btn.cyan{background:#0788b7}
 
 #map{
  position:absolute;
- top:58px;bottom:0;left:0;right:0
+ inset:0;
+ z-index:1;
 }
 
-.glass{
- background:rgba(4,17,26,.94);
- border:1px solid rgba(75,183,218,.32);
- box-shadow:0 12px 35px #0007;
- backdrop-filter:blur(10px);
- border-radius:13px
+/* =========================================================
+   PREMIUM TOP BAR
+========================================================= */
+
+#top{
+ position:absolute;
+ top:0;
+ left:0;
+ right:0;
+ height:68px;
+ z-index:5000;
+
+ display:flex;
+ align-items:center;
+ gap:9px;
+ padding:10px 14px;
+
+ background:rgba(4,25,35,.94);
+ border-bottom:1px solid rgba(74,203,235,.25);
+
+ box-shadow:0 5px 25px #0004;
 }
+
+.brand{
+ color:white;
+ font-size:15px;
+ font-weight:950;
+ letter-spacing:.7px;
+ white-space:nowrap;
+}
+
+.brand span{
+ color:#24d7ff;
+}
+
+.badge{
+ color:#72e9ff;
+ font-size:7px;
+ font-weight:800;
+ border:1px solid #28788c;
+ border-radius:20px;
+ padding:5px 8px;
+ white-space:nowrap;
+}
+
+.searchBox{
+ flex:1;
+ max-width:440px;
+ height:42px;
+
+ display:flex;
+ align-items:center;
+
+ background:#fff;
+ border-radius:23px;
+ overflow:hidden;
+
+ box-shadow:0 4px 18px #0003;
+}
+
+.searchBox input{
+ flex:1;
+ height:100%;
+ border:0;
+ outline:0;
+ padding:0 15px;
+ font-size:13px;
+ color:#26343b;
+}
+
+.searchBtn{
+ width:72px;
+ height:100%;
+ border:0;
+ background:#079bc7;
+ color:white;
+ font-size:9px;
+ font-weight:900;
+ cursor:pointer;
+}
+
+.topBtn{
+ height:40px;
+ padding:0 13px;
+ border-radius:22px;
+ border:1px solid #33738a;
+ background:#0b3547;
+ color:white;
+ font-size:9px;
+ font-weight:900;
+ cursor:pointer;
+}
+
+.topBtn:hover{
+ background:#087e9e;
+}
+
+/* =========================================================
+   MAP PREMIUM FLOATING UI
+========================================================= */
+
+.float{
+ position:absolute;
+ z-index:4000;
+
+ width:50px;
+ height:50px;
+
+ border:0;
+ border-radius:50%;
+
+ background:rgba(255,255,255,.96);
+ color:#12303b;
+
+ display:flex;
+ align-items:center;
+ justify-content:center;
+
+ font-size:21px;
+
+ box-shadow:
+  0 5px 20px #0003,
+  0 1px 4px #0002;
+
+ cursor:pointer;
+
+ transition:.2s;
+}
+
+.float:hover{
+ transform:scale(1.06);
+}
+
+.float.active{
+ background:#079fc8;
+ color:white;
+ box-shadow:
+  0 5px 22px #008fb755,
+  0 0 0 4px #ffffffaa;
+}
+
+#simBtn{
+ right:16px;
+ top:86px;
+}
+
+#layerBtn{
+ right:16px;
+ top:146px;
+}
+
+#legendBtn{
+ right:16px;
+ top:206px;
+}
+
+#locBtn{
+ right:16px;
+ bottom:150px;
+}
+
+#mapStyleBtn{
+ right:16px;
+ bottom:90px;
+}
+
+/* =========================================================
+   FLOATING CHIPS
+========================================================= */
+
+#chips{
+ position:absolute;
+ z-index:3500;
+ top:82px;
+ left:14px;
+
+ display:flex;
+ gap:8px;
+
+ overflow-x:auto;
+ max-width:calc(100% - 90px);
+
+ scrollbar-width:none;
+}
+
+#chips::-webkit-scrollbar{
+ display:none;
+}
+
+.chip{
+ flex:none;
+
+ height:38px;
+ padding:0 15px;
+
+ border:0;
+ border-radius:20px;
+
+ background:#fff;
+ color:#24333a;
+
+ font-size:10px;
+ font-weight:800;
+
+ box-shadow:0 4px 15px #0003;
+
+ cursor:pointer;
+}
+
+.chip:hover{
+ background:#e8faff;
+}
+
+.chip.active{
+ background:#087f9f;
+ color:#fff;
+}
+
+/* =========================================================
+   GLASS PANELS
+========================================================= */
 
 .panel{
  position:absolute;
- z-index:1700;
- padding:11px
+ z-index:4500;
+
+ width:290px;
+ max-height:calc(100vh - 170px);
+
+ overflow:auto;
+
+ padding:15px;
+
+ background:rgba(4,23,32,.94);
+
+ color:#eafaff;
+
+ border:1px solid rgba(75,207,235,.3);
+ border-radius:18px;
+
+ box-shadow:
+  0 15px 45px #0007,
+  inset 0 1px 0 #ffffff12;
+
+ backdrop-filter:blur(16px);
+
+ display:none;
+}
+
+.panel.open{
+ display:block;
+}
+
+#simPanel{
+ top:140px;
+ left:14px;
+}
+
+#layerPanel{
+ top:140px;
+ right:14px;
+}
+
+#legendPanel{
+ bottom:82px;
+ right:14px;
+ width:245px;
+}
+
+.close{
+ position:absolute;
+ right:9px;
+ top:9px;
+
+ width:27px;
+ height:27px;
+
+ border:0;
+ border-radius:50%;
+
+ background:#163a49;
+ color:#fff;
+
+ cursor:pointer;
+}
+
+.close:hover{
+ background:#079bc7;
 }
 
 .title{
- font-size:11px;font-weight:900;
- color:#63e2ff;letter-spacing:.5px
+ color:#61e5ff;
+ font-size:12px;
+ font-weight:950;
+ letter-spacing:.5px;
 }
 
 .sub{
- font-size:7px;color:#8da9b5;
- margin:3px 0 9px
+ color:#94adb6;
+ font-size:8px;
+ margin:4px 0 12px;
+ line-height:1.5;
 }
 
 .section{
- border-top:1px solid #ffffff12;
- margin-top:9px;
- padding-top:8px
+ margin-top:11px;
+ padding-top:10px;
+ border-top:1px solid #ffffff14;
+}
+
+.mode{
+ display:flex;
+ align-items:center;
+ gap:8px;
+
+ padding:8px;
+ margin:3px 0;
+
+ border-radius:9px;
+
+ font-size:8px;
+
+ cursor:pointer;
+}
+
+.mode:hover{
+ background:#0b3b4d;
+}
+
+.mode input{
+ accent-color:#17cbe9;
 }
 
 .row{
  display:flex;
  justify-content:space-between;
- gap:8px;
+ gap:10px;
+ padding:5px 0;
+
  font-size:8px;
- padding:4px 0
-}
-
-.mode{
- display:flex;
- gap:7px;
- align-items:center;
- padding:6px;
- border-radius:7px;
- font-size:8px;
- cursor:pointer
-}
-
-.mode:hover{background:#0b3446}
-.mode input{accent-color:#16c7f3}
-
-#mode{
- position:absolute;
- z-index:1800;
- top:69px;
- left:50%;
- transform:translateX(-50%);
- font-size:8px;
- color:#70e6ff;
- padding:6px 10px;
- border-radius:15px;
- white-space:nowrap
-}
-
-#kpi{
- position:absolute;
- z-index:1800;
- bottom:10px;
- left:50%;
- transform:translateX(-50%);
- display:flex;
- gap:5px;
- width:min(620px,92%);
- justify-content:center
-}
-
-.k{
- flex:1;
- min-width:80px;
- text-align:center;
- padding:7px 4px;
- border-radius:9px;
- background:#061721eF;
- border:1px solid #2c687c
-}
-
-.kv{
- font-size:14px;
- font-weight:900;
- color:#63e1ff
-}
-
-.kl{
- font-size:6px;
- color:#8fa8b2;
- margin-top:2px
-}
-
-#status{
- position:absolute;
- z-index:1800;
- bottom:10px;
- left:10px;
- font-size:7px;
- padding:7px 9px
-}
-
-.grad{
- height:8px;
- border-radius:8px;
- background:
- linear-gradient(
- 90deg,
- #075985,
- #16a34a,
- #facc15,
- #f97316,
- #dc2626
- );
- margin:6px 0
 }
 
 .small{
+ color:#91a9b2;
  font-size:7px;
- color:#8faab5;
- line-height:1.45
+ line-height:1.55;
 }
 
-.factor{margin:6px 0}
+.factor{
+ margin:8px 0;
+}
 
 .factor label{
- font-size:7px;
- color:#b9cdd4;
  display:flex;
- justify-content:space-between
+ justify-content:space-between;
+ font-size:7px;
+ color:#cce0e5;
 }
 
 .bar{
  height:5px;
- background:#17313d;
- border-radius:5px;
+ margin-top:4px;
+
+ background:#18323d;
+ border-radius:10px;
  overflow:hidden;
- margin-top:3px
 }
 
 .bar i{
  display:block;
  height:100%;
- background:
- linear-gradient(
- 90deg,
- #22c7f5,
- #8bdeff
+
+ background:linear-gradient(
+  90deg,
+  #19c9ee,
+  #a4f1ff
  );
- border-radius:5px
 }
 
+/* =========================================================
+   TIME SLIDER
+========================================================= */
+
+.timeRow{
+ display:flex;
+ align-items:center;
+ gap:7px;
+}
+
+.timeRow input{
+ flex:1;
+}
+
+.time{
+ color:#6be7ff;
+ font-weight:900;
+ font-size:8px;
+}
+
+/* =========================================================
+   LEGEND
+========================================================= */
+
+.gradient{
+ height:10px;
+ margin:8px 0;
+
+ border-radius:10px;
+
+ background:
+ linear-gradient(
+  90deg,
+  #006d8f,
+  #16a34a,
+  #facc15,
+  #f97316,
+  #dc2626
+ );
+}
+
+.legendLine{
+ display:flex;
+ align-items:center;
+ gap:7px;
+ margin:5px 0;
+ font-size:8px;
+}
+
+.dot{
+ width:10px;
+ height:10px;
+ border-radius:50%;
+ display:inline-block;
+}
+
+/* =========================================================
+   SMART SKY ANALYSIS
+========================================================= */
+
 #info{
- right:10px;
- bottom:66px;
- width:240px;
- display:none
+ position:absolute;
+ z-index:4400;
+
+ right:16px;
+ bottom:150px;
+
+ width:270px;
+
+ display:none;
+
+ padding:14px;
+
+ background:rgba(4,23,32,.94);
+ color:white;
+
+ border:1px solid #3c9bb4;
+ border-radius:17px;
+
+ box-shadow:0 15px 40px #0007;
+ backdrop-filter:blur(15px);
+}
+
+#info.open{
+ display:block;
 }
 
 .reco{
- margin-top:7px;
- padding:7px;
- border-radius:8px;
- background:#063043;
- color:#c9eaf3;
- font-size:7px;
- line-height:1.45
+ margin-top:9px;
+ padding:9px;
+
+ background:#07384a;
+ border-radius:9px;
+
+ color:#d6f6fc;
+
+ font-size:8px;
+ line-height:1.55;
 }
+
+/* =========================================================
+   KPI
+========================================================= */
+
+#kpi{
+ position:absolute;
+ z-index:3500;
+
+ left:50%;
+ bottom:12px;
+ transform:translateX(-50%);
+
+ width:min(720px,90%);
+
+ display:flex;
+ gap:7px;
+}
+
+.kpi{
+ flex:1;
+
+ min-width:0;
+
+ padding:9px 5px;
+
+ text-align:center;
+
+ background:rgba(3,22,31,.92);
+
+ border:1px solid #2e6172;
+
+ border-radius:12px;
+
+ box-shadow:0 6px 20px #0005;
+}
+
+.kv{
+ color:#5ce1ff;
+ font-size:14px;
+ font-weight:950;
+}
+
+.kl{
+ color:#91a9b1;
+ font-size:6px;
+ margin-top:3px;
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+#status{
+ position:absolute;
+ z-index:3500;
+
+ left:14px;
+ bottom:14px;
+
+ padding:8px 11px;
+
+ background:rgba(3,22,31,.9);
+ color:#a7c3cc;
+
+ border:1px solid #315d69;
+ border-radius:15px;
+
+ font-size:7px;
+}
+
+/* =========================================================
+   FULLSCREEN / JUDGE
+========================================================= */
 
 #tools{
  position:absolute;
- right:10px;
- bottom:10px;
- z-index:1800;
+ z-index:3500;
+
+ left:16px;
+ top:145px;
+
  display:flex;
- gap:5px
+ flex-direction:column;
+ gap:8px;
 }
 
 .tool{
- width:32px;
- height:32px;
- border-radius:8px;
- border:1px solid #356b7d;
- background:#061721eF;
- color:#fff;
- cursor:pointer
+ width:42px;
+ height:42px;
+
+ border:0;
+ border-radius:13px;
+
+ background:rgba(255,255,255,.95);
+ color:#18333c;
+
+ box-shadow:0 5px 18px #0003;
+
+ cursor:pointer;
+ font-size:17px;
 }
+
+/* =========================================================
+   PRESSURE GLOW MARKERS
+========================================================= */
+
+.pressureGlow{
+ position:relative;
+
+ border-radius:50%;
+
+ pointer-events:none;
+
+ filter:blur(.2px);
+
+ background:
+ radial-gradient(
+  circle,
+  rgba(220,38,38,.75) 0%,
+  rgba(249,115,22,.58) 22%,
+  rgba(250,204,21,.40) 42%,
+  rgba(34,197,94,.22) 62%,
+  rgba(7,89,133,.08) 76%,
+  transparent 78%
+ );
+
+ animation:pulseGlow 4s ease-in-out infinite;
+}
+
+.pressureGlow.soft{
+ animation:none;
+}
+
+@keyframes pulseGlow{
+ 0%,100%{
+  transform:scale(.98);
+  opacity:.78;
+ }
+ 50%{
+  transform:scale(1.03);
+  opacity:.9;
+ }
+}
+
+/* =========================================================
+   URBAN NODE
+========================================================= */
+
+.cityNode{
+ width:13px;
+ height:13px;
+
+ border-radius:50%;
+
+ border:2px solid white;
+
+ box-shadow:
+  0 0 0 4px rgba(255,255,255,.22),
+  0 0 16px currentColor;
+}
+
+/* =========================================================
+   MODAL
+========================================================= */
 
 #modal{
  position:absolute;
  inset:0;
- z-index:4000;
- background:#000a;
+
+ z-index:9000;
+
  display:none;
+
  align-items:center;
  justify-content:center;
- padding:18px
+
+ padding:20px;
+
+ background:#0009;
 }
 
-.box{
- max-width:560px;
- width:95%;
- max-height:86vh;
+.modalBox{
+ width:min(650px,94%);
+ max-height:85vh;
+
  overflow:auto;
- padding:18px
+
+ padding:20px;
+
+ border-radius:20px;
+
+ background:#061c27;
+
+ color:white;
+
+ border:1px solid #39788a;
+
+ box-shadow:0 20px 70px #0009;
 }
 
-.box h2{
- margin:0 0 10px;
- color:#64e2ff;
- font-size:17px
+.modalBox h2{
+ color:#63e5ff;
+ margin-top:0;
 }
 
-.box p,.box li{
+.modalBox p,
+.modalBox li{
+ color:#c5d8de;
  font-size:9px;
  line-height:1.7;
- color:#c7d8de
 }
 
-.close{
- float:right;
- background:none;
- border:0;
- color:#fff;
- font-size:22px
-}
-
-.timeLine{
- display:flex;
- align-items:center;
- gap:7px
-}
-
-.timeLine input{flex:1}
-
-.timeLabel{
- font-size:8px;
- color:#6ce5ff;
- font-weight:bold
-}
-
-/* ================================
-   BOTTOM ICON DOCK
-================================ */
-
-#controlDock{
- position:absolute;
- z-index:3000;
- right:10px;
- bottom:60px;
- display:flex;
- gap:7px;
- padding:6px;
- border-radius:15px;
- background:rgba(3,17,26,.72);
- border:1px solid rgba(76,190,223,.25);
- backdrop-filter:blur(10px);
- box-shadow:0 10px 30px #0008
-}
-
-.mapIcon{
- width:42px;
- height:42px;
- border:1px solid rgba(90,210,240,.5);
- border-radius:12px;
- background:rgba(3,18,28,.96);
- color:#68e5ff;
- display:flex;
- align-items:center;
- justify-content:center;
- font-size:18px;
- cursor:pointer;
- box-shadow:0 7px 20px #0008;
- transition:.2s
-}
-
-.mapIcon:hover,
-.mapIcon.active{
- background:#087fa5;
- color:#fff;
- transform:translateY(-2px)
-}
-
-/* hidden panels */
-
-#left,#right{
- display:none;
- max-height:72vh;
- overflow:auto
-}
-
-#left.open,#right.open{
- display:block
-}
-
-/* layer / legend popup */
-
-#layerPopup,#customLegend{
- position:absolute;
- z-index:3100;
- display:none
-}
-
-#layerPopup.open,#customLegend.open{
- display:block
-}
-
-#layerPopup{
- right:10px;
- bottom:108px;
- width:215px;
- padding:12px
-}
-
-#customLegend{
- right:10px;
- bottom:108px;
- width:205px;
- padding:11px
-}
-
-.panelClose{
- position:absolute;
- right:7px;
- top:7px;
- width:25px;
- height:25px;
- border:0;
- border-radius:50%;
- background:#123746;
- color:#fff;
- font-size:16px;
- cursor:pointer
-}
-
-.panelClose:hover{
- background:#087fa5
-}
-
-#left{
- top:auto;
- bottom:108px;
- left:10px;
- width:250px;
- padding:11px
-}
-
-#right{
- top:auto;
- bottom:108px;
- right:10px;
- width:235px;
- padding:11px
-}
-
-.leaflet-control-layers{
- display:none!important
-}
-
-/* MOBILE */
+/* =========================================================
+   RESPONSIVE MOBILE
+========================================================= */
 
 @media(max-width:700px){
 
  #top{
-  height:54px;
-  padding:7px
+  height:60px;
+  padding:7px;
  }
 
- #map{top:54px}
-
- .brand{font-size:12px}
- .badge{display:none}
-
- .btn{
-  padding:0 8px;
-  font-size:8px
+ .brand{
+  font-size:11px;
  }
 
- #controlDock{
-  right:7px;
-  bottom:60px;
-  gap:5px;
-  padding:5px
+ .badge{
+  display:none;
  }
 
- .mapIcon{
-  width:39px;
-  height:39px;
-  font-size:16px
+ .searchBox{
+  height:37px;
  }
 
- #left{
-  left:7px;
-  bottom:105px;
-  width:190px;
-  max-height:67vh;
-  padding:9px
+ .searchBox input{
+  font-size:11px;
+  min-width:0;
  }
 
- #right{
-  right:7px;
-  bottom:105px;
-  width:185px;
-  max-height:67vh;
-  padding:9px
+ .searchBtn{
+  width:53px;
+  font-size:7px;
  }
 
- #layerPopup,
- #customLegend{
-  right:7px;
-  bottom:105px
+ .topBtn{
+  width:42px;
+  padding:0;
+  font-size:0;
  }
 
- #layerPopup{width:190px}
- #customLegend{width:185px}
-
- .title{font-size:9px}
- .sub{font-size:6px}
- .mode{font-size:6.5px;padding:4px}
- .row{font-size:6.5px}
- .small{font-size:6px}
-
- #mode{
-  top:61px;
-  font-size:6px
+ .topBtn:first-of-type::after{
+  content:"⌖";
+  font-size:17px;
  }
 
- .k{min-width:0}
- .kv{font-size:10px}
- .kl{font-size:5px}
+ .topBtn:last-of-type::after{
+  content:"📍";
+  font-size:15px;
+ }
 
- #info{
-  right:6px;
-  bottom:54px;
-  width:190px
+ #chips{
+  top:70px;
+  left:9px;
+  max-width:calc(100% - 18px);
+ }
+
+ .chip{
+  height:35px;
+  font-size:9px;
+  padding:0 13px;
+ }
+
+ .float{
+  width:47px;
+  height:47px;
+  font-size:19px;
+ }
+
+ #simBtn{
+  right:10px;
+  top:120px;
+ }
+
+ #layerBtn{
+  right:10px;
+  top:177px;
+ }
+
+ #legendBtn{
+  right:10px;
+  top:234px;
+ }
+
+ #locBtn{
+  right:10px;
+  bottom:160px;
+ }
+
+ #mapStyleBtn{
+  right:10px;
+  bottom:103px;
+ }
+
+ #tools{
+  left:10px;
+  top:125px;
  }
 
  .tool{
-  width:29px;
-  height:29px
+  width:39px;
+  height:39px;
  }
+
+ #simPanel{
+  top:118px;
+  left:8px;
+  width:calc(100% - 68px);
+  max-height:67vh;
+ }
+
+ #layerPanel{
+  top:118px;
+  right:8px;
+  width:calc(100% - 68px);
+  max-height:67vh;
+ }
+
+ #legendPanel{
+  right:8px;
+  bottom:70px;
+  width:235px;
+ }
+
+ #info{
+  right:8px;
+  bottom:150px;
+  width:230px;
+ }
+
+ #kpi{
+  width:96%;
+  bottom:7px;
+  gap:3px;
+ }
+
+ .kpi{
+  padding:7px 2px;
+ }
+
+ .kv{
+  font-size:10px;
+ }
+
+ .kl{
+  font-size:5px;
+ }
+
+ #status{
+  left:7px;
+  bottom:7px;
+  font-size:5.5px;
+ }
+
+}
+
+/* =========================================================
+   LEAFLET CLEANUP
+========================================================= */
+
+.leaflet-control-zoom{
+ border:0!important;
+ box-shadow:0 4px 15px #0003!important;
+}
+
+.leaflet-control-zoom a{
+ border:0!important;
+ color:#18333c!important;
+}
+
+.leaflet-control-attribution{
+ font-size:8px!important;
+}
+
+/* Hide default layers because custom premium layers are used */
+.leaflet-control-layers{
+ display:none!important;
 }
 </style>
 </head>
 
 <body>
 
+<!-- =======================================================
+     MAP
+======================================================= -->
+
+<div id="map"></div>
+
+
+<!-- =======================================================
+     TOP PREMIUM HEADER
+======================================================= -->
+
 <header id="top">
 
  <div class="brand">
-  URBAN SKY <b>SHIELD</b>
+  URBAN SKY <span>SHIELD</span>
  </div>
 
  <div class="badge">
-  TN • PROTOTYPE
+  TN • GIS
  </div>
 
- <input
-  id="search"
-  placeholder="Search Chennai, Madurai, Ooty..."
- >
+ <div class="searchBox">
+
+  <input
+   id="searchInput"
+   placeholder="Search Chennai, Madurai, Ooty..."
+   onkeydown="if(event.key==='Enter')searchPlace()">
+
+  <button
+   class="searchBtn"
+   onclick="searchPlace()">
+   SEARCH
+  </button>
+
+ </div>
 
  <button
-  class="btn cyan"
-  onclick="searchPlace()">
-  SEARCH
- </button>
-
- <button
-  class="btn"
+  class="topBtn"
   onclick="getLocation()">
-  📍 LOCATION
+  LOCATION
  </button>
 
 </header>
 
-<div id="map"></div>
 
-<div id="mode" class="glass">
- MODE • CURRENT / BASELINE
+<!-- =======================================================
+     PREMIUM MAP CHIPS
+======================================================= -->
+
+<div id="chips">
+
+ <button
+  class="chip active"
+  onclick="openSimulator()">
+  🌌 Sky Shield
+ </button>
+
+ <button
+  class="chip"
+  onclick="openLayers()">
+  🗺️ Layers
+ </button>
+
+ <button
+  class="chip"
+  onclick="openLegend()">
+  🌈 Pressure
+ </button>
+
+ <button
+  class="chip"
+  onclick="openMethod()">
+  🧠 AI Planning
+ </button>
+
+ <button
+  class="chip"
+  onclick="openScience()">
+  🛰 Data & Science
+ </button>
+
 </div>
 
-<!-- BOTTOM ICONS -->
 
-<div id="controlDock">
+<!-- =======================================================
+     FLOATING MAP ICONS
+======================================================= -->
+
+<button
+ id="simBtn"
+ class="float"
+ onclick="toggleSimulator()"
+ title="Sky Shield Simulator">
+ 🌌
+</button>
+
+
+<button
+ id="layerBtn"
+ class="float"
+ onclick="toggleLayers()"
+ title="Map Layers">
+ 🗺️
+</button>
+
+
+<button
+ id="legendBtn"
+ class="float"
+ onclick="toggleLegend()"
+ title="Light Pollution Legend">
+ 🌈
+</button>
+
+
+<button
+ id="locBtn"
+ class="float"
+ onclick="getLocation()"
+ title="My Location">
+ 📍
+</button>
+
+
+<button
+ id="mapStyleBtn"
+ class="float"
+ onclick="toggleBaseMap()"
+ title="Switch Map">
+ 🛰️
+</button>
+
+
+<!-- =======================================================
+     LEFT TOOLS
+======================================================= -->
+
+<div id="tools">
 
  <button
-  id="simIcon"
-  class="mapIcon"
-  onclick="toggleSimulator()"
-  title="Sky Shield Simulator">
-  🌌
+  class="tool"
+  onclick="toggleFullscreen()">
+  ⛶
  </button>
 
  <button
-  id="layerIcon"
-  class="mapIcon"
-  onclick="toggleLayers()"
-  title="Map Layers">
-  🗺️
- </button>
-
- <button
-  id="legendIcon"
-  class="mapIcon"
-  onclick="toggleLegend()"
-  title="Light Pollution Legend">
-  🌈
+  class="tool"
+  onclick="judgeMode()">
+  ▶
  </button>
 
 </div>
 
 
-<!-- SIMULATOR -->
+<!-- =======================================================
+     SIMULATOR
+======================================================= -->
 
 <section
- id="left"
- class="panel glass">
+ id="simPanel"
+ class="panel">
 
  <button
-  class="panelClose"
+  class="close"
   onclick="toggleSimulator()">
   ×
  </button>
+
 
  <div class="title">
   🌌 SKY SHIELD • MITIGATION LAB
  </div>
 
  <div class="sub">
-  Decision-support scenarios • conceptual simulation
+  Conceptual spatial decision-support simulation
  </div>
+
 
  <label class="mode">
   <input
@@ -604,32 +1084,36 @@ html,body{
    name="scenario"
    value="baseline"
    checked>
-  Current / Baseline
+  🔵 Current / Baseline
  </label>
+
 
  <label class="mode">
   <input
    type="radio"
    name="scenario"
    value="shielded">
-  🛡 Shielded Street Lighting
+  🛡️ Shielded Street Lighting
  </label>
+
 
  <label class="mode">
   <input
    type="radio"
    name="scenario"
    value="dimming">
-  Adaptive Dimming
+  💡 Adaptive Dimming
  </label>
+
 
  <label class="mode">
   <input
    type="radio"
    name="scenario"
    value="curfew">
-  Late-Night Lighting Control
+  🌙 Late-Night Lighting Control
  </label>
+
 
  <label class="mode">
   <input
@@ -639,21 +1123,24 @@ html,body{
   🌌 Dark-Sky Protection
  </label>
 
+
  <div class="section">
 
   <div class="row">
    <b>🌙 Night-time scenario</b>
-
    <span
-    class="timeLabel"
-    id="timeLabel">
+    id="timeLabel"
+    class="time">
     21:00
    </span>
   </div>
 
-  <div class="timeLine">
 
-   <span class="small">18</span>
+  <div class="timeRow">
+
+   <span class="small">
+    18
+   </span>
 
    <input
     id="nightSlider"
@@ -663,278 +1150,54 @@ html,body{
     step=".5"
     value="21">
 
-   <span class="small">24</span>
+   <span class="small">
+    24
+   </span>
 
   </div>
 
+
   <div class="small">
-   Conceptual temporal simulation;
-   not a measured hourly dataset.
+   Conceptual temporal simulation; not measured hourly data.
   </div>
 
  </div>
+
 
  <div class="section">
 
   <div class="title"
    style="font-size:9px">
-   DATA STATUS
+   SCENARIO OUTPUT
   </div>
 
-  <div class="small">
-   🛰 Night-light proxy • planned integration<br>
-   Historical satellite proxy can support
-   future validation.
+
+  <div class="row">
+   <span>Pressure visualization</span>
+   <b id="scenarioOutput">BASELINE</b>
+  </div>
+
+
+  <div class="row">
+   <span>Planning response</span>
+   <b id="scenarioAction">Monitor</b>
   </div>
 
  </div>
 
- <div
-  class="small"
-  style="color:#f4c75c;margin-top:8px">
-
-  ⚠ Pressure surface is conceptual.
-  It is not a ground measurement or
-  validated AI prediction.
-
- </div>
-
-</section>
-
-
-<!-- MAP LAYERS -->
-
-<div
- id="layerPopup"
- class="glass">
-
- <button
-  class="panelClose"
-  onclick="toggleLayers()">
-  ×
- </button>
-
- <div class="title">
-  🗺️ MAP LAYERS
- </div>
-
- <div class="sub">
-  Visualization controls
- </div>
 
  <div class="section">
 
-  <div
-   class="title"
-   style="font-size:9px">
-   BASE MAP
-  </div>
-
-  <label class="mode">
-
-   <input
-    type="radio"
-    name="baseMap"
-    checked
-    onchange="switchBase('normal')">
-
-   🗺 Normal Map
-
-  </label>
-
-  <label class="mode">
-
-   <input
-    type="radio"
-    name="baseMap"
-    onchange="switchBase('satellite')">
-
-   🛰 Satellite
-
-  </label>
-
- </div>
-
- <div class="section">
-
-  <div
-   class="title"
-   style="font-size:9px">
-   VISUALIZATION LAYERS
-  </div>
-
-  <label class="mode">
-
-   <input
-    type="checkbox"
-    id="pressureToggle"
-    checked
-    onchange="togglePressure(this)">
-
-   🌈 Light Pollution Pressure
-
-  </label>
-
-  <label class="mode">
-
-   <input
-    type="checkbox"
-    id="darkToggle"
-    checked
-    onchange="toggleDarkSky(this)">
-
-   🌌 Dark-Sky Candidates
-
-  </label>
-
-  <label class="mode">
-
-   <input
-    type="checkbox"
-    id="proxyToggle"
-    onchange="toggleProxy(this)">
-
-   🛰 Night-Light Proxy • planned
-
-  </label>
-
- </div>
-
- <div class="small"
-  style="margin-top:8px">
-
-  Pressure visualization =
-  conceptual planning surface.
-
- </div>
-
-</div>
-
-
-<!-- LEGEND -->
-
-<div
- id="customLegend"
- class="glass">
-
- <button
-  class="panelClose"
-  onclick="toggleLegend()">
-  ×
- </button>
-
- <div class="title">
-  💡 LIGHT-POLLUTION PRESSURE
- </div>
-
- <div class="grad"></div>
-
- <div style="
- display:flex;
- justify-content:space-between;
- font-size:6px">
-
-  <span>LOW</span>
-  <span>HIGH</span>
-
- </div>
-
- <br>
-
- <span style="color:#dc2626">●</span>
- Very High
- <br>
-
- <span style="color:#f97316">●</span>
- High
- <br>
-
- <span style="color:#facc15">●</span>
- Moderate
- <br>
-
- <span style="color:#22c55e">●</span>
- Low
- <br>
-
- <span style="color:#0284c7">●</span>
- Very Low / Dark-sky
-
- <br><br>
-
- <span class="small">
-
- Conceptual planning visualization.<br>
- Night-light satellite data can be used
- as a proxy, not direct sky brightness.
-
- </span>
-
-</div>
-
-
-<!-- AI PANEL -->
-
-<section
- id="right"
- class="panel glass">
-
- <button
-  class="panelClose"
-  onclick="toggleRightPanel()">
-  ×
- </button>
-
- <div class="title">
-  🧠 AI-ASSISTED SPATIAL PLANNING
- </div>
-
- <div class="sub">
-  Explainable prototype workflow
- </div>
-
- <div class="row">
-  <span>01 • Night-light proxy</span>
-  <span>INPUT</span>
- </div>
-
- <div class="row">
-  <span>02 • Urban / built-up indicators</span>
-  <span>INPUT</span>
- </div>
-
- <div class="row">
-  <span>03 • Spatial analysis</span>
-  <span>MODEL</span>
- </div>
-
- <div class="row">
-  <span>04 • Pressure visualization</span>
-  <span>OUTPUT</span>
- </div>
-
- <div class="row">
-  <span>05 • Mitigation planning</span>
-  <span>ACTION</span>
- </div>
-
- <div class="section">
-
-  <div
-   class="title"
+  <div class="title"
    style="font-size:9px">
    🔬 EXPLAINABLE FACTORS
   </div>
 
-  <div class="small">
-   Relative conceptual influence —
-   not measured percentages.
-  </div>
 
   <div class="factor">
 
    <label>
-    Night-light signal
+    Night-light proxy
     <span>HIGH</span>
    </label>
 
@@ -943,6 +1206,7 @@ html,body{
    </div>
 
   </div>
+
 
   <div class="factor">
 
@@ -957,10 +1221,11 @@ html,body{
 
   </div>
 
+
   <div class="factor">
 
    <label>
-    Infrastructure influence
+    Infrastructure
     <span>MED</span>
    </label>
 
@@ -970,11 +1235,12 @@ html,body{
 
   </div>
 
+
   <div class="factor">
 
    <label>
-    Dark-sky potential
-    <span>CONTEXT</span>
+    Dark-sky context
+    <span>LOW</span>
    </label>
 
    <div class="bar">
@@ -985,21 +1251,21 @@ html,body{
 
  </div>
 
+
  <div class="section">
 
-  <div
-   class="title"
+  <div class="title"
    style="font-size:9px">
-   📌 VALIDATION ROADMAP
+   ⚠ SCIENTIFIC SCOPE
   </div>
 
   <div class="small">
-   Satellite proxy →
-   spatial indicators →
-   field sky-brightness measurement →
-   model training →
-   field validation →
-   protection planning.
+
+   Pressure surface is a conceptual planning
+   visualization. Satellite night-light products
+   are treated as proxy indicators and are not
+   direct ground sky-brightness measurements.
+
   </div>
 
  </div>
@@ -1007,15 +1273,258 @@ html,body{
 </section>
 
 
-<!-- SMART ANALYSIS -->
+<!-- =======================================================
+     LAYERS
+======================================================= -->
 
-<div
- id="info"
- class="panel glass">
+<section
+ id="layerPanel"
+ class="panel">
+
+ <button
+  class="close"
+  onclick="toggleLayers()">
+  ×
+ </button>
+
+
+ <div class="title">
+  🗺️ MAP LAYERS
+ </div>
+
+ <div class="sub">
+  Premium visualization controls
+ </div>
+
+
+ <div class="section">
+
+  <div class="title"
+   style="font-size:9px">
+   BASE MAP
+  </div>
+
+
+  <label class="mode">
+
+   <input
+    type="radio"
+    name="base"
+    checked
+    onchange="setBase('clean')">
+
+   🗺️ Clean Street Map
+
+  </label>
+
+
+  <label class="mode">
+
+   <input
+    type="radio"
+    name="base"
+    onchange="setBase('satellite')">
+
+   🛰️ Satellite
+
+  </label>
+
+ </div>
+
+
+ <div class="section">
+
+  <div class="title"
+   style="font-size:9px">
+   PROJECT LAYERS
+  </div>
+
+
+  <label class="mode">
+
+   <input
+    id="pressureCheck"
+    type="checkbox"
+    checked
+    onchange="setPressureVisible(this.checked)">
+
+   🌈 Light-Pollution Pressure
+
+  </label>
+
+
+  <label class="mode">
+
+   <input
+    id="cityCheck"
+    type="checkbox"
+    checked
+    onchange="setCitiesVisible(this.checked)">
+
+   🏙️ Urban Light Nodes
+
+  </label>
+
+
+  <label class="mode">
+
+   <input
+    id="darkCheck"
+    type="checkbox"
+    checked
+    onchange="setDarkVisible(this.checked)">
+
+   🌌 Dark-Sky Candidates
+
+  </label>
+
+
+  <label class="mode">
+
+   <input
+    id="nasaCheck"
+    type="checkbox"
+    onchange="setNASAVisible(this.checked)">
+
+   🛰️ NASA Night-Light Proxy
+
+  </label>
+
+ </div>
+
+
+ <div class="section">
+
+  <div class="title"
+   style="font-size:9px">
+   DATA STATUS
+  </div>
+
+  <div class="small">
+
+   NASA VIIRS / Black Marble<br>
+   Proxy indicator layer<br>
+   Historical imagery<br>
+   Field validation planned
+
+  </div>
+
+ </div>
+
+</section>
+
+
+<!-- =======================================================
+     LEGEND
+======================================================= -->
+
+<section
+ id="legendPanel"
+ class="panel">
+
+ <button
+  class="close"
+  onclick="toggleLegend()">
+  ×
+ </button>
+
+
+ <div class="title">
+  🌈 LIGHT-POLLUTION PRESSURE
+ </div>
+
+
+ <div class="sub">
+  Conceptual planning visualization
+ </div>
+
+
+ <div class="gradient"></div>
+
+
+ <div class="row">
+  <span>LOW</span>
+  <span>HIGH</span>
+ </div>
+
+
+ <div class="legendLine">
+  <span
+   class="dot"
+   style="background:#dc2626">
+  </span>
+  Very High
+ </div>
+
+
+ <div class="legendLine">
+  <span
+   class="dot"
+   style="background:#f97316">
+  </span>
+  High
+ </div>
+
+
+ <div class="legendLine">
+  <span
+   class="dot"
+   style="background:#facc15">
+  </span>
+  Moderate
+ </div>
+
+
+ <div class="legendLine">
+  <span
+   class="dot"
+   style="background:#22c55e">
+  </span>
+  Low
+ </div>
+
+
+ <div class="legendLine">
+  <span
+   class="dot"
+   style="background:#0284c7">
+  </span>
+  Very Low / Dark-sky
+ </div>
+
+
+ <div class="section">
+
+  <div class="small">
+
+   The visualization represents relative
+   planning pressure, not measured sky
+   brightness or Bortle classification.
+
+  </div>
+
+ </div>
+
+</section>
+
+
+<!-- =======================================================
+     SMART ANALYSIS
+======================================================= -->
+
+<section id="info">
+
+ <button
+  class="close"
+  onclick="closeInfo()">
+  ×
+ </button>
+
 
  <div class="title">
   📍 SMART SKY ANALYSIS
  </div>
+
 
  <div
   id="placeName"
@@ -1023,119 +1532,127 @@ html,body{
   Selected location
  </div>
 
+
  <div class="row">
   <span>Coordinates</span>
   <span id="coords">—</span>
  </div>
+
 
  <div class="row">
   <span>Nearest planning zone</span>
   <span id="nearest">—</span>
  </div>
 
+
  <div class="row">
   <span>Pressure class</span>
   <span id="pressure">—</span>
  </div>
+
 
  <div class="row">
   <span>Urban influence</span>
   <span id="urban">—</span>
  </div>
 
+
  <div class="row">
   <span>Dark-sky potential</span>
   <span id="dark">—</span>
  </div>
 
- <div
-  class="reco"
-  id="reco">
 
-  Select a point on the map to
-  generate a planning recommendation.
+ <div
+  id="reco"
+  class="reco">
+
+  Select a point on the map to generate
+  a planning recommendation.
 
  </div>
 
-</div>
+</section>
 
 
-<!-- KPI -->
+<!-- =======================================================
+     KPI
+======================================================= -->
 
 <div id="kpi">
 
- <div class="k glass">
-  <div class="kv">22</div>
-  <div class="kl">PLANNING ZONES</div>
+ <div class="kpi">
+
+  <div class="kv">
+   22
+  </div>
+
+  <div class="kl">
+   PLANNING ZONES
+  </div>
+
  </div>
 
- <div class="k glass">
-  <div class="kv">04</div>
-  <div class="kl">DARK-SKY CANDIDATES</div>
+
+ <div class="kpi">
+
+  <div class="kv">
+   04
+  </div>
+
+  <div class="kl">
+   DARK-SKY CANDIDATES
+  </div>
+
  </div>
 
- <div class="k glass">
-  <div class="kv">05</div>
-  <div class="kl">MITIGATION SCENARIOS</div>
+
+ <div class="kpi">
+
+  <div class="kv">
+   05
+  </div>
+
+  <div class="kl">
+   MITIGATION SCENARIOS
+  </div>
+
  </div>
 
- <div class="k glass">
+
+ <div class="kpi">
+
   <div
-   class="kv"
-   id="gpsKpi">
+   id="gpsKpi"
+   class="kv">
    READY
   </div>
-  <div class="kl">GPS STATUS</div>
+
+  <div class="kl">
+   GPS STATUS
+  </div>
+
  </div>
 
 </div>
 
 
-<div
- id="status"
- class="glass">
+<!-- =======================================================
+     STATUS
+======================================================= -->
 
- Conceptual / planning visualization
-
+<div id="status">
+ 🌃 Pressure model ready • GPS ready
 </div>
 
 
-<!-- TOOLS -->
-
-<div id="tools">
-
- <button
-  class="tool"
-  onclick="toggleFullscreen()">
-  ⛶
- </button>
-
- <button
-  class="tool"
-  onclick="toggleDemo()">
-  ▶
- </button>
-
- <button
-  class="tool"
-  onclick="openModal('method')">
-  ℹ
- </button>
-
- <button
-  class="tool"
-  onclick="openModal('sources')">
-  ⌁
- </button>
-
-</div>
-
-
-<!-- MODAL -->
+<!-- =======================================================
+     MODAL
+======================================================= -->
 
 <div id="modal">
 
- <div class="box glass">
+ <div class="modalBox">
 
   <button
    class="close"
@@ -1152,92 +1669,126 @@ html,body{
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+
 <script>
 
-const map=L.map(
- 'map',
- {
-  zoomControl:true,
-  minZoom:5,
-  maxZoom:18
- }
-).setView(
+/* =========================================================
+   MAP INITIALIZATION
+========================================================= */
+
+const map =
+L.map('map',{
+ zoomControl:true,
+ minZoom:5,
+ maxZoom:18
+}).setView(
  [11.1271,78.6569],
  7
 );
 
 
-/* BASE MAPS */
+/* =========================================================
+   PREMIUM CLEAN BASEMAP
+========================================================= */
 
-const normal=L.tileLayer(
- 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+const clean =
+L.tileLayer(
+ 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
  {
   maxZoom:19,
-  attribution:'&copy; OpenStreetMap contributors'
+  attribution:
+   '&copy; OpenStreetMap contributors &copy; CARTO'
  }
 ).addTo(map);
 
-const satellite=L.tileLayer(
+
+/* =========================================================
+   SATELLITE
+========================================================= */
+
+const satellite =
+L.tileLayer(
  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
  {
   maxZoom:19,
-  attribution:'Tiles &copy; Esri'
+  attribution:
+   'Tiles &copy; Esri'
  }
 );
 
 
-/* CONCEPTUAL ZONES */
+/* =========================================================
+   NASA NIGHT-LIGHT PROXY
+========================================================= */
 
-const data=[
+let nasaLayer =
+L.tileLayer.wms(
+ 'https://gibs.earthdata.nasa.gov/wms/epsg3857/best/wms.cgi',
+ {
+  layers:'VIIRS_Night_Lights',
+  format:'image/png',
+  transparent:true,
+  version:'1.1.1',
+  time:'2016-01-01',
+  opacity:.58
+ }
+);
 
- ['Chennai',13.0827,80.2707,'Very High','#dc2626',56000],
 
- ['Vellore',12.9165,79.1325,'Very High','#dc2626',26000],
+/* =========================================================
+   PROJECT DATA
+========================================================= */
 
- ['Coimbatore',11.0168,76.9558,'Very High','#dc2626',36000],
+const zones=[
 
- ['Madurai',9.9252,78.1198,'Very High','#dc2626',35000],
+ ['Chennai',13.0827,80.2707,'Very High','#dc2626',2.8],
 
- ['Tiruchirappalli',10.7905,78.7047,'High','#f97316',28000],
+ ['Vellore',12.9165,79.1325,'Very High','#dc2626',1.8],
 
- ['Salem',11.6643,78.1460,'High','#f97316',29000],
+ ['Coimbatore',11.0168,76.9558,'Very High','#dc2626',2.2],
 
- ['Kumbakonam',10.9601,79.3845,'High','#f97316',21000],
+ ['Madurai',9.9252,78.1198,'Very High','#dc2626',2.1],
 
- ['Thanjavur',10.7870,79.1378,'High','#f97316',23000],
+ ['Tiruchirappalli',10.7905,78.7047,'High','#f97316',1.8],
 
- ['Tirunelveli',8.7139,77.7567,'High','#f97316',25000],
+ ['Salem',11.6643,78.1460,'High','#f97316',1.9],
 
- ['Tiruppur',11.1085,77.3411,'High','#f97316',24000],
+ ['Kumbakonam',10.9601,79.3845,'High','#f97316',1.3],
 
- ['Erode',11.3410,77.7172,'Moderate','#facc15',22000],
+ ['Thanjavur',10.7870,79.1378,'High','#f97316',1.5],
 
- ['Namakkal',11.2194,78.1677,'Moderate','#facc15',19000],
+ ['Tirunelveli',8.7139,77.7567,'High','#f97316',1.6],
 
- ['Dindigul',10.3673,77.9803,'Moderate','#facc15',21000],
+ ['Tiruppur',11.1085,77.3411,'High','#f97316',1.7],
 
- ['Karur',10.9601,78.0766,'Moderate','#facc15',19000],
+ ['Erode',11.3410,77.7172,'Moderate','#facc15',1.5],
 
- ['Thoothukudi',8.7642,78.1348,'Moderate','#facc15',22000],
+ ['Namakkal',11.2194,78.1677,'Moderate','#facc15',1.2],
 
- ['Ramanathapuram',9.3639,78.8395,'Moderate','#facc15',18000],
+ ['Dindigul',10.3673,77.9803,'Moderate','#facc15',1.2],
 
- ['Sivaganga',9.8433,78.4809,'Moderate','#facc15',18000],
+ ['Karur',10.9601,78.0766,'Moderate','#facc15',1.1],
 
- ['Kanchipuram',12.8342,79.7036,'Moderate','#facc15',20000],
+ ['Thoothukudi',8.7642,78.1348,'Moderate','#facc15',1.3],
 
- ['Ooty',11.4064,76.6932,'Low','#22c55e',22000],
+ ['Ramanathapuram',9.3639,78.8395,'Moderate','#facc15',1.0],
 
- ['Tiruvannamalai',12.2253,79.0747,'Low','#22c55e',19000],
+ ['Sivaganga',9.8433,78.4809,'Moderate','#facc15',1.0],
 
- ['Kanyakumari Interior',8.3000,77.3500,'Low','#22c55e',18000],
+ ['Kanchipuram',12.8342,79.7036,'Moderate','#facc15',1.4],
 
- ['Nilgiri Interior',11.4500,76.6000,'Very Low / Dark-sky','#0284c7',27000]
+ ['Ooty',11.4064,76.6932,'Low','#22c55e',.8],
+
+ ['Tiruvannamalai',12.2253,79.0747,'Low','#22c55e',.8],
+
+ ['Kanyakumari Interior',8.3000,77.3500,'Low','#22c55e',.55],
+
+ ['Nilgiri Interior',11.4500,76.6000,'Very Low / Dark-sky','#0284c7',.35]
 
 ];
 
 
-const darkData=[
+const darkZones=[
 
  ['Nilgiri Interior',11.45,76.60],
 
@@ -1250,904 +1801,1007 @@ const darkData=[
 ];
 
 
-const pressureLayer=L.layerGroup().addTo(map);
-const darkLayer=L.layerGroup().addTo(map);
-const proxyLayer=L.layerGroup();
+/* =========================================================
+   PRESSURE GLOW LAYER
+========================================================= */
 
-const objects=[];
+const pressureLayer =
+L.layerGroup().addTo(map);
 
 
-/* PRESSURE GLOW */
+function createGlow(d){
 
-function addZone(d){
+ const size =
+  Math.max(
+   110,
+   Math.min(
+    280,
+    75+d[5]*70
+   )
+  );
 
- const g=L.layerGroup();
 
- const rings=[
-  1,
-  .74,
-  .51,
-  .31,
-  .16
- ];
+ const html=
+ `
+ <div
+  class="pressureGlow"
+  style="
+   width:${size}px;
+   height:${size}px;
+   margin-left:${-size/2}px;
+   margin-top:${-size/2}px;
+  ">
+ </div>
+ `;
 
- rings.forEach((r,i)=>{
 
-  L.circle(
-   [d[1],d[2]],
-   {
-    radius:d[5]*(1+i*.38),
-    stroke:false,
-    fillColor:d[4],
-    fillOpacity:.028*(6-i),
-    _baseOpacity:.028*(6-i)
-   }
-  ).addTo(g);
-
- });
-
- g.addTo(pressureLayer);
-
- objects.push({
-  g:g,
-  zone:d[0]
- });
+ return L.marker(
+  [d[1],d[2]],
+  {
+   icon:L.divIcon({
+    className:'',
+    html:html,
+    iconSize:[size,size],
+    iconAnchor:[size/2,size/2]
+   }),
+   interactive:false
+  }
+ );
 
 }
 
 
-data.forEach(addZone);
+zones.forEach(
+ d=>{
+  createGlow(d).addTo(pressureLayer);
+ }
+);
 
 
-/* DARK SKY */
+/* =========================================================
+   CITY LIGHT NODES
+========================================================= */
 
-darkData.forEach(d=>{
+const cityLayer =
+L.layerGroup().addTo(map);
+
+
+zones.forEach(d=>{
+
+ const icon =
+  L.divIcon({
+   className:'',
+   html:
+    `<div
+      class="cityNode"
+      style="
+       color:${d[4]};
+       background:${d[4]};
+      ">
+     </div>`,
+   iconSize:[13,13],
+   iconAnchor:[6.5,6.5]
+  });
+
+
+ L.marker(
+  [d[1],d[2]],
+  {icon:icon}
+ )
+ .bindPopup(
+  `
+  <b>${d[0]}</b><br>
+  Pressure class: <b>${d[3]}</b><br>
+  <small>
+  Conceptual planning zone.
+  </small>
+  `
+ )
+ .addTo(cityLayer);
+
+});
+
+
+/* =========================================================
+   DARK SKY LAYER
+========================================================= */
+
+const darkLayer =
+L.layerGroup().addTo(map);
+
+
+darkZones.forEach(d=>{
 
  L.circleMarker(
   [d[1],d[2]],
   {
-   radius:6,
-   color:'#38bdf8',
-   fillColor:'#38bdf8',
-   fillOpacity:.9,
-   weight:1
+   radius:8,
+   color:'#087f9f',
+   fillColor:'#4de1b1',
+   fillOpacity:.82,
+   weight:2
   }
  )
  .bindPopup(
-  `<b>🌌 ${d[0]}</b><br>
-   Dark-sky candidate<br>
-   <small>
-   Future field validation recommended.
-   </small>`
+  `
+  <b>🌌 ${d[0]}</b><br>
+  Dark-sky candidate zone<br>
+  <small>
+  Candidate for future field validation.
+  </small>
+  `
  )
  .addTo(darkLayer);
 
 });
 
 
-/* SCALE */
+/* =========================================================
+   BASEMAP FUNCTIONS
+========================================================= */
 
-L.control.scale({
- imperial:false
-}).addTo(map);
-
-
-/* SCENARIOS */
-
-const names={
-
- baseline:'CURRENT / BASELINE',
-
- shielded:'SHIELDED STREET LIGHTING',
-
- dimming:'ADAPTIVE DIMMING',
-
- curfew:'LATE-NIGHT LIGHTING CONTROL',
-
- darksky:'DARK-SKY PROTECTION'
-
-};
-
-const opacity={
-
- baseline:1,
-
- shielded:.72,
-
- dimming:.55,
-
- curfew:.40,
-
- darksky:.25
-
-};
+let currentBase='clean';
 
 
-document
- .querySelectorAll(
-  'input[name=scenario]'
- )
- .forEach(
-  x=>
-   x.addEventListener(
-    'change',
-    ()=>{
-     scenario(x.value);
-    }
-   )
- );
+function setBase(type){
+
+ if(type==='satellite'){
+
+  if(map.hasLayer(clean))
+   map.removeLayer(clean);
+
+  satellite.addTo(map);
+
+  currentBase='satellite';
+
+ }else{
+
+  if(map.hasLayer(satellite))
+   map.removeLayer(satellite);
+
+  clean.addTo(map);
+
+  currentBase='clean';
+
+ }
+
+}
 
 
-function scenario(s){
+function toggleBaseMap(){
 
- objects.forEach(
-  o=>
-   o.g.eachLayer(
-    l=>{
-
-     if(
-      l.setStyle &&
-      l.options._baseOpacity!=null
-     ){
-
-      l.setStyle({
-       fillOpacity:
-        l.options._baseOpacity *
-        (s==='baseline'?1:opacity[s])
-      });
-
-     }
-
-    }
-   )
- );
-
- document.getElementById(
-  'mode'
- ).textContent=
-  'MODE • '+names[s];
-
- status(
-  names[s]+
-  ' • conceptual planning scenario'
+ setBase(
+  currentBase==='clean'
+   ? 'satellite'
+   : 'clean'
  );
 
 }
 
 
-/* TIME */
+/* =========================================================
+   LAYER FUNCTIONS
+========================================================= */
 
-document
- .getElementById('nightSlider')
- .addEventListener(
-  'input',
-  e=>{
+function setPressureVisible(show){
 
-   let h=parseFloat(e.target.value);
+ if(show)
+  pressureLayer.addTo(map);
+ else
+  map.removeLayer(pressureLayer);
 
-   let hh=Math.floor(h);
-
-   let mm=h%1?'30':'00';
-
-   document.getElementById(
-    'timeLabel'
-   ).textContent=
-    (hh<24?
-     String(hh).padStart(2,'0'):
-     '00'
-    )+':'+mm;
-
-   status(
-    'Night-time scenario '+
-    document.getElementById(
-     'timeLabel'
-    ).textContent+
-    ' • conceptual temporal simulation'
-   );
-
-  }
- );
+}
 
 
-/* COLLAPSIBLE CONTROLS */
+function setCitiesVisible(show){
 
-function closeControlPanels(){
+ if(show)
+  cityLayer.addTo(map);
+ else
+  map.removeLayer(cityLayer);
 
- document
-  .getElementById('left')
-  .classList.remove('open');
+}
 
- document
-  .getElementById('right')
-  .classList.remove('open');
 
- document
-  .getElementById('layerPopup')
-  .classList.remove('open');
+function setDarkVisible(show){
 
- document
-  .getElementById('customLegend')
-  .classList.remove('open');
+ if(show)
+  darkLayer.addTo(map);
+ else
+  map.removeLayer(darkLayer);
+
+}
+
+
+function setNASAVisible(show){
+
+ if(show)
+  nasaLayer.addTo(map);
+ else
+  map.removeLayer(nasaLayer);
+
+}
+
+
+/* =========================================================
+   PANEL FUNCTIONS
+========================================================= */
+
+function closeAllPanels(){
 
  document
-  .querySelectorAll('.mapIcon')
+  .querySelectorAll('.panel')
   .forEach(
-   x=>
-    x.classList.remove('active')
+   p=>p.classList.remove('open')
   );
+
+}
+
+
+function openSimulator(){
+
+ closeAllPanels();
+
+ document
+  .getElementById('simPanel')
+  .classList.add('open');
 
 }
 
 
 function toggleSimulator(){
 
- const el=
-  document.getElementById('left');
+ const p=
+  document.getElementById('simPanel');
 
- const open=
-  !el.classList.contains('open');
-
- closeControlPanels();
-
- if(open){
-
-  el.classList.add('open');
-
-  document
-   .getElementById('simIcon')
-   .classList.add('active');
-
- }
+ if(p.classList.contains('open'))
+  p.classList.remove('open');
+ else
+  openSimulator();
 
 }
 
 
-function toggleRightPanel(){
+function openLayers(){
 
- const el=
-  document.getElementById('right');
+ closeAllPanels();
 
- const open=
-  !el.classList.contains('open');
-
- closeControlPanels();
-
- if(open)
-  el.classList.add('open');
+ document
+  .getElementById('layerPanel')
+  .classList.add('open');
 
 }
 
 
 function toggleLayers(){
 
- const el=
-  document.getElementById('layerPopup');
+ const p=
+  document.getElementById('layerPanel');
 
- const open=
-  !el.classList.contains('open');
+ if(p.classList.contains('open'))
+  p.classList.remove('open');
+ else
+  openLayers();
 
- closeControlPanels();
+}
 
- if(open){
 
-  el.classList.add('open');
+function openLegend(){
 
-  document
-   .getElementById('layerIcon')
-   .classList.add('active');
+ closeAllPanels();
 
- }
+ document
+  .getElementById('legendPanel')
+  .classList.add('open');
 
 }
 
 
 function toggleLegend(){
 
- const el=
-  document.getElementById('customLegend');
+ const p=
+  document.getElementById('legendPanel');
 
- const open=
-  !el.classList.contains('open');
-
- closeControlPanels();
-
- if(open){
-
-  el.classList.add('open');
-
-  document
-   .getElementById('legendIcon')
-   .classList.add('active');
-
- }
+ if(p.classList.contains('open'))
+  p.classList.remove('open');
+ else
+  openLegend();
 
 }
 
 
-/* BASE MAP */
+/* =========================================================
+   SCENARIOS
+========================================================= */
 
-function switchBase(which){
-
- if(which==='satellite'){
-
-  if(map.hasLayer(normal))
-   map.removeLayer(normal);
-
-  satellite.addTo(map);
-
- }
- else{
-
-  if(map.hasLayer(satellite))
-   map.removeLayer(satellite);
-
-  normal.addTo(map);
-
- }
-
- setTimeout(
-  ()=>map.invalidateSize(),
-  50
- );
-
-}
+let scenario='baseline';
 
 
-/* PRESSURE TOGGLE */
+const scenarioNames={
 
-function togglePressure(el){
+ baseline:'BASELINE',
 
- if(el.checked){
+ shielded:'SHIELDED LIGHTING',
 
-  pressureLayer.addTo(map);
+ dimming:'ADAPTIVE DIMMING',
 
-  status(
-   'Light-pollution pressure ON • conceptual visualization'
-  );
+ curfew:'LATE-NIGHT CONTROL',
 
- }
- else{
+ darksky:'DARK-SKY PROTECTION'
 
-  map.removeLayer(pressureLayer);
-
-  status(
-   'Light-pollution pressure OFF'
-  );
-
- }
-
-}
+};
 
 
-/* DARK SKY TOGGLE */
+const scenarioActions={
 
-function toggleDarkSky(el){
+ baseline:'Monitor + validate',
 
- if(el.checked){
+ shielded:'Use fully shielded fixtures',
 
-  darkLayer.addTo(map);
+ dimming:'Apply adaptive lighting levels',
 
-  status(
-   'Dark-sky candidate layer ON'
-  );
+ curfew:'Reduce unnecessary late-night lighting',
 
- }
- else{
+ darksky:'Protect candidate dark-sky areas'
 
-  map.removeLayer(darkLayer);
-
-  status(
-   'Dark-sky candidate layer OFF'
-  );
-
- }
-
-}
+};
 
 
-/* PROXY */
+const scenarioFactors={
 
-function toggleProxy(el){
+ baseline:1,
 
- if(el.checked){
+ shielded:.78,
 
-  proxyLayer.addTo(map);
+ dimming:.60,
 
-  status(
-   'Night-light proxy layer is planned for data integration'
-  );
+ curfew:.45,
 
- }
- else{
+ darksky:.30
 
-  map.removeLayer(proxyLayer);
-
- }
-
-}
+};
 
 
-/* STATUS */
+document
+ .querySelectorAll(
+  'input[name="scenario"]'
+ )
+ .forEach(
+  radio=>{
 
-function status(s){
+   radio.addEventListener(
+    'change',
+    ()=>{
 
- document.getElementById(
-  'status'
- ).textContent=s;
+     scenario=
+      radio.value;
 
-}
+     document
+      .getElementById(
+       'scenarioOutput'
+      )
+      .textContent=
+       scenarioNames[scenario];
 
-
-/* DISTANCE */
-
-function dist(a,b,c,d){
-
- const R=6371;
-
- const la=
-  (c-a)*Math.PI/180;
-
- const lo=
-  (d-b)*Math.PI/180;
-
- const x=
-  Math.sin(la/2)**2+
-  Math.cos(a*Math.PI/180)*
-  Math.cos(c*Math.PI/180)*
-  Math.sin(lo/2)**2;
-
- return R*
-  2*
-  Math.atan2(
-   Math.sqrt(x),
-   Math.sqrt(1-x)
-  );
-
-}
+     document
+      .getElementById(
+       'scenarioAction'
+      )
+      .textContent=
+       scenarioActions[scenario];
 
 
-/* SMART ANALYSIS */
+     pressureLayer
+      .eachLayer(
+       layer=>{
+        const el=
+         layer.getElement();
 
-function analyze(
- lat,
- lon,
- label='Selected location'
-){
+        if(el){
 
- let near=data[0];
- let md=Infinity;
+         el.style.opacity=
+          scenarioFactors[scenario];
 
- data.forEach(d=>{
+        }
 
-  let x=
-   dist(
-    lat,
-    lon,
-    d[1],
-    d[2]
+       }
+      );
+
+    }
    );
 
-  if(x<md){
-
-   md=x;
-   near=d;
-
   }
-
- });
-
-
- let urban=
-  md<15?'Very High':
-  md<35?'High':
-  md<70?'Moderate':
-  'Low';
-
-
- let dark=
-  ['Low','Very Low / Dark-sky']
-   .includes(near[3])
-   ?'Potential candidate':
-  near[3]==='Moderate'
-   ?'Possible candidate':
-  'Low potential';
-
-
- let rec=
-  near[3]==='Very High'||
-  near[3]==='High'
-  ?
-  'Prioritize shielded lighting, adaptive dimming and upward-light reduction.'
-  :
-  near[3]==='Moderate'
-  ?
-  'Consider efficient lighting, shielding and targeted night-time controls.'
-  :
-  'Potential area for future field-based dark-sky assessment and protection planning.';
-
-
- document
-  .getElementById('info')
-  .style.display='block';
-
-
- document
-  .getElementById('placeName')
-  .textContent=label;
-
-
- document
-  .getElementById('coords')
-  .textContent=
-   lat.toFixed(5)+
-   '°, '+
-   lon.toFixed(5)+
-   '°';
-
-
- document
-  .getElementById('nearest')
-  .textContent=
-   near[0]+
-   ' • '+
-   md.toFixed(1)+
-   ' km';
-
-
- document
-  .getElementById('pressure')
-  .textContent=
-   near[3];
-
-
- document
-  .getElementById('urban')
-  .textContent=
-   urban;
-
-
- document
-  .getElementById('dark')
-  .textContent=
-   dark;
-
-
- document
-  .getElementById('reco')
-  .textContent=
-   '💡 '+rec;
-
-
- L.popup()
-  .setLatLng([lat,lon])
-  .setContent(
-   `<b>🧠 Spatial Planning Result</b><br>
-    Pressure: ${near[3]}<br>
-    Urban influence: ${urban}<br>
-    Dark-sky potential: ${dark}`
-  )
-  .openOn(map);
-
-}
-
-
-map.on(
- 'click',
- e=>
-  analyze(
-   e.latlng.lat,
-   e.latlng.lng
-  )
-);
-
-
-/* GPS */
-
-let marker,acc;
-
-function getLocation(){
-
- if(!navigator.geolocation)
-  return status(
-   'Geolocation is not supported.'
-  );
-
- status(
-  'Requesting high-accuracy GPS...'
  );
 
- navigator.geolocation
-  .getCurrentPosition(
 
-   p=>{
+/* =========================================================
+   NIGHT SLIDER
+========================================================= */
 
-    const {
-     latitude:lat,
-     longitude:lon,
-     accuracy
-    }=p.coords;
+document
+ .getElementById('nightSlider')
+ .addEventListener(
+  'input',
+  function(){
 
-    if(marker)
-     map.removeLayer(marker);
+   const value=
+    parseFloat(this.value);
 
-    if(acc)
-     map.removeLayer(acc);
+   const hour=
+    Math.floor(value);
 
+   const mins=
+    value%1
+     ? '30'
+     : '00';
 
-    acc=
-     L.circle(
-      [lat,lon],
-      {
-       radius:accuracy,
-       color:'#169cff',
-       fillColor:'#169cff',
-       fillOpacity:.08,
-       weight:1
-      }
-     ).addTo(map);
-
-
-    marker=
-     L.circleMarker(
-      [lat,lon],
-      {
-       radius:8,
-       color:'#fff',
-       weight:3,
-       fillColor:'#168cff',
-       fillOpacity:1
-      }
-     ).addTo(map);
+   document
+    .getElementById(
+     'timeLabel'
+    )
+    .textContent=
+     String(hour)
+      .padStart(2,'0')
+     +':'+mins;
 
 
-    marker.bindPopup(
-     `<b>📍 Current Location</b><br>
-      Accuracy: ${Math.round(accuracy)} m`
-    );
+   if(
+    hour>=23
+   ){
 
+    scenario=
+     scenario==='baseline'
+      ? 'curfew'
+      : scenario;
 
-    map.setView(
-     [lat,lon],
-     Math.max(9,map.getZoom())
-    );
-
-
-    document
-     .getElementById('gpsKpi')
-     .textContent='ACTIVE';
-
-
-    status(
-     'GPS ACTIVE • accuracy '+
-     Math.round(accuracy)+
-     ' m'
-    );
-
-
-    analyze(
-     lat,
-     lon,
-     'Current location'
-    );
-
-   },
-
-   ()=>{
-
-    document
-     .getElementById('gpsKpi')
-     .textContent='DENIED';
-
-    status(
-     'GPS permission unavailable.'
-    );
-
-   },
-
-   {
-    enableHighAccuracy:true,
-    timeout:15000,
-    maximumAge:0
    }
 
-  );
+  }
+ );
 
-}
 
-
-/* SEARCH */
+/* =========================================================
+   SEARCH
+========================================================= */
 
 async function searchPlace(){
 
  const q=
   document
-   .getElementById('search')
+   .getElementById(
+    'searchInput'
+   )
    .value
    .trim();
 
- if(!q)return;
 
- status(
-  'Searching '+q+'...'
- );
+ if(!q)
+  return;
+
+
+ document
+  .getElementById('status')
+  .textContent=
+   '🔎 Searching location...';
+
 
  try{
 
-  const r=
-   await fetch(
-    'https://nominatim.openstreetmap.org/search?format=json&limit=1&q='+
-    encodeURIComponent(q+', Tamil Nadu')
+  const url=
+   'https://nominatim.openstreetmap.org/search'
+   +'?format=json'
+   +'&limit=1'
+   +'&q='+
+   encodeURIComponent(q);
+
+
+  const response=
+   await fetch(url);
+
+
+  const result=
+   await response.json();
+
+
+  if(
+   !result.length
+  ){
+
+   document
+    .getElementById('status')
+    .textContent=
+     'Location not found';
+
+   return;
+
+  }
+
+
+  const lat=
+   parseFloat(
+    result[0].lat
    );
 
-  const d=
-   await r.json();
-
-  if(!d.length)
-   return status(
-    'Location not found.'
+  const lon=
+   parseFloat(
+    result[0].lon
    );
-
-
-  const lat=+d[0].lat;
-  const lon=+d[0].lon;
 
 
   map.setView(
    [lat,lon],
-   11
+   11,
+   {animate:true}
   );
 
 
-  analyze(
+  analyzeLocation(
    lat,
    lon,
-   q
+   result[0].display_name
   );
 
 
-  status(
-   'Location found • spatial analysis ready'
-  );
+  document
+   .getElementById('status')
+   .textContent=
+    '📍 Location selected';
 
  }
- catch(e){
+ catch(error){
 
-  status(
-   'Search service unavailable.'
-  );
+  document
+   .getElementById('status')
+   .textContent=
+    'Search service unavailable';
 
  }
 
 }
 
 
-document
- .getElementById('search')
- .addEventListener(
-  'keydown',
-  e=>{
-   if(e.key==='Enter')
-    searchPlace()
+/* =========================================================
+   GPS
+========================================================= */
+
+let gpsMarker=null;
+let gpsCircle=null;
+
+
+function getLocation(){
+
+ if(!navigator.geolocation){
+
+  document
+   .getElementById('gpsKpi')
+   .textContent=
+    'N/A';
+
+  return;
+
+ }
+
+
+ document
+  .getElementById('gpsKpi')
+  .textContent=
+   '...';
+
+
+ navigator.geolocation.getCurrentPosition(
+
+  position=>{
+
+   const lat=
+    position.coords.latitude;
+
+   const lon=
+    position.coords.longitude;
+
+   const accuracy=
+    position.coords.accuracy;
+
+
+   if(gpsMarker)
+    map.removeLayer(gpsMarker);
+
+   if(gpsCircle)
+    map.removeLayer(gpsCircle);
+
+
+   gpsMarker=
+    L.circleMarker(
+     [lat,lon],
+     {
+      radius:8,
+      color:'#fff',
+      fillColor:'#087ff5',
+      fillOpacity:1,
+      weight:3
+     }
+    ).addTo(map);
+
+
+   gpsCircle=
+    L.circle(
+     [lat,lon],
+     {
+      radius:accuracy,
+      color:'#087ff5',
+      fillColor:'#087ff5',
+      fillOpacity:.10,
+      weight:1
+     }
+    ).addTo(map);
+
+
+   map.setView(
+    [lat,lon],
+    12,
+    {animate:true}
+   );
+
+
+   document
+    .getElementById('gpsKpi')
+    .textContent=
+     'ACTIVE';
+
+
+   document
+    .getElementById('status')
+    .textContent=
+     '📍 GPS ACTIVE • ±'
+     +Math.round(accuracy)
+     +' m';
+
+
+   analyzeLocation(
+    lat,
+    lon,
+    'Current GPS Location'
+   );
+
+  },
+
+  error=>{
+
+   document
+    .getElementById('gpsKpi')
+    .textContent=
+     'DENIED';
+
+
+   document
+    .getElementById('status')
+    .textContent=
+     '📍 GPS permission unavailable';
+
+  },
+
+  {
+   enableHighAccuracy:true,
+   timeout:12000,
+   maximumAge:0
   }
-);
 
-
-/* TOOLS */
-
-function toggleFullscreen(){
-
- if(!document.fullscreenElement)
-  document.documentElement
-   .requestFullscreen?.();
-
- else
-  document.exitFullscreen?.();
-
-}
-
-
-function toggleDemo(){
-
- document.body
-  .classList
-  .toggle('demo');
-
- status(
-  document.body.classList.contains('demo')
-  ?
-  'Judge / presentation mode enabled'
-  :
-  'Judge / presentation mode disabled'
  );
 
 }
 
 
-/* MODALS */
+/* =========================================================
+   SMART SKY ANALYSIS
+========================================================= */
 
-const method=`
+function distanceKm(
+ lat1,
+ lon1,
+ lat2,
+ lon2
+){
 
-<h2>URBAN SKY SHIELD</h2>
+ const R=6371;
 
-<p>
-<b>Objective</b><br>
-AI-assisted spatial planning for
-light-pollution pressure mapping
-and dark-sky protection in Tamil Nadu.
-</p>
+ const dLat=
+  (lat2-lat1)*
+  Math.PI/180;
 
-<p>
-<b>Proposed pipeline</b><br>
-Night-light proxy →
-urban/built-up indicators →
-spatial analysis →
-pressure visualization →
-mitigation planning →
-field validation.
-</p>
+ const dLon=
+  (lon2-lon1)*
+  Math.PI/180;
 
-<p>
-<b>Important scope</b><br>
-The current prototype uses conceptual
-planning zones. It does not claim ground
-sky-brightness measurements, validated AI
-accuracy, R², or measured mitigation
-percentages.
-</p>
+ const a=
+  Math.sin(dLat/2)**2+
+  Math.cos(lat1*Math.PI/180)*
+  Math.cos(lat2*Math.PI/180)*
+  Math.sin(dLon/2)**2;
 
-<p>
-<b>Next validation phase</b><br>
-Integrate research-grade nighttime-light
-products, perform field measurements,
-train/validate the prediction model,
-quantify uncertainty and compare
-predictions against observations.
-</p>
+ return 2*R*Math.asin(
+  Math.sqrt(a)
+ );
 
-`;
+}
 
 
-const sources=`
+function analyzeLocation(
+ lat,
+ lon,
+ place='Selected location'
+){
 
-<h2>DATA & SCIENTIFIC BASIS</h2>
-
-<p>
-Research-grade nighttime-light products
-such as NASA Black Marble use VIIRS
-Day/Night Band observations and apply
-corrections for atmospheric, lunar,
-terrain and stray-light effects.
-</p>
-
-<p>
-Satellite nighttime lights are a proxy
-for artificial lighting and human activity;
-they are not identical to ground-observed
-sky brightness. A complete light-pollution
-model therefore needs field validation
-and careful uncertainty handling.
-</p>
-
-<p>
-<b>Prototype data status:</b>
-conceptual / planned integration.
-</p>
-
-`;
+ let nearest=null;
+ let min=Infinity;
 
 
-function openModal(t){
+ zones.forEach(
+  d=>{
+
+   const dist=
+    distanceKm(
+     lat,
+     lon,
+     d[1],
+     d[2]
+    );
+
+   if(dist<min){
+
+    min=dist;
+    nearest=d;
+
+   }
+
+  }
+ );
+
+
+ if(!nearest)
+  return;
+
+
+ let darkPotential=
+  'LOW';
+
+
+ if(
+  nearest[3]==='Low' ||
+  nearest[3].includes(
+   'Dark-sky'
+  )
+ ){
+
+  darkPotential=
+   'HIGH';
+
+ }else if(
+  nearest[3]==='Moderate'
+ ){
+
+  darkPotential=
+   'MEDIUM';
+
+ }
+
+
+ let recommendation=
+  'Prioritize field validation and local lighting inventory.';
+
+
+ if(
+  nearest[3]==='Very High'
+ ){
+
+  recommendation=
+   'Consider shielded fixtures, adaptive dimming and targeted late-night lighting control.';
+
+ }
+ else if(
+  nearest[3]==='High'
+ ){
+
+  recommendation=
+   'Assess roadway and urban lighting; prioritize shielding and adaptive controls.';
+
+ }
+ else if(
+  nearest[3]==='Low' ||
+  nearest[3].includes('Dark-sky')
+ ){
+
+  recommendation=
+   'Consider dark-sky protection guidelines and future field sky-brightness validation.';
+
+ }
+
 
  document
-  .getElementById('modalContent')
+  .getElementById(
+   'placeName'
+  )
+  .textContent=
+   place;
+
+
+ document
+  .getElementById(
+   'coords'
+  )
+  .textContent=
+   lat.toFixed(4)
+   +', '
+   +lon.toFixed(4);
+
+
+ document
+  .getElementById(
+   'nearest'
+  )
+  .textContent=
+   nearest[0];
+
+
+ document
+  .getElementById(
+   'pressure'
+  )
+  .textContent=
+   nearest[3];
+
+
+ document
+  .getElementById(
+   'urban'
+  )
+  .textContent=
+   nearest[3]==='Very High'
+    ?'HIGH'
+    :nearest[3]==='High'
+     ?'HIGH'
+     :nearest[3]==='Moderate'
+      ?'MEDIUM'
+      :'LOW';
+
+
+ document
+  .getElementById(
+   'dark'
+  )
+  .textContent=
+   darkPotential;
+
+
+ document
+  .getElementById(
+   'reco'
+  )
+  .textContent=
+   recommendation;
+
+
+ document
+  .getElementById(
+   'info'
+  )
+  .classList.add(
+   'open'
+  );
+
+}
+
+
+/* =========================================================
+   MAP CLICK ANALYSIS
+========================================================= */
+
+map.on(
+ 'click',
+ e=>{
+
+  analyzeLocation(
+   e.latlng.lat,
+   e.latlng.lng,
+   'Selected map location'
+  );
+
+ }
+);
+
+
+/* =========================================================
+   MODALS
+========================================================= */
+
+function openMethod(){
+
+ closeAllPanels();
+
+ document
+  .getElementById(
+   'modalContent'
+  )
   .innerHTML=
-   t==='method'
-   ?method
-   :sources;
+ `
+ <h2>🧠 AI-Assisted Spatial Planning</h2>
+
+ <p>
+ Urban Sky Shield is designed as a spatial
+ decision-support prototype for analysing
+ light-pollution pressure and planning
+ mitigation strategies.
+ </p>
+
+ <p>
+ Conceptual workflow:
+ </p>
+
+ <ul>
+  <li>Night-light proxy indicators</li>
+  <li>Urban / built-up influence</li>
+  <li>Infrastructure context</li>
+  <li>Spatial pressure visualization</li>
+  <li>Dark-sky candidate identification</li>
+  <li>Mitigation planning</li>
+ </ul>
+
+ <p>
+ Future validation can integrate field
+ sky-brightness measurements and model
+ training using validated observations.
+ </p>
+ `;
 
  document
-  .getElementById('modal')
-  .style.display='flex';
+  .getElementById(
+   'modal'
+  ).style.display='flex';
+
+}
+
+
+function openScience(){
+
+ closeAllPanels();
+
+ document
+  .getElementById(
+   'modalContent'
+  )
+  .innerHTML=
+ `
+ <h2>🛰 Data & Scientific Basis</h2>
+
+ <p>
+ NASA VIIRS nighttime-light products can
+ indicate patterns of artificial illumination.
+ They are treated here as proxy indicators,
+ not direct measurements of ground-level
+ sky brightness.
+ </p>
+
+ <p>
+ The current pressure visualization is
+ conceptual and intended for planning,
+ demonstration and future validation.
+ </p>
+
+ <p>
+ Proposed validation pathway:
+ </p>
+
+ <ul>
+  <li>Satellite night-light proxy</li>
+  <li>Spatial indicators</li>
+  <li>Field sky-brightness observations</li>
+  <li>Model training</li>
+  <li>Independent validation</li>
+ </ul>
+ `;
+
+ document
+  .getElementById(
+   'modal'
+  ).style.display='flex';
 
 }
 
@@ -2155,34 +2809,191 @@ function openModal(t){
 function closeModal(){
 
  document
-  .getElementById('modal')
-  .style.display='none';
+  .getElementById(
+   'modal'
+  ).style.display='none';
 
 }
 
 
-document
- .getElementById('modal')
- .onclick=
+function closeInfo(){
+
+ document
+  .getElementById(
+   'info'
+  )
+  .classList.remove(
+   'open'
+  );
+
+}
+
+
+/* =========================================================
+   FULLSCREEN
+========================================================= */
+
+function toggleFullscreen(){
+
+ if(
+  !document.fullscreenElement
+ ){
+
+  document
+   .documentElement
+   .requestFullscreen()
+   .catch(
+    ()=>{}
+   );
+
+ }else{
+
+  document
+   .exitFullscreen()
+   .catch(
+    ()=>{}
+   );
+
+ }
+
+}
+
+
+/* =========================================================
+   JUDGE MODE
+========================================================= */
+
+let judge=false;
+
+
+function judgeMode(){
+
+ judge=!judge;
+
+
+ if(judge){
+
+  closeAllPanels();
+
+  document
+   .getElementById(
+    'info'
+   )
+   .classList.remove(
+    'open'
+   );
+
+  document
+   .getElementById(
+    'status'
+   )
+   .textContent=
+    '▶ JUDGE PRESENTATION MODE';
+
+ }else{
+
+  document
+   .getElementById(
+    'status'
+   )
+   .textContent=
+    '🌃 Pressure model ready';
+
+ }
+
+}
+
+
+/* =========================================================
+   KEYBOARD SHORTCUTS
+========================================================= */
+
+document.addEventListener(
+ 'keydown',
  e=>{
-  if(e.target.id==='modal')
-   closeModal()
- };
 
+  if(e.key==='Escape'){
 
-setTimeout(
- ()=>map.invalidateSize(),
- 500
+   closeAllPanels();
+   closeInfo();
+   closeModal();
+
+  }
+
+  if(e.key.toLowerCase()==='l')
+   toggleLayers();
+
+  if(e.key.toLowerCase()==='g')
+   toggleLegend();
+
+  if(e.key.toLowerCase()==='s')
+   toggleSimulator();
+
+ }
 );
+
+
+/* =========================================================
+   RESPONSIVE MAP
+========================================================= */
 
 window.addEventListener(
  'resize',
- ()=>map.invalidateSize()
+ ()=>{
+  map.invalidateSize();
+ }
 );
 
-console.log(
- 'Urban Sky Shield professional prototype loaded.'
-);
+
+/* =========================================================
+   INITIAL STATE
+========================================================= */
+
+document
+ .getElementById(
+  'pressureCheck'
+ )
+ .checked=true;
+
+document
+ .getElementById(
+  'cityCheck'
+ )
+ .checked=true;
+
+document
+ .getElementById(
+  'darkCheck'
+ )
+ .checked=true;
+
+document
+ .getElementById(
+  'nasaCheck'
+ )
+ .checked=false;
+
+
+/* =========================================================
+   SCALE
+========================================================= */
+
+L.control.scale({
+ imperial:false,
+ position:'bottomleft'
+}).addTo(map);
+
+
+/* =========================================================
+   INITIAL STATUS
+========================================================= */
+
+document
+ .getElementById(
+  'status'
+ )
+ .textContent=
+  '🌃 Conceptual pressure model ready • GPS ready';
 
 </script>
 
