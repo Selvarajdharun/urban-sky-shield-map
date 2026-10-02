@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Urban Sky Shield | Tamil Nadu Light Pollution Map</title>
 
 <link rel="stylesheet"
@@ -13,210 +12,364 @@ href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 *{box-sizing:border-box}
 
 html,body{
-margin:0;
-padding:0;
-width:100%;
-height:100%;
-font-family:Arial,sans-serif;
-background:#06121f;
+  margin:0;
+  height:100%;
+  font-family:Arial,Helvetica,sans-serif;
 }
 
-body{overflow:hidden}
+body{
+  background:#07111f;
+  color:#fff;
+  overflow:hidden;
+}
+
+#app{
+  height:100%;
+  display:flex;
+  flex-direction:column;
+}
 
 header{
-height:200px;
-padding:18px 22px;
-background:linear-gradient(135deg,#06233c,#073e61,#07192a);
-color:white;
-border-bottom:2px solid #19cfff;
+  height:104px;
+  padding:11px 12px;
+  background:linear-gradient(135deg,#07182b,#103657);
+  border-bottom:1px solid #285879;
+  z-index:1000;
 }
 
-h1{
-margin:0;
-font-size:30px;
-letter-spacing:2px;
-color:#58e6ff;
+.brand{
+  font-size:21px;
+  font-weight:800;
+  letter-spacing:1.4px;
+  color:#55e7ff;
 }
 
 .subtitle{
-margin-top:5px;
-color:#a9c9dc;
-font-size:15px;
+  font-size:11px;
+  color:#a9c2d5;
+  margin-top:2px;
 }
 
-.search-row{
-display:flex;
-gap:8px;
-margin-top:20px;
+.tools{
+  display:flex;
+  gap:7px;
+  margin-top:9px;
 }
 
 #searchBox{
-flex:1;
-min-width:0;
-padding:14px;
-border-radius:13px;
-border:2px solid #246287;
-background:#04111d;
-color:white;
-font-size:16px;
-outline:none;
+  flex:1;
+  min-width:0;
+  padding:10px 11px;
+  border-radius:9px;
+  border:1px solid #35617f;
+  background:#071522;
+  color:#fff;
+  outline:none;
 }
 
-button{
-border:2px solid #2b668b;
-background:#092b45;
-color:white;
-border-radius:13px;
-padding:12px 16px;
-font-weight:bold;
-font-size:14px;
+.toolBtn{
+  border:1px solid #35617f;
+  border-radius:9px;
+  background:#123a59;
+  color:#fff;
+  padding:9px 11px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.toolBtn:active{
+  background:#1d719f;
 }
 
 #map{
-position:absolute;
-top:200px;
-bottom:0;
-left:0;
-right:0;
-z-index:1;
+  flex:1;
+  min-height:0;
+  width:100%;
 }
 
-.controls{
-position:absolute;
-right:14px;
-top:215px;
-z-index:1000;
-display:flex;
-flex-direction:column;
-gap:10px;
+.leaflet-tile-pane.dark-street-tiles{
+  filter:brightness(.48) contrast(1.12) saturate(.78);
 }
 
-.control-btn{
-width:58px;
-height:58px;
-padding:0;
-border-radius:17px;
-background:#071a2a;
-border:2px solid #176087;
-font-size:25px;
+/* Floating buttons */
+
+.floatBtns{
+  position:absolute;
+  right:12px;
+  top:116px;
+  z-index:950;
+  display:flex;
+  flex-direction:column;
+  gap:7px;
 }
 
-.info{
-position:absolute;
-z-index:1000;
-left:12px;
-top:215px;
-width:245px;
-max-width:calc(100% - 90px);
-background:rgba(4,16,29,.94);
-color:white;
-border:1px solid #217da4;
-border-radius:15px;
-padding:14px;
-font-size:13px;
-line-height:1.45;
+.floatBtn{
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  border:1px solid #315b78;
+  background:rgba(7,17,31,.94);
+  color:#fff;
+  font-size:19px;
+  cursor:pointer;
+  box-shadow:0 5px 18px rgba(0,0,0,.3);
 }
 
-.info strong{
-color:#5ce6ff;
+.floatBtn:hover{
+  background:#123a59;
 }
 
-.legend{
-position:absolute;
-left:12px;
-bottom:25px;
-z-index:1000;
-background:rgba(4,15,27,.94);
-border:1px solid #2781aa;
-border-radius:14px;
-padding:12px;
-color:white;
-font-size:13px;
+/* Popups */
+
+.popup{
+  display:none;
+  position:absolute;
+  z-index:1200;
+  background:rgba(5,16,29,.97);
+  border:1px solid #2a5878;
+  border-radius:14px;
+  box-shadow:0 12px 35px rgba(0,0,0,.45);
+  color:#fff;
 }
 
-.legend-title{
-font-weight:bold;
-color:#5ce6ff;
-margin-bottom:8px;
+.popup.open{
+  display:block;
 }
 
-.legend-item{
-display:flex;
-align-items:center;
-gap:7px;
-margin:5px 0;
+#infoPopup{
+  left:12px;
+  top:116px;
+  width:min(340px,calc(100% - 24px));
+  padding:15px;
 }
 
-.dot{
-width:15px;
-height:15px;
-border-radius:50%;
-border:1px solid white;
+#legendPopup{
+  right:12px;
+  bottom:16px;
+  width:190px;
+  padding:13px;
 }
+
+.popup h3{
+  margin:0 0 8px;
+  color:#55e7ff;
+  font-size:17px;
+}
+
+.popup p{
+  font-size:12px;
+  line-height:1.5;
+  color:#d7e6f0;
+  margin:7px 0;
+}
+
+.closeBtn{
+  position:absolute;
+  right:9px;
+  top:7px;
+  background:none;
+  border:0;
+  color:#a9c2d5;
+  font-size:20px;
+  cursor:pointer;
+}
+
+/* Legend */
+
+.legendTitle{
+  color:#ffd166;
+  font-weight:800;
+  font-size:12px;
+  margin-bottom:8px;
+}
+
+.item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:11px;
+  margin:6px 0;
+}
+
+.sw{
+  width:18px;
+  height:11px;
+  border-radius:3px;
+}
+
+.red{background:#ff3b30}
+.orange{background:#ff9500}
+.yellow{background:#ffd60a}
+.green{background:#30d158}
+.blue{background:#46b7ff}
+
+/* Leaflet controls */
 
 .leaflet-control-layers{
-background:rgba(5,18,32,.95)!important;
-color:white!important;
-border:1px solid #27779c!important;
+  background:rgba(5,16,29,.95)!important;
+  color:#fff!important;
+  border:1px solid #285879!important;
+  border-radius:10px!important;
 }
+
+.leaflet-control-layers-expanded{
+  padding:8px 10px;
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip{
+  background:#0d1d30;
+  color:#fff;
+}
+
+.city{
+  font-size:16px;
+  font-weight:800;
+  color:#55e7ff;
+}
+
+.badge{
+  display:inline-block;
+  margin-top:5px;
+  padding:4px 8px;
+  border-radius:20px;
+  color:#06101d;
+  font-size:10px;
+  font-weight:800;
+}
+
+.note{
+  font-size:10px;
+  color:#9db6ca;
+  line-height:1.4;
+}
+
+/* Light mode */
+
+body.light header{
+  background:linear-gradient(135deg,#eef7ff,#d8ecfb);
+  border-bottom:1px solid #b7d2e6;
+  color:#07111f;
+}
+
+body.light .subtitle{
+  color:#47677d;
+}
+
+body.light .brand{
+  color:#007e9d;
+}
+
+body.light .toolBtn{
+  background:#e9f4fb;
+  color:#123a59;
+  border-color:#9bbdd3;
+}
+
+body.light #searchBox{
+  background:#fff;
+  color:#07111f;
+  border-color:#9bbdd3;
+}
+
+body.light .floatBtn{
+  background:rgba(255,255,255,.95);
+  color:#123a59;
+  border-color:#9bbdd3;
+}
+
+body.light .popup{
+  background:rgba(255,255,255,.97);
+  color:#07111f;
+  border-color:#9bbdd3;
+}
+
+body.light .popup p{
+  color:#29475b;
+}
+
+body.light .closeBtn{
+  color:#47677d;
+}
+
+body.light .leaflet-control-layers{
+  background:rgba(255,255,255,.96)!important;
+  color:#07111f!important;
+}
+
+/* Small screens */
 
 @media(max-width:600px){
 
-header{
-height:200px;
-padding:16px;
-}
+  header{
+    height:106px;
+  }
 
-h1{
-font-size:27px;
-}
+  .brand{
+    font-size:19px;
+  }
 
-.subtitle{
-font-size:13px;
-}
+  .subtitle{
+    font-size:10px;
+  }
 
-#map{
-top:200px;
-}
+  .tools{
+    gap:5px;
+  }
 
-.controls{
-top:215px;
-}
+  .toolBtn{
+    padding:9px 9px;
+  }
 
-.info{
-top:215px;
-width:220px;
-}
+  #searchBox{
+    font-size:12px;
+  }
 
-.legend{
-bottom:18px;
-font-size:12px;
-}
+  .floatBtns{
+    top:118px;
+    right:8px;
+  }
 
+  .floatBtn{
+    width:40px;
+    height:40px;
+  }
 }
 </style>
 </head>
 
 <body>
 
+<div id="app">
+
 <header>
 
-<h1>URBAN SKY SHIELD</h1>
-
-<div class="subtitle">
-Interactive Tamil Nadu Night Light & Dark-Sky Research Map
+<div class="brand">
+URBAN SKY SHIELD
 </div>
 
-<div class="search-row">
+<div class="subtitle">
+Interactive Tamil Nadu Night-Light & Dark-Sky Research Map
+</div>
+
+<div class="tools">
 
 <input
 id="searchBox"
-type="text"
-placeholder="Search Chennai, Madurai, Ooty...">
+placeholder="Search Chennai, Madurai, Ooty..."
+autocomplete="off">
 
-<button onclick="searchLocation()">SEARCH</button>
+<button
+class="toolBtn"
+onclick="searchLocation()">
+SEARCH
+</button>
 
-<button onclick="findMyLocation()">📍 LOCATION</button>
+<button
+class="toolBtn"
+onclick="requestLocation()">
+📍 LOCATION
+</button>
 
 </div>
 
@@ -224,456 +377,758 @@ placeholder="Search Chennai, Madurai, Ooty...">
 
 <div id="map"></div>
 
-<div class="controls">
+<div class="floatBtns">
 
 <button
-class="control-btn"
-onclick="toggleDarkMode()"
-title="Dark / Light Map">🌙</button>
+class="floatBtn"
+title="Research information"
+onclick="togglePopup('infoPopup')">
+ⓘ
+</button>
 
 <button
-class="control-btn"
-onclick="togglePollution()"
-title="Pollution Layer">🎨</button>
+class="floatBtn"
+title="Map legend"
+onclick="togglePopup('legendPopup')">
+🎨
+</button>
 
 <button
-class="control-btn"
-onclick="findMyLocation()"
-title="My Location">⦿</button>
+class="floatBtn"
+title="Reset Tamil Nadu view"
+onclick="resetMap()">
+⌖
+</button>
+
+<button
+class="floatBtn"
+id="themeBtn"
+title="Toggle light/dark map"
+onclick="toggleTheme()">
+☀️
+</button>
 
 </div>
 
-<div class="info">
 
-<strong>LIGHT-POLLUTION MAP</strong>
+<div id="infoPopup" class="popup">
 
-<br><br>
+<button
+class="closeBtn"
+onclick="closePopup('infoPopup')">
+×
+</button>
 
-Satellite night-light intensity is used as a
-<b>spatial indicator</b> of artificial lighting.
+<h3>Research Map</h3>
 
-<br><br>
+<p>
+<b>Urban Sky Shield</b> visualizes satellite night-light information
+and a planning framework for dark-sky protection in Tamil Nadu.
+</p>
 
-<strong>Important:</strong><br>
+<p>
+<b>NASA VIIRS</b> is a satellite-based indicator of artificial
+night lighting. It is not a direct Bortle or ground sky-brightness
+measurement.
+</p>
 
-The coloured zones are
-<b>planning / visualization categories</b>,
-not ground measurements.
+<p>
+The coloured city zones are
+<b>planning/visualization categories</b>,
+not invented field measurements.
+</p>
+
+<p>
+<b>How to use:</b>
+switch between light and dark basemaps,
+turn the NASA night-light layer on/off,
+search a place, zoom, drag and tap a coloured zone for details.
+</p>
 
 </div>
 
-<div class="legend">
 
-<div class="legend-title">LIGHT POLLUTION</div>
+<div id="legendPopup" class="popup">
 
-<div class="legend-item">
-<span class="dot" style="background:#ff2020"></span>
+<button
+class="closeBtn"
+onclick="closePopup('legendPopup')">
+×
+</button>
+
+<div class="legendTitle">
+LIGHT-POLLUTION INDICATOR
+</div>
+
+<div class="item">
+<span class="sw red"></span>
 Very High
 </div>
 
-<div class="legend-item">
-<span class="dot" style="background:#ff8c00"></span>
+<div class="item">
+<span class="sw orange"></span>
 High
 </div>
 
-<div class="legend-item">
-<span class="dot" style="background:#ffe500"></span>
+<div class="item">
+<span class="sw yellow"></span>
 Moderate
 </div>
 
-<div class="legend-item">
-<span class="dot" style="background:#21c95a"></span>
-Low
+<div class="item">
+<span class="sw green"></span>
+Lower
 </div>
 
-<div class="legend-item">
-<span class="dot" style="background:#168fff"></span>
-Very Low
+<div class="item">
+<span class="sw blue"></span>
+Darker / lower-light
 </div>
 
 </div>
+
+
+<div
+id="locationPopup"
+class="popup"
+style="
+left:50%;
+top:50%;
+transform:translate(-50%,-50%);
+width:min(330px,calc(100% - 28px));
+padding:18px;
+text-align:center;
+">
+
+<button
+class="closeBtn"
+onclick="closePopup('locationPopup')">
+×
+</button>
+
+<div style="font-size:34px;margin-bottom:5px">
+📍
+</div>
+
+<h3>
+Location Access
+</h3>
+
+<p>
+Allow location access to show your current position
+on the Tamil Nadu map.
+</p>
+
+<button
+class="toolBtn"
+style="width:100%;margin-top:6px"
+onclick="allowLocation()">
+ALLOW LOCATION
+</button>
+
+<p
+class="note"
+style="margin-top:9px">
+Your browser will ask for location permission.
+Choose <b>Allow</b>.
+</p>
+
+</div>
+
+</div>
+
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
 
-const map=L.map("map",{
-center:[11.1271,78.6569],
-zoom:7,
-minZoom:5,
-maxZoom:19,
-zoomControl:true
+const map=L.map('map',{
+  zoomControl:true,
+  minZoom:5,
+  maxZoom:19
 });
+
+
+/* Dark street map pane */
+
+const darkStreetPane=map.createPane('darkStreetPane');
+
+darkStreetPane.style.zIndex=200;
+
+darkStreetPane.classList.add('dark-street-tiles');
+
+
+/* Tamil Nadu */
+
+const tamilNaduBounds=[
+  [8.0,76.2],
+  [13.6,80.4]
+];
+
+map.fitBounds(
+  tamilNaduBounds,
+  {padding:[8,8]}
+);
+
+
+/* LIGHT MAP */
 
 const lightMap=L.tileLayer(
-"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-{
-maxZoom:19,
-attribution:"© OpenStreetMap contributors"
-});
+  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  {
+    maxZoom:19,
+    attribution:'© OpenStreetMap contributors'
+  }
+).addTo(map);
+
+
+/* DARK MAP */
 
 const darkMap=L.tileLayer(
-"https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-{
-maxZoom:20,
-attribution:"© OpenStreetMap © CARTO"
-});
+  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  {
+    maxZoom:19,
+    attribution:'© OpenStreetMap contributors',
+    pane:'darkStreetPane'
+  }
+);
 
-darkMap.addTo(map);
 
-let darkMode=true;
+/* NASA VIIRS */
 
-const pollutionLayer=L.layerGroup().addTo(map);
+const nasaNight=L.tileLayer(
+  'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_SNPP_DayNightBand_ENCC/default/2025-01-01/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg',
+  {
+    opacity:.80,
+    maxNativeZoom:9,
+    maxZoom:19,
+    attribution:'NASA VIIRS / GIBS'
+  }
+).addTo(map);
 
-const cities=[
 
-{
-name:"Chennai",
-lat:13.0827,
-lon:80.2707,
-color:"#ff2020",
-level:"Very High"
-},
+/*
+ These categories are a visualization/planning framework.
+ They are NOT measured ground values.
+*/
 
-{
-name:"Coimbatore",
-lat:11.0168,
-lon:76.9558,
-color:"#ff8c00",
-level:"High"
-},
+const data=[
 
-{
-name:"Madurai",
-lat:9.9252,
-lon:78.1198,
-color:"#ff8c00",
-level:"High"
-},
+["Chennai",13.0827,80.2707,"Very High",
+"Major metropolitan lighting region."],
 
-{
-name:"Tiruchirappalli",
-lat:10.7905,
-lon:78.7047,
-color:"#ffe500",
-level:"Moderate"
-},
+["Coimbatore",11.0168,76.9558,"High",
+"Major urban and industrial centre."],
 
-{
-name:"Salem",
-lat:11.6643,
-lon:78.1460,
-color:"#ffe500",
-level:"Moderate"
-},
+["Madurai",9.9252,78.1198,"High",
+"Major urban centre."],
 
-{
-name:"Vellore",
-lat:12.9165,
-lon:79.1325,
-color:"#ffe500",
-level:"Moderate"
-},
+["Tiruchirappalli",10.7905,78.7047,"High",
+"Major transport and urban centre."],
 
-{
-name:"Tirunelveli",
-lat:8.7139,
-lon:77.7567,
-color:"#21c95a",
-level:"Low"
-},
+["Salem",11.6643,78.1460,"High",
+"Major urban and industrial centre."],
 
-{
-name:"Thanjavur",
-lat:10.7870,
-lon:79.1378,
-color:"#21c95a",
-level:"Low"
-},
+["Tirunelveli",8.7139,77.7567,"Moderate",
+"Southern urban centre."],
 
-{
-name:"Kanyakumari",
-lat:8.0883,
-lon:77.5385,
-color:"#168fff",
-level:"Very Low"
-},
+["Vellore",12.9165,79.1325,"High",
+"Urban and institutional corridor."],
 
-{
-name:"Ooty",
-lat:11.4064,
-lon:76.6932,
-color:"#168fff",
-level:"Very Low"
-}
+["Thanjavur",10.7870,79.1378,"Moderate",
+"Regional urban centre."],
+
+["Erode",11.3410,77.7172,"High",
+"Industrial and commercial corridor."],
+
+["Tiruppur",11.1085,77.3411,"High",
+"Industrial urban corridor."],
+
+["Thoothukudi",8.7642,78.1348,"High",
+"Port and industrial region."],
+
+["Dindigul",10.3673,77.9803,"Moderate",
+"Regional urban centre."],
+
+["Kanchipuram",12.8342,79.7036,"High",
+"Urban corridor."],
+
+["Hosur",12.7409,77.8253,"High",
+"Industrial growth corridor."],
+
+["Cuddalore",11.7480,79.7714,"Moderate",
+"Coastal urban centre."],
+
+["Pudukkottai",10.3833,78.8001,"Moderate",
+"Regional urban centre."],
+
+["Karur",10.9601,78.0766,"Moderate",
+"Commercial and industrial centre."],
+
+["Namakkal",11.2194,78.1677,"Moderate",
+"Regional urban centre."],
+
+["Ramanathapuram",9.3639,78.8395,"Lower",
+"Lower-density regional centre."],
+
+["Sivakasi",9.4497,77.7975,"High",
+"Industrial town."],
+
+["Kanyakumari",8.0883,77.5385,"Lower",
+"Southern coastal region."],
+
+["Ooty",11.4064,76.6932,"Darker",
+"Hill-region context."],
+
+["Kodaikanal",10.2381,77.4892,"Darker",
+"Hill-region context."],
+
+["Yercaud",11.7753,78.2090,"Darker",
+"Hill-region context."],
+
+["Rameswaram",9.2876,79.3129,"Lower",
+"Coastal tourism region."],
+
+["Pollachi",10.6586,77.0086,"Lower",
+"Lower-density regional area."],
+
+["Kumbakonam",10.9602,79.3780,"Moderate",
+"Regional urban centre."],
+
+["Mayiladuthurai",11.1018,79.6528,"Moderate",
+"Regional urban centre."],
+
+["Nagapattinam",10.7672,79.8449,"Moderate",
+"Coastal urban centre."],
+
+["Dharmapuri",12.1211,78.1582,"Lower",
+"Lower-density regional area."],
+
+["Krishnagiri",12.5186,78.2137,"Lower",
+"Lower-density regional area."],
+
+["Ariyalur",11.1401,79.0782,"Lower",
+"Lower-density regional area."],
+
+["Perambalur",11.2320,78.8801,"Lower",
+"Lower-density regional area."]
 
 ];
 
-cities.forEach(city=>{
+
+const colors={
+
+"Very High":"#ff3b30",
+
+"High":"#ff9500",
+
+"Moderate":"#ffd60a",
+
+"Lower":"#30d158",
+
+"Darker":"#46b7ff"
+
+};
+
+
+const zones=L.layerGroup().addTo(map);
+
+
+data.forEach(x=>{
+
+const [
+name,
+lat,
+lon,
+level,
+desc
+]=x;
+
+
+const radius=
+
+level==="Very High"
+?32000:
+
+level==="High"
+?25000:
+
+level==="Moderate"
+?19000:
+
+level==="Lower"
+?15000:
+
+12000;
+
 
 const circle=L.circle(
-[city.lat,city.lon],
+[lat,lon],
 {
-radius:18000,
-color:city.color,
-fillColor:city.color,
-fillOpacity:.35,
-weight:3
-});
+  radius:radius,
+  color:colors[level],
+  fillColor:colors[level],
+  fillOpacity:.22,
+  weight:2
+}
+).addTo(zones);
 
-circle.bindPopup(
-"<b>"+city.name+"</b><br><br>"+
-"Light Pollution Category: <b>"+
-city.level+
-"</b><br><br>"+
-"<small>Planning / visualization category. "+
-"Not a direct ground measurement.</small>"
-);
-
-circle.addTo(pollutionLayer);
 
 const marker=L.circleMarker(
-[city.lat,city.lon],
+[lat,lon],
 {
-radius:6,
-color:"white",
-weight:2,
-fillColor:city.color,
-fillOpacity:1
+  radius:6,
+  color:"#fff",
+  weight:1.5,
+  fillColor:colors[level],
+  fillOpacity:1
+}
+).addTo(zones);
+
+
+const popup=
+
+"<div class='city'>"+
+name+
+"</div>"+
+
+"<span class='badge' style='background:"+
+colors[level]+
+"'>"+
+level+
+"</span>"+
+
+"<p>"+
+desc+
+"</p>"+
+
+"<div class='note'>"+
+"Planning category / visualization only — "+
+"not a measured ground value."+
+"</div>";
+
+
+marker.bindPopup(popup);
+
+circle.bindPopup(popup);
+
 });
 
-marker.bindPopup(
-"<b>"+city.name+"</b><br>"+
-"Category: <b>"+city.level+"</b>"
-);
 
-marker.addTo(pollutionLayer);
+/* LAYER CONTROL */
 
-});
-
-L.control.layers(
+const layerControl=L.control.layers(
 
 {
-"🌙 Dark Street Map":darkMap,
-"☀️ Light Street Map":lightMap
+  "☀️ Light Map":lightMap,
+  "🌙 Dark Map":darkMap
 },
 
 {
-"🎨 Light Pollution":pollutionLayer
+  "🌌 NASA VIIRS Night Lights":nasaNight,
+  "🎨 Light-Pollution Zones":zones
 },
 
 {
-position:"topright"
+  collapsed:true,
+  position:'topright'
 }
 
 ).addTo(map);
 
 
-function toggleDarkMode(){
+L.control.scale({
+  imperial:false
+}).addTo(map);
 
-if(darkMode){
+
+/* POPUPS */
+
+function togglePopup(id){
+
+document
+.getElementById(id)
+.classList
+.toggle('open');
+
+}
+
+
+function closePopup(id){
+
+document
+.getElementById(id)
+.classList
+.remove('open');
+
+}
+
+
+/* RESET */
+
+function resetMap(){
+
+map.fitBounds(
+  tamilNaduBounds,
+  {padding:[10,10]}
+);
+
+}
+
+
+/* DARK / LIGHT */
+
+function toggleTheme(){
+
+const isLight=
+document.body.classList.toggle('light');
+
+
+if(isLight){
 
 map.removeLayer(darkMap);
+
+darkStreetPane
+.classList
+.remove('dark-street-tiles');
+
 lightMap.addTo(map);
-darkMode=false;
+
+document
+.getElementById('themeBtn')
+.textContent='🌙';
 
 }else{
 
 map.removeLayer(lightMap);
+
+darkStreetPane
+.classList
+.add('dark-street-tiles');
+
 darkMap.addTo(map);
-darkMode=true;
+
+document
+.getElementById('themeBtn')
+.textContent='☀️';
 
 }
 
 }
 
 
-function togglePollution(){
+/* SEARCH */
 
-if(map.hasLayer(pollutionLayer)){
-map.removeLayer(pollutionLayer);
-}else{
-pollutionLayer.addTo(map);
-}
+function searchLocation(){
 
-}
+const q=
+document
+.getElementById('searchBox')
+.value
+.trim();
 
 
-async function searchLocation(){
+if(!q)return;
 
-const query=
-document.getElementById("searchBox").value.trim();
 
-if(!query){
-alert("Please enter a location.");
-return;
-}
-
-const localCity=cities.find(c=>
-c.name.toLowerCase()===query.toLowerCase()
+const found=data.find(
+x=>
+x[0]
+.toLowerCase()
+===
+q.toLowerCase()
 );
 
-if(localCity){
 
-map.setView(
-[localCity.lat,localCity.lon],
-16
+if(found){
+
+map.flyTo(
+[found[1],found[2]],
+16,
+{duration:1}
 );
 
 return;
+
 }
 
-try{
 
-const url=
-"https://nominatim.openstreetmap.org/search"+
-"?format=json&limit=1&countrycodes=in&q="+
-encodeURIComponent(query+", Tamil Nadu");
+fetch(
+'https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=in&q='+
+encodeURIComponent(q+', Tamil Nadu, India'),
+{
+headers:{
+'Accept-Language':'en'
+}
+}
+)
 
-const response=await fetch(url);
+.then(r=>r.json())
 
-const data=await response.json();
+.then(result=>{
 
-if(data.length===0){
+if(!result.length){
 
-alert("Location not found.");
+alert(
+'Location not found. Try a Tamil Nadu city or place.'
+);
+
 return;
 
 }
 
-const lat=parseFloat(data[0].lat);
-const lon=parseFloat(data[0].lon);
 
-map.setView([lat,lon],17);
+const lat=
+parseFloat(result[0].lat);
+
+const lon=
+parseFloat(result[0].lon);
+
+
+map.flyTo(
+[lat,lon],
+16,
+{duration:1}
+);
+
 
 L.marker([lat,lon])
 .addTo(map)
 .bindPopup(
-"<b>"+data[0].display_name+"</b>"
+'<b>'+
+escapeHtml(result[0].display_name)+
+'</b><br>'+
+'<span class="note">Search result location</span>'
 )
 .openPopup();
 
-}catch(error){
+})
+
+.catch(()=>{
 
 alert(
-"Search failed. Check your internet connection."
+'Search temporarily unavailable. Try again.'
 );
 
-}
-
-}
-
-
-let userMarker=null;
-let accuracyCircle=null;
-
-function findMyLocation(){
-
-if(!navigator.geolocation){
-
-alert("Location is not supported by this browser.");
-return;
-
-}
-
-navigator.geolocation.getCurrentPosition(
-
-function(position){
-
-const lat=position.coords.latitude;
-const lon=position.coords.longitude;
-const accuracy=position.coords.accuracy;
-
-if(userMarker){
-map.removeLayer(userMarker);
-}
-
-if(accuracyCircle){
-map.removeLayer(accuracyCircle);
-}
-
-userMarker=L.circleMarker(
-[lat,lon],
-{
-radius:9,
-color:"#ffffff",
-weight:4,
-fillColor:"#168fff",
-fillOpacity:1
-}
-).addTo(map);
-
-userMarker.bindPopup(
-"<b>📍 Your Location</b><br><br>"+
-"Accuracy: approximately "+
-Math.round(accuracy)+" m"
-).openPopup();
-
-accuracyCircle=L.circle(
-[lat,lon],
-{
-radius:accuracy,
-color:"#168fff",
-fillColor:"#168fff",
-fillOpacity:.12,
-weight:2
-}
-).addTo(map);
-
-map.setView([lat,lon],17);
-
-},
-
-function(error){
-
-if(error.code===1){
-
-alert(
-"Location permission denied.\n\n"+
-"Please allow Location permission for this website in Chrome."
-);
-
-}else{
-
-alert("Unable to get your location.");
-
-}
-
-},
-
-{
-enableHighAccuracy:true,
-timeout:15000,
-maximumAge:0
-}
-
-);
+});
 
 }
 
 
 document
-.getElementById("searchBox")
+.getElementById('searchBox')
 .addEventListener(
-"keydown",
-function(event){
+'keydown',
+e=>{
 
-if(event.key==="Enter"){
+if(e.key==='Enter')
 searchLocation();
+
+}
+);
+
+
+/* LOCATION PERMISSION */
+
+function requestLocation(){
+
+togglePopup('locationPopup');
+
+}
+
+
+function allowLocation(){
+
+closePopup('locationPopup');
+
+
+if(!navigator.geolocation){
+
+alert(
+'Location is not supported by this browser.'
+);
+
+return;
+
+}
+
+
+map.locate({
+
+setView:true,
+
+maxZoom:18,
+
+enableHighAccuracy:true
+
+});
+
+}
+
+
+map.on(
+'locationfound',
+e=>{
+
+L.circle(
+e.latlng,
+{
+  radius:e.accuracy,
+  color:'#55e7ff',
+  fillOpacity:.08
+}
+).addTo(map);
+
+
+L.marker(e.latlng)
+.addTo(map)
+.bindPopup(
+'Your approximate location'
+)
+.openPopup();
+
+});
+
+
+map.on(
+'locationerror',
+e=>{
+
+if(e && e.code===1){
+
+alert(
+'Location permission was denied. Please allow Location permission for this site in your browser settings.'
+);
+
+}else{
+
+alert(
+'Could not get your location. Please try again.'
+);
+
 }
 
 });
 
 
-map.fitBounds(
-[
-[8.0,76.0],
-[13.6,80.4]
-],
-{
-padding:[20,20]
-}
+/* ESCAPE HTML */
+
+function escapeHtml(str){
+
+return String(str).replace(
+/[&<>"']/g,
+m=>({
+
+'&':'&amp;',
+'<':'&lt;',
+'>':'&gt;',
+'"':'&quot;',
+"'":'&#039;'
+
+}[m])
 );
+
+}
 
 </script>
 
