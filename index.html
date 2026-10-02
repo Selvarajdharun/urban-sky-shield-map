@@ -6,14 +6,12 @@
 
 <title>URBAN SKY SHIELD</title>
 
-<!-- Leaflet CSS -->
 <link
   rel="stylesheet"
   href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
 >
 
 <style>
-
 *{
   box-sizing:border-box;
 }
@@ -37,53 +35,53 @@ body{
 /* ================= HEADER ================= */
 
 .header{
-  height:70px;
-  min-height:70px;
+  height:76px;
+  min-height:76px;
   background:#071522;
   color:white;
   display:flex;
   align-items:center;
-  gap:15px;
-  padding:10px 16px;
+  gap:14px;
+  padding:9px 15px;
   z-index:9999;
-  box-shadow:0 2px 10px rgba(0,0,0,.35);
+  box-shadow:0 2px 12px rgba(0,0,0,.35);
 }
 
-.logo{
+.brand{
   font-size:20px;
   font-weight:800;
   letter-spacing:1px;
   white-space:nowrap;
 }
 
-.logo span{
+.brand span{
   color:#43d9ff;
 }
 
-.search{
+.search-area{
   flex:1;
+  max-width:760px;
   display:flex;
   gap:7px;
-  max-width:700px;
 }
 
-.search input{
+.search-area input{
   flex:1;
-  height:40px;
-  border:0;
-  outline:0;
-  border-radius:20px;
-  padding:0 16px;
+  height:42px;
+  border:none;
+  outline:none;
+  border-radius:21px;
+  padding:0 17px;
   font-size:14px;
 }
 
 .btn{
-  height:40px;
-  border:0;
-  border-radius:20px;
-  padding:0 15px;
+  height:42px;
+  border:none;
+  border-radius:21px;
+  padding:0 16px;
   cursor:pointer;
-  font-weight:bold;
+  font-weight:700;
   color:white;
   background:#08a9d8;
 }
@@ -92,9 +90,9 @@ body{
   background:#078db5;
 }
 
-.locationBtn{
+.location-btn{
   background:#17304a;
-  border:1px solid #36536d;
+  border:1px solid #3c5c78;
 }
 
 /* ================= MAP ================= */
@@ -115,22 +113,33 @@ body{
   background:#1683ff;
   border:3px solid white;
   box-shadow:
-    0 0 0 5px rgba(22,131,255,.20),
+    0 0 0 6px rgba(22,131,255,.20),
     0 2px 8px rgba(0,0,0,.45);
 }
 
-/* ================= POPUP ================= */
+/* ================= CUSTOM LOCATION BUTTON ================= */
 
-.popup-title{
-  font-size:15px;
-  font-weight:bold;
-  margin-bottom:5px;
+.location-control{
+  background:white;
+  width:42px;
+  height:42px;
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 2px 8px rgba(0,0,0,.3);
+  cursor:pointer;
+  font-size:20px;
+}
+
+.location-control:hover{
+  background:#f2f2f2;
 }
 
 /* ================= LEGEND ================= */
 
 .legend{
-  background:rgba(255,255,255,.96);
+  background:rgba(255,255,255,.97);
   padding:12px 14px;
   border-radius:10px;
   box-shadow:0 2px 12px rgba(0,0,0,.3);
@@ -140,7 +149,7 @@ body{
 }
 
 .legend-title{
-  font-weight:bold;
+  font-weight:800;
   font-size:14px;
   margin-bottom:5px;
 }
@@ -158,12 +167,20 @@ body{
   border:1px solid rgba(0,0,0,.25);
 }
 
-.note{
+.legend-note{
   border-top:1px solid #ddd;
   margin-top:6px;
   padding-top:5px;
   font-size:10px;
   color:#555;
+}
+
+/* ================= POPUP ================= */
+
+.popup-title{
+  font-size:15px;
+  font-weight:bold;
+  margin-bottom:5px;
 }
 
 /* ================= MOBILE ================= */
@@ -178,17 +195,17 @@ body{
     gap:6px;
   }
 
-  .logo{
+  .brand{
     width:100%;
     font-size:17px;
   }
 
-  .search{
+  .search-area{
     width:100%;
     max-width:none;
   }
 
-  .search input{
+  .search-area input{
     height:37px;
     min-width:0;
   }
@@ -199,8 +216,15 @@ body{
     font-size:11px;
   }
 
-}
+  .legend{
+    font-size:10px;
+    padding:9px;
+  }
 
+  .legend-title{
+    font-size:12px;
+  }
+}
 </style>
 </head>
 
@@ -210,11 +234,11 @@ body{
 
 <div class="header">
 
-  <div class="logo">
+  <div class="brand">
     URBAN SKY <span>SHIELD</span>
   </div>
 
-  <div class="search">
+  <div class="search-area">
 
     <input
       id="searchBox"
@@ -222,12 +246,15 @@ body{
       placeholder="Search Chennai, Madurai, Ooty..."
     >
 
-    <button class="btn" onclick="searchPlace()">
+    <button
+      class="btn"
+      onclick="searchPlace()"
+    >
       SEARCH
     </button>
 
     <button
-      class="btn locationBtn"
+      class="btn location-btn"
       onclick="getMyLocation()"
     >
       📍 LOCATION
@@ -243,15 +270,13 @@ body{
 <div id="map"></div>
 
 
-<!-- ================= LEAFLET JS ================= -->
-
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 
 <script>
 
 /* =========================================================
-   MAP
+   MAP INITIALIZATION
 ========================================================= */
 
 const map = L.map("map", {
@@ -265,7 +290,7 @@ const map = L.map("map", {
 
 
 /* =========================================================
-   NORMAL MAP
+   NORMAL OPENSTREETMAP
 ========================================================= */
 
 const normalMap = L.tileLayer(
@@ -273,7 +298,7 @@ const normalMap = L.tileLayer(
   {
     maxZoom:19,
     attribution:
-      '&copy; OpenStreetMap contributors'
+      '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
   }
 );
 
@@ -288,25 +313,24 @@ const satelliteMap = L.tileLayer(
   "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
   {
     maxZoom:19,
-    attribution:
-      "Tiles &copy; Esri"
+    attribution:"Tiles &copy; Esri"
   }
 );
 
 
 /* =========================================================
-   POLLUTION LAYER
+   LIGHT POLLUTION
 ========================================================= */
 
 const pollutionLayer = L.layerGroup();
 
 
-function pollution(
+function addPollution(
   lat,
   lon,
   radius,
   color,
-  name,
+  place,
   level
 ){
 
@@ -316,14 +340,14 @@ function pollution(
       radius:radius,
       color:color,
       fillColor:color,
-      fillOpacity:.22,
+      fillOpacity:.24,
       weight:2
     }
   );
 
   circle.bindPopup(`
     <div class="popup-title">
-      ${name}
+      ${place}
     </div>
 
     <b>Lighting level:</b>
@@ -345,7 +369,7 @@ function pollution(
    VERY HIGH
 ========================================================= */
 
-pollution(
+addPollution(
   13.0827,
   80.2707,
   30000,
@@ -354,7 +378,7 @@ pollution(
   "Very High"
 );
 
-pollution(
+addPollution(
   11.0168,
   76.9558,
   22000,
@@ -363,7 +387,7 @@ pollution(
   "Very High"
 );
 
-pollution(
+addPollution(
   9.9252,
   78.1198,
   20000,
@@ -372,7 +396,7 @@ pollution(
   "Very High"
 );
 
-pollution(
+addPollution(
   12.9165,
   79.1325,
   18000,
@@ -386,7 +410,7 @@ pollution(
    HIGH
 ========================================================= */
 
-pollution(
+addPollution(
   10.7905,
   78.7047,
   18000,
@@ -395,7 +419,7 @@ pollution(
   "High"
 );
 
-pollution(
+addPollution(
   11.6643,
   78.1460,
   18000,
@@ -404,7 +428,7 @@ pollution(
   "High"
 );
 
-pollution(
+addPollution(
   10.7867,
   79.1378,
   15000,
@@ -413,7 +437,7 @@ pollution(
   "High"
 );
 
-pollution(
+addPollution(
   8.7139,
   77.7567,
   15000,
@@ -422,7 +446,7 @@ pollution(
   "High"
 );
 
-pollution(
+addPollution(
   11.1085,
   77.3411,
   15000,
@@ -436,7 +460,7 @@ pollution(
    MODERATE
 ========================================================= */
 
-pollution(
+addPollution(
   11.3410,
   77.7172,
   16000,
@@ -445,7 +469,7 @@ pollution(
   "Moderate"
 );
 
-pollution(
+addPollution(
   10.9601,
   78.0766,
   14000,
@@ -454,7 +478,7 @@ pollution(
   "Moderate"
 );
 
-pollution(
+addPollution(
   10.3624,
   77.9695,
   14000,
@@ -463,7 +487,7 @@ pollution(
   "Moderate"
 );
 
-pollution(
+addPollution(
   9.2881,
   79.3129,
   15000,
@@ -472,7 +496,7 @@ pollution(
   "Moderate"
 );
 
-pollution(
+addPollution(
   8.7642,
   78.1348,
   15000,
@@ -486,7 +510,7 @@ pollution(
    LOW
 ========================================================= */
 
-pollution(
+addPollution(
   11.4102,
   76.6950,
   26000,
@@ -495,7 +519,7 @@ pollution(
   "Low"
 );
 
-pollution(
+addPollution(
   12.2253,
   79.0747,
   17000,
@@ -504,7 +528,7 @@ pollution(
   "Low"
 );
 
-pollution(
+addPollution(
   8.0883,
   77.5385,
   18000,
@@ -515,10 +539,10 @@ pollution(
 
 
 /* =========================================================
-   VERY LOW
+   VERY LOW / DARK SKY POTENTIAL
 ========================================================= */
 
-pollution(
+addPollution(
   11.45,
   76.40,
   35000,
@@ -527,7 +551,7 @@ pollution(
   "Very Low / Dark-sky potential"
 );
 
-pollution(
+addPollution(
   10.00,
   78.00,
   30000,
@@ -536,7 +560,7 @@ pollution(
   "Very Low / Dark-sky potential"
 );
 
-pollution(
+addPollution(
   10.75,
   79.35,
   30000,
@@ -545,30 +569,35 @@ pollution(
   "Very Low / Dark-sky potential"
 );
 
+
 pollutionLayer.addTo(map);
 
 
 /* =========================================================
-   TRAFFIC VISUALIZATION
+   TRAFFIC DEMO LAYER
 ========================================================= */
 
 const trafficLayer = L.layerGroup();
 
 
-function traffic(points,color,name){
+function addTraffic(
+  points,
+  color,
+  name
+){
 
-  const line = L.polyline(
+  const road = L.polyline(
     points,
     {
       color:color,
       weight:6,
-      opacity:.75
+      opacity:.78
     }
   );
 
-  line.bindPopup(`
-    <b>Traffic Visualization</b>
-    <br>
+  road.bindPopup(`
+    <b>🚦 Traffic Visualization</b>
+    <br><br>
     ${name}
     <br><br>
     <small>
@@ -577,13 +606,13 @@ function traffic(points,color,name){
     </small>
   `);
 
-  trafficLayer.addLayer(line);
+  trafficLayer.addLayer(road);
 }
 
 
-/* Chennai */
+/* Chennai corridors */
 
-traffic(
+addTraffic(
   [
     [13.0827,80.2707],
     [13.0475,80.2090],
@@ -593,7 +622,7 @@ traffic(
   "Chennai urban corridor"
 );
 
-traffic(
+addTraffic(
   [
     [13.0827,80.2707],
     [13.1200,80.1900],
@@ -603,7 +632,7 @@ traffic(
   "Chennai western corridor"
 );
 
-traffic(
+addTraffic(
   [
     [13.0827,80.2707],
     [12.9500,80.2500],
@@ -616,7 +645,7 @@ traffic(
 
 /* Chennai - Vellore */
 
-traffic(
+addTraffic(
   [
     [13.0827,80.2707],
     [12.9165,79.1325]
@@ -628,7 +657,7 @@ traffic(
 
 /* Chennai - Trichy */
 
-traffic(
+addTraffic(
   [
     [13.0827,80.2707],
     [12.5000,79.9000],
@@ -642,7 +671,7 @@ traffic(
 
 /* Coimbatore - Salem */
 
-traffic(
+addTraffic(
   [
     [11.0168,76.9558],
     [11.2500,77.0000],
@@ -655,7 +684,7 @@ traffic(
 
 /* Madurai - Trichy */
 
-traffic(
+addTraffic(
   [
     [9.9252,78.1198],
     [10.3500,78.5000],
@@ -676,7 +705,7 @@ L.control.zoom({
 
 
 /* =========================================================
-   LAYERS
+   LAYER CONTROL
 ========================================================= */
 
 L.control.layers(
@@ -707,10 +736,11 @@ L.control({
 
 legend.onAdd=function(){
 
-  const div=L.DomUtil.create(
-    "div",
-    "legend"
-  );
+  const div =
+    L.DomUtil.create(
+      "div",
+      "legend"
+    );
 
   div.innerHTML=`
 
@@ -719,45 +749,100 @@ legend.onAdd=function(){
     </div>
 
     <div class="legend-row">
-      <span class="legend-dot"
-      style="background:#e53935"></span>
+      <span
+        class="legend-dot"
+        style="background:#e53935"
+      ></span>
       Very High
     </div>
 
     <div class="legend-row">
-      <span class="legend-dot"
-      style="background:#fb8c00"></span>
+      <span
+        class="legend-dot"
+        style="background:#fb8c00"
+      ></span>
       High
     </div>
 
     <div class="legend-row">
-      <span class="legend-dot"
-      style="background:#fdd835"></span>
+      <span
+        class="legend-dot"
+        style="background:#fdd835"
+      ></span>
       Moderate
     </div>
 
     <div class="legend-row">
-      <span class="legend-dot"
-      style="background:#43a047"></span>
+      <span
+        class="legend-dot"
+        style="background:#43a047"
+      ></span>
       Low
     </div>
 
     <div class="legend-row">
-      <span class="legend-dot"
-      style="background:#1e88e5"></span>
+      <span
+        class="legend-dot"
+        style="background:#1e88e5"
+      ></span>
       Very Low / Dark-sky
     </div>
 
-    <div class="note">
+    <div class="legend-note">
       Conceptual planning visualization
     </div>
-
   `;
 
   return div;
 };
 
 legend.addTo(map);
+
+
+/* =========================================================
+   CURRENT LOCATION CONTROL
+========================================================= */
+
+const LocationControl =
+L.Control.extend({
+
+  options:{
+    position:"topright"
+  },
+
+  onAdd:function(){
+
+    const container =
+      L.DomUtil.create(
+        "div",
+        "location-control"
+      );
+
+    container.innerHTML="📍";
+
+    container.title=
+      "Find my current location";
+
+    container.onclick=
+      function(){
+
+        getMyLocation();
+
+      };
+
+    L.DomEvent.disableClickPropagation(
+      container
+    );
+
+    return container;
+  }
+
+});
+
+
+map.addControl(
+  new LocationControl()
+);
 
 
 /* =========================================================
@@ -804,22 +889,37 @@ function getMyLocation(){
 
 
       if(currentMarker){
-        map.removeLayer(currentMarker);
+        map.removeLayer(
+          currentMarker
+        );
       }
 
 
       if(accuracyCircle){
-        map.removeLayer(accuracyCircle);
+        map.removeLayer(
+          accuracyCircle
+        );
       }
 
 
       const icon =
         L.divIcon({
+
           className:"",
+
           html:
             '<div class="location-dot"></div>',
-          iconSize:[18,18],
-          iconAnchor:[9,9]
+
+          iconSize:[
+            18,
+            18
+          ],
+
+          iconAnchor:[
+            9,
+            9
+          ]
+
         });
 
 
@@ -847,12 +947,15 @@ function getMyLocation(){
         .addTo(map);
 
 
-      currentMarker.bindPopup(`
-        <b>📍 Your Current Location</b>
-        <br><br>
-        GPS accuracy:
-        approximately ${Math.round(accuracy)} m
-      `).openPopup();
+      currentMarker
+        .bindPopup(`
+          <b>📍 Your Current Location</b>
+          <br><br>
+          GPS accuracy:
+          approximately
+          ${Math.round(accuracy)} m
+        `)
+        .openPopup();
 
 
       reverseLocation(
@@ -903,7 +1006,7 @@ function getMyLocation(){
 
 
 /* =========================================================
-   REVERSE LOCATION
+   REVERSE GEOCODING
 ========================================================= */
 
 async function reverseLocation(
@@ -917,9 +1020,9 @@ async function reverseLocation(
       await fetch(
         "https://nominatim.openstreetmap.org/reverse" +
         "?format=json" +
-        "&lat="+lat+
-        "&lon="+lon+
-        "&zoom=18"+
+        "&lat="+encodeURIComponent(lat) +
+        "&lon="+encodeURIComponent(lon) +
+        "&zoom=18" +
         "&addressdetails=1"
       );
 
@@ -930,15 +1033,17 @@ async function reverseLocation(
 
     if(
       currentMarker &&
-      data.display_name
+      data &&
+      data.address
     ){
 
       const address =
-        data.address || {};
+        data.address;
 
 
       const road =
         address.road ||
+        address.pedestrian ||
         address.neighbourhood ||
         "Location";
 
@@ -958,12 +1063,13 @@ async function reverseLocation(
         <br>
         ${city}
         <br>
-        Tamil Nadu
+        ${address.state || "Tamil Nadu"}
       `);
 
     }
 
-  }catch(error){
+  }
+  catch(error){
 
     console.log(
       "Reverse geocoding unavailable"
@@ -978,11 +1084,16 @@ async function reverseLocation(
    SEARCH
 ========================================================= */
 
+let searchMarker=null;
+
+
 async function searchPlace(){
 
   const query =
     document
-      .getElementById("searchBox")
+      .getElementById(
+        "searchBox"
+      )
       .value
       .trim();
 
@@ -1029,10 +1140,15 @@ async function searchPlace(){
 
 
     const lat =
-      parseFloat(place.lat);
+      parseFloat(
+        place.lat
+      );
+
 
     const lon =
-      parseFloat(place.lon);
+      parseFloat(
+        place.lon
+      );
 
 
     map.setView(
@@ -1044,23 +1160,35 @@ async function searchPlace(){
     );
 
 
-    L.marker(
-      [lat,lon]
-    )
-    .addTo(map)
-    .bindPopup(
-      "<b>"+
-      place.display_name+
-      "</b>"
-    )
-    .openPopup();
+    if(searchMarker){
+
+      map.removeLayer(
+        searchMarker
+      );
+
+    }
 
 
-  }catch(error){
+    searchMarker =
+      L.marker(
+        [lat,lon]
+      )
+      .addTo(map)
+      .bindPopup(
+        "<b>"+
+        place.display_name+
+        "</b>"
+      )
+      .openPopup();
+
+  }
+  catch(error){
 
     alert(
       "Search service unavailable."
     );
+
+    console.log(error);
 
   }
 
@@ -1068,17 +1196,21 @@ async function searchPlace(){
 
 
 /* =========================================================
-   ENTER KEY
+   ENTER KEY SEARCH
 ========================================================= */
 
 document
-  .getElementById("searchBox")
+  .getElementById(
+    "searchBox"
+  )
   .addEventListener(
     "keydown",
     function(event){
 
       if(event.key==="Enter"){
+
         searchPlace();
+
       }
 
     }
@@ -1086,7 +1218,7 @@ document
 
 
 /* =========================================================
-   FIX MAP SIZE
+   MAP SIZE FIX
 ========================================================= */
 
 setTimeout(
@@ -1109,15 +1241,11 @@ window.addEventListener(
 );
 
 
-/* =========================================================
-   DONE
-========================================================= */
-
 console.log(
-  "URBAN SKY SHIELD MAP LOADED"
+  "URBAN SKY SHIELD loaded successfully."
 );
 
 </script>
 
 </body>
-  </html>
+</html>
