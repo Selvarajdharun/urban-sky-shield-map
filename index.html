@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+b<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -49,7 +49,7 @@ body {
 
   position: absolute;
 
-  z-index: 1000;
+  z-index: 2000;
 
   top: 8px;
 
@@ -62,10 +62,6 @@ body {
   margin: auto;
 }
 
-
-/* =========================
-   TITLE
-========================= */
 
 .title-box {
 
@@ -81,6 +77,7 @@ body {
   margin-bottom: 7px;
 }
 
+
 .title {
 
   font-size: 21px;
@@ -88,13 +85,11 @@ body {
   font-weight: bold;
 
   color: #123b4a;
-
-  letter-spacing: 0.6px;
 }
 
 
 /* =========================
-   SEARCH ROW
+   SEARCH
 ========================= */
 
 .search-row {
@@ -103,6 +98,7 @@ body {
 
   gap: 7px;
 }
+
 
 .search-row input {
 
@@ -126,6 +122,7 @@ body {
     0 3px 13px rgba(0,0,0,0.25);
 }
 
+
 .search-btn,
 .location-btn {
 
@@ -135,7 +132,7 @@ body {
 
   border-radius: 14px;
 
-  padding: 0 16px;
+  padding: 0 15px;
 
   font-size: 14px;
 
@@ -147,12 +144,14 @@ body {
     0 3px 13px rgba(0,0,0,0.25);
 }
 
+
 .search-btn {
 
   background: #087f9b;
 
   color: white;
 }
+
 
 .location-btn {
 
@@ -163,19 +162,71 @@ body {
 
 
 /* =========================
-   LOCATION FLOAT BUTTON
+   CUSTOM RIGHT ICONS
+========================= */
+
+.map-icons {
+
+  position: absolute;
+
+  z-index: 2000;
+
+  right: 12px;
+
+  top: 155px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 9px;
+}
+
+
+.map-icon {
+
+  width: 48px;
+
+  height: 48px;
+
+  border: none;
+
+  border-radius: 15px;
+
+  background: #09233a;
+
+  color: white;
+
+  font-size: 22px;
+
+  box-shadow:
+    0 3px 12px rgba(0,0,0,0.35);
+
+  cursor: pointer;
+}
+
+
+.map-icon:active {
+
+  transform: scale(0.94);
+}
+
+
+/* =========================
+   MY LOCATION
 ========================= */
 
 .locate-control {
 
   position: absolute;
 
-  z-index: 1000;
+  z-index: 2000;
 
-  right: 15px;
+  right: 12px;
 
-  bottom: 28px;
+  bottom: 25px;
 }
+
 
 .locate-big {
 
@@ -201,7 +252,7 @@ body {
 
 
 /* =========================
-   BLUE GPS DOT
+   GPS BLUE DOT
 ========================= */
 
 .user-dot {
@@ -227,15 +278,16 @@ body {
 
 
 /* =========================
-   ZOOM BUTTONS
+   ZOOM
 ========================= */
 
 .leaflet-control-zoom {
 
-  margin-top: 130px !important;
+  margin-top: 155px !important;
 
   margin-left: 8px !important;
 }
+
 
 .leaflet-control-zoom a {
 
@@ -254,15 +306,16 @@ body {
 
 
 /* =========================
-   LOCATION POPUP
+   POPUP
 ========================= */
 
 .location-popup {
 
-  font-family: Arial, sans-serif;
-
   min-width: 190px;
+
+  font-family: Arial, sans-serif;
 }
+
 
 .location-popup .heading {
 
@@ -272,8 +325,9 @@ body {
 
   color: #1769ff;
 
-  margin-bottom: 6px;
+  margin-bottom: 7px;
 }
+
 
 .location-popup .street {
 
@@ -283,12 +337,13 @@ body {
 
   color: #222;
 
-  line-height: 1.4;
+  line-height: 1.45;
 }
+
 
 .location-popup .accuracy {
 
-  margin-top: 5px;
+  margin-top: 6px;
 
   font-size: 11px;
 
@@ -300,33 +355,48 @@ body {
    MOBILE
 ========================= */
 
-@media (max-width:600px) {
+@media(max-width:600px) {
 
   .title {
 
     font-size: 18px;
-
   }
+
 
   .search-row {
 
     flex-wrap: wrap;
-
   }
+
 
   .search-row input {
 
     width: 100%;
 
     flex: none;
-
   }
+
 
   .search-btn,
   .location-btn {
 
     flex: 1;
+  }
 
+
+  .map-icons {
+
+    top: 160px;
+
+    right: 9px;
+  }
+
+
+  .map-icon {
+
+    width: 45px;
+
+    height: 45px;
   }
 
 }
@@ -347,7 +417,7 @@ body {
 
 
 <!-- =========================
-     TOP PANEL
+     TOP
 ========================= -->
 
 <div class="top-panel">
@@ -378,7 +448,9 @@ body {
       class="search-btn"
       onclick="searchPlace()"
     >
+
       SEARCH
+
     </button>
 
 
@@ -386,7 +458,9 @@ body {
       class="location-btn"
       onclick="startLocation()"
     >
+
       📍 LOCATION
+
     </button>
 
 
@@ -396,7 +470,52 @@ body {
 
 
 <!-- =========================
-     FLOAT LOCATION
+     MAP ICONS
+========================= -->
+
+<div class="map-icons">
+
+
+  <button
+    class="map-icon"
+    onclick="toggleLayers()"
+    title="Map layers"
+  >
+    🗺️
+  </button>
+
+
+  <button
+    class="map-icon"
+    onclick="togglePollution()"
+    title="Light pollution"
+  >
+    🌈
+  </button>
+
+
+  <button
+    class="map-icon"
+    onclick="startLocation()"
+    title="My location"
+  >
+    ⦿
+  </button>
+
+
+  <button
+    class="map-icon"
+    onclick="toggleSatellite()"
+    title="Satellite"
+  >
+    🛰️
+  </button>
+
+</div>
+
+
+<!-- =========================
+     MY LOCATION
 ========================= -->
 
 <div class="locate-control">
@@ -406,7 +525,9 @@ body {
     onclick="startLocation()"
     title="My Location"
   >
-    ⦿
+
+    📍
+
   </button>
 
 </div>
@@ -420,7 +541,7 @@ src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
 <script>
 
 /* =====================================================
-   CREATE MAP
+   MAP
 ===================================================== */
 
 const map = L.map("map", {
@@ -441,7 +562,7 @@ const map = L.map("map", {
 
 
 /* =====================================================
-   DETAILED OPENSTREETMAP
+   NORMAL DETAILED STREET MAP
 ===================================================== */
 
 const streetMap = L.tileLayer(
@@ -453,7 +574,7 @@ const streetMap = L.tileLayer(
     maxZoom: 19,
 
     attribution:
-      '&copy; OpenStreetMap contributors'
+      "&copy; OpenStreetMap contributors"
 
   }
 
@@ -464,8 +585,32 @@ streetMap.addTo(map);
 
 
 /* =====================================================
-   LIGHT POLLUTION ZONES
+   SATELLITE
 ===================================================== */
+
+const satelliteMap = L.tileLayer(
+
+  "https://server.arcgisonline.com/ArcGIS/rest/services/" +
+  "World_Imagery/MapServer/tile/{z}/{y}/{x}",
+
+  {
+
+    maxZoom: 19,
+
+    attribution:
+      "&copy; Esri"
+
+  }
+
+);
+
+
+/* =====================================================
+   LIGHT POLLUTION
+===================================================== */
+
+const pollutionGroup = L.layerGroup();
+
 
 const cities = [
 
@@ -544,9 +689,8 @@ const cities = [
 ];
 
 
-/* DRAW POLLUTION CIRCLES */
-
 cities.forEach(function(city) {
+
 
   L.circle(
 
@@ -568,8 +712,6 @@ cities.forEach(function(city) {
 
   )
 
-  .addTo(map)
-
   .bindPopup(
 
     "<b>" +
@@ -577,12 +719,19 @@ cities.forEach(function(city) {
     "</b><br><br>" +
 
     "<small>" +
-    "Planning visualization only" +
+    "Light-pollution planning visualization" +
     "</small>"
 
-  );
+  )
+
+  .addTo(pollutionGroup);
 
 });
+
+
+/* SHOW POLLUTION BY DEFAULT */
+
+pollutionGroup.addTo(map);
 
 
 /* =====================================================
@@ -595,22 +744,20 @@ let accuracyCircle = null;
 
 let locationWatch = null;
 
-let firstLocationFound = false;
+let firstGPSFix = false;
 
 
 /* =====================================================
-   START LOCATION
+   START GPS
 ===================================================== */
 
 function startLocation() {
 
 
-  /* CHECK GPS SUPPORT */
-
   if (!navigator.geolocation) {
 
     alert(
-      "Your browser does not support location."
+      "Your browser does not support GPS location."
     );
 
     return;
@@ -618,7 +765,7 @@ function startLocation() {
   }
 
 
-  /* STOP OLD WATCH */
+  /* STOP OLD GPS WATCH */
 
   if (locationWatch !== null) {
 
@@ -629,7 +776,7 @@ function startLocation() {
   }
 
 
-  firstLocationFound = false;
+  firstGPSFix = false;
 
 
   /* START HIGH ACCURACY GPS */
@@ -654,15 +801,17 @@ function startLocation() {
 
 
       console.log(
-        "Current GPS:",
+        "GPS LOCATION:",
         lat,
         lon,
-        "Accuracy:",
+        "ACCURACY:",
         accuracy
       );
 
 
-      /* REMOVE OLD MARKER */
+      /* =========================
+         REMOVE OLD MARKER
+      ========================= */
 
       if (userMarker !== null) {
 
@@ -673,7 +822,9 @@ function startLocation() {
       }
 
 
-      /* REMOVE OLD ACCURACY */
+      /* =========================
+         REMOVE OLD CIRCLE
+      ========================= */
 
       if (accuracyCircle !== null) {
 
@@ -684,11 +835,13 @@ function startLocation() {
       }
 
 
-      /* =================================================
-         BLUE CURRENT LOCATION
-      ================================================= */
+      /* =========================
+         BLUE GPS DOT
+      ========================= */
 
-      userMarker = L.marker(
+      userMarker =
+
+      L.marker(
 
         [lat, lon],
 
@@ -701,9 +854,9 @@ function startLocation() {
             html:
               '<div class="user-dot"></div>',
 
-            iconSize: [22, 22],
+            iconSize: [22,22],
 
-            iconAnchor: [11, 11]
+            iconAnchor: [11,11]
 
           })
 
@@ -712,11 +865,13 @@ function startLocation() {
       ).addTo(map);
 
 
-      /* =================================================
+      /* =========================
          ACCURACY CIRCLE
-      ================================================= */
+      ========================= */
 
-      accuracyCircle = L.circle(
+      accuracyCircle =
+
+      L.circle(
 
         [lat, lon],
 
@@ -737,13 +892,13 @@ function startLocation() {
       ).addTo(map);
 
 
-      /* =================================================
-         FIRST GPS FIX
-      ================================================= */
+      /* =========================
+         FIRST FIX
+      ========================= */
 
-      if (!firstLocationFound) {
+      if (!firstGPSFix) {
 
-        firstLocationFound = true;
+        firstGPSFix = true;
 
 
         map.flyTo(
@@ -763,14 +918,16 @@ function startLocation() {
       }
 
 
-      /* =================================================
-         GET STREET NAME
-      ================================================= */
+      /* =========================
+         GET STREET
+      ========================= */
 
       getStreetName(
+
         lat,
         lon,
         accuracy
+
       );
 
     },
@@ -785,11 +942,11 @@ function startLocation() {
 
           "Location permission denied.\n\n" +
 
-          "Please allow Location permission " +
+          "Browser Settings → Site permissions → " +
 
-          "for this website.\n\n" +
+          "Location → Allow.\n\n" +
 
-          "Also enable Precise Location."
+          "Also keep Precise Location ON."
 
         );
 
@@ -802,7 +959,7 @@ function startLocation() {
 
           "Location unavailable.\n\n" +
 
-          "Please turn ON your phone Location/GPS."
+          "Please turn ON phone GPS/Location."
 
         );
 
@@ -813,9 +970,9 @@ function startLocation() {
 
         alert(
 
-          "GPS could not get your location.\n\n" +
+          "GPS timeout.\n\n" +
 
-          "Please try again."
+          "Please try again in an open area."
 
         );
 
@@ -840,14 +997,15 @@ function startLocation() {
 
 
 /* =====================================================
-   REVERSE GEOCODING
-   GET STREET NAME FROM GPS
+   STREET NAME
 ===================================================== */
 
 async function getStreetName(
+
   lat,
   lon,
   accuracy
+
 ) {
 
 
@@ -883,43 +1041,53 @@ async function getStreetName(
       data.address || {};
 
 
-    /* STREET */
-
     const road =
+
       address.road ||
+
       address.pedestrian ||
+
+      address.residential ||
+
       address.footway ||
+
       address.path ||
+
       "Street name unavailable";
 
 
-    /* AREA */
-
     const area =
+
       address.suburb ||
+
       address.neighbourhood ||
+
       address.village ||
+
       address.town ||
-      address.city_district ||
+
       "";
 
-
-    /* CITY */
 
     const city =
+
       address.city ||
+
       address.town ||
+
       address.municipality ||
+
       address.village ||
+
       "";
 
 
-    let locationText = road;
+    let text = road;
 
 
     if (area) {
 
-      locationText +=
+      text +=
         "<br>" + area;
 
     }
@@ -930,13 +1098,11 @@ async function getStreetName(
       city !== area
     ) {
 
-      locationText +=
+      text +=
         "<br>" + city;
 
     }
 
-
-    /* POPUP */
 
     if (userMarker) {
 
@@ -945,25 +1111,17 @@ async function getStreetName(
         '<div class="location-popup">' +
 
         '<div class="heading">' +
-
         '📍 You are here' +
-
         '</div>' +
 
         '<div class="street">' +
-
-        locationText +
-
+        text +
         '</div>' +
 
         '<div class="accuracy">' +
-
         'GPS accuracy: approximately ' +
-
         Math.round(accuracy) +
-
-        ' metres' +
-
+        ' m' +
         '</div>' +
 
         '</div>'
@@ -985,25 +1143,17 @@ async function getStreetName(
         '<div class="location-popup">' +
 
         '<div class="heading">' +
-
         '📍 You are here' +
-
         '</div>' +
 
         '<div class="street">' +
-
         'Street name unavailable' +
-
         '</div>' +
 
         '<div class="accuracy">' +
-
         'GPS accuracy: approximately ' +
-
         Math.round(accuracy) +
-
-        ' metres' +
-
+        ' m' +
         '</div>' +
 
         '</div>'
@@ -1013,6 +1163,96 @@ async function getStreetName(
     }
 
   }
+
+}
+
+
+/* =====================================================
+   POLLUTION ON / OFF
+===================================================== */
+
+let pollutionVisible = true;
+
+
+function togglePollution() {
+
+
+  if (pollutionVisible) {
+
+    map.removeLayer(
+      pollutionGroup
+    );
+
+    pollutionVisible = false;
+
+  }
+
+  else {
+
+    pollutionGroup.addTo(map);
+
+    pollutionVisible = true;
+
+  }
+
+}
+
+
+/* =====================================================
+   SATELLITE ON / OFF
+===================================================== */
+
+let satelliteVisible = false;
+
+
+function toggleSatellite() {
+
+
+  if (!satelliteVisible) {
+
+    map.removeLayer(
+      streetMap
+    );
+
+    satelliteMap.addTo(map);
+
+    satelliteVisible = true;
+
+  }
+
+  else {
+
+    map.removeLayer(
+      satelliteMap
+    );
+
+    streetMap.addTo(map);
+
+    satelliteVisible = false;
+
+  }
+
+}
+
+
+/* =====================================================
+   LAYERS BUTTON
+===================================================== */
+
+function toggleLayers() {
+
+
+  alert(
+
+    "🗺️ MAP OPTIONS\n\n" +
+
+    "🌈 = Light Pollution ON/OFF\n" +
+
+    "🛰️ = Satellite / Street Map\n" +
+
+    "⦿ = Current Location"
+
+  );
 
 }
 
@@ -1132,7 +1372,7 @@ async function searchPlace() {
 
 
 /* =====================================================
-   ENTER KEY
+   ENTER TO SEARCH
 ===================================================== */
 
 document
@@ -1159,4 +1399,4 @@ document
 
 </body>
 
-</html>
+      </html>
