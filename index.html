@@ -1,541 +1,889 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
-<title>URBAN SKY SHIELD</title>
+<title>Urban Sky Shield</title>
 
-<link rel="stylesheet"
-href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
 
 <style>
-*{box-sizing:border-box}
+
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+*{
+  box-sizing:border-box;
+}
 
 html,body{
   margin:0;
   padding:0;
   width:100%;
   height:100%;
-  overflow:hidden;
   font-family:Arial,Helvetica,sans-serif;
-  background:#071522;
+  background:#06121a;
+  color:#fff;
+  overflow:hidden;
 }
 
-body{display:flex;flex-direction:column}
-
-/* ================= HEADER ================= */
-
-.header{
-  height:76px;
-  min-height:76px;
-  background:linear-gradient(135deg,#06121f,#0b2134);
-  color:white;
-  display:flex;
-  align-items:center;
-  gap:14px;
-  padding:9px 15px;
-  z-index:9999;
-  box-shadow:0 3px 18px rgba(0,0,0,.45);
+button,
+input{
+  font-family:inherit;
 }
 
-.brand{
-  font-size:20px;
-  font-weight:900;
-  letter-spacing:1px;
-  white-space:nowrap;
-}
+/* =========================================================
+   HEADER
+========================================================= */
 
-.brand span{color:#43d9ff}
-
-.search-area{
-  flex:1;
-  max-width:800px;
-  display:flex;
-  gap:7px;
-}
-
-.search-area input{
-  flex:1;
-  height:42px;
-  border:none;
-  outline:none;
-  border-radius:22px;
-  padding:0 18px;
-  font-size:14px;
-  box-shadow:0 2px 10px rgba(0,0,0,.18);
-}
-
-.btn{
-  height:42px;
-  border:none;
-  border-radius:22px;
-  padding:0 16px;
-  cursor:pointer;
-  font-weight:800;
-  color:white;
-  background:linear-gradient(135deg,#08bde9,#087fc0);
-  transition:.2s;
-}
-
-.btn:hover{
-  transform:translateY(-1px);
-  filter:brightness(1.1);
-}
-
-.location-btn{
-  background:#17304a;
-  border:1px solid #3c6686;
-}
-
-/* ================= MAP ================= */
-
-#map{
-  flex:1;
-  width:100%;
-  min-height:0;
-  background:#dce7ee;
-}
-
-/* ================= LOCATION ================= */
-
-.location-dot{
-  width:18px;
-  height:18px;
-  border-radius:50%;
-  background:#1683ff;
-  border:3px solid white;
-  box-shadow:
-    0 0 0 6px rgba(22,131,255,.20),
-    0 2px 8px rgba(0,0,0,.45);
-}
-
-.location-control{
-  background:white;
-  width:42px;
-  height:42px;
-  border-radius:9px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  box-shadow:0 2px 10px rgba(0,0,0,.3);
-  cursor:pointer;
-  font-size:20px;
-}
-
-/* ================= PREMIUM SCENARIO PANEL ================= */
-
-.scenario-panel{
-  position:absolute;
-  z-index:1000;
-  top:92px;
-  left:15px;
-  width:255px;
-  background:rgba(5,19,32,.94);
-  color:white;
-  border:1px solid rgba(67,217,255,.28);
-  border-radius:14px;
-  padding:14px;
-  box-shadow:0 10px 30px rgba(0,0,0,.4);
-  backdrop-filter:blur(8px);
-}
-
-.scenario-title{
-  color:#43d9ff;
-  font-size:15px;
-  font-weight:900;
-  margin-bottom:3px;
-}
-
-.scenario-sub{
-  color:#8ea9bc;
-  font-size:10px;
-  margin-bottom:12px;
-}
-
-.scenario-option{
+#header{
+  height:54px;
+  background:#06141d;
+  border-bottom:1px solid #173341;
   display:flex;
   align-items:center;
   gap:8px;
-  padding:8px 5px;
-  border-radius:7px;
+  padding:7px 10px;
+  position:relative;
+  z-index:2000;
+}
+
+.brand{
+  font-weight:800;
+  font-size:15px;
+  letter-spacing:.5px;
+  white-space:nowrap;
+}
+
+.brand span{
+  color:#24c9ff;
+}
+
+#searchBox{
+  flex:1;
+  max-width:370px;
+  height:34px;
+  border:none;
+  outline:none;
+  border-radius:20px;
+  padding:0 14px;
   font-size:12px;
+}
+
+.topBtn{
+  height:34px;
+  border:1px solid #275268;
+  background:#08334a;
+  color:white;
+  border-radius:20px;
+  padding:0 14px;
+  font-size:11px;
+  font-weight:bold;
   cursor:pointer;
 }
 
-.scenario-option:hover{
-  background:rgba(67,217,255,.08);
+.topBtn:hover{
+  background:#0b4d6c;
 }
 
-.scenario-option input{
-  accent-color:#16bce9;
-}
+/* =========================================================
+   MAP
+========================================================= */
 
-.scenario-note{
-  margin-top:10px;
-  padding:8px;
-  border-radius:8px;
-  background:rgba(255,193,7,.08);
-  border:1px solid rgba(255,193,7,.18);
-  color:#c8d7df;
-  font-size:9px;
-  line-height:14px;
-}
-
-/* ================= MAP INFO ================= */
-
-.map-info{
+#map{
   position:absolute;
-  z-index:1000;
-  top:92px;
-  right:15px;
-  width:220px;
-  background:rgba(5,19,32,.92);
-  color:white;
-  border:1px solid rgba(67,217,255,.25);
+  top:54px;
+  bottom:0;
+  left:0;
+  right:0;
+}
+
+/* =========================================================
+   GLASS PANELS
+========================================================= */
+
+.panel{
+  background:rgba(4,17,25,.92);
+  border:1px solid rgba(71,164,197,.35);
+  box-shadow:0 10px 30px rgba(0,0,0,.35);
+  backdrop-filter:blur(9px);
   border-radius:12px;
+  color:#fff;
+}
+
+#simulator{
+  position:absolute;
+  z-index:1500;
+  left:12px;
+  top:66px;
+  width:245px;
   padding:12px;
-  box-shadow:0 8px 25px rgba(0,0,0,.35);
-  pointer-events:none;
 }
 
-.info-title{
-  color:#43d9ff;
-  font-weight:900;
-  font-size:13px;
+.panelTitle{
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.5px;
+  color:#54d9ff;
+  margin-bottom:3px;
 }
 
-.info-line{
-  font-size:10px;
-  color:#c2d1dc;
-  margin-top:5px;
+.panelSub{
+  font-size:8px;
+  color:#94aeb9;
+  margin-bottom:10px;
 }
 
-/* ================= LEGEND ================= */
-
-.legend{
-  background:rgba(255,255,255,.96);
-  padding:12px 14px;
-  border-radius:11px;
-  box-shadow:0 3px 15px rgba(0,0,0,.3);
-  color:#17202a;
-  font-size:11px;
-  line-height:19px;
-}
-
-.legend-title{
-  font-weight:900;
-  font-size:13px;
-  margin-bottom:5px;
-}
-
-.legend-row{
+.scenario{
   display:flex;
   align-items:center;
   gap:7px;
-}
-
-.legend-dot{
-  width:11px;
-  height:11px;
-  border-radius:50%;
-}
-
-.gradient-bar{
-  width:145px;
-  height:10px;
-  border-radius:10px;
-  margin:6px 0;
-  background:linear-gradient(
-    to right,
-    #087f5b,
-    #74c947,
-    #ffd43b,
-    #ff922b,
-    #ff3030
-  );
-}
-
-.legend-note{
-  border-top:1px solid #ddd;
-  margin-top:6px;
-  padding-top:5px;
+  padding:7px 5px;
+  border-radius:7px;
+  cursor:pointer;
   font-size:9px;
-  color:#555;
+  transition:.2s;
 }
 
-/* ================= STATUS ================= */
-
-.status-control{
-  background:rgba(5,19,32,.94);
-  color:white;
-  padding:9px 12px;
-  border-radius:9px;
-  box-shadow:0 3px 12px rgba(0,0,0,.35);
-  font-size:10px;
-  line-height:15px;
+.scenario:hover{
+  background:rgba(34,183,235,.12);
 }
 
-.status-title{
-  color:#43d9ff;
-  font-weight:900;
-  margin-bottom:2px;
+.scenario input{
+  accent-color:#16b9ef;
 }
 
-/* ================= DARK SKY MARKER ================= */
+.scenario.active{
+  background:rgba(30,184,235,.15);
+  border:1px solid rgba(30,184,235,.3);
+}
 
-.darksky-marker{
-  width:28px;
-  height:28px;
+.warning{
+  margin-top:9px;
+  padding:7px;
+  border-radius:7px;
+  background:rgba(255,190,0,.08);
+  border:1px solid rgba(255,190,0,.18);
+  color:#c8d7dc;
+  font-size:7px;
+  line-height:1.4;
+}
+
+/* =========================================================
+   WORKFLOW
+========================================================= */
+
+#workflow{
+  position:absolute;
+  z-index:1500;
+  right:12px;
+  top:66px;
+  width:205px;
+  padding:11px;
+}
+
+.workflowItem{
+  display:flex;
+  gap:7px;
+  align-items:center;
+  font-size:8px;
+  padding:5px 0;
+  color:#c7d9df;
+}
+
+.workflowNum{
+  width:19px;
+  height:19px;
   border-radius:50%;
-  background:#1683ff;
-  border:3px solid white;
-  box-shadow:
-    0 0 0 5px rgba(30,136,229,.20),
-    0 2px 7px rgba(0,0,0,.35);
   display:flex;
   align-items:center;
   justify-content:center;
-  color:white;
+  background:#07394e;
+  color:#4ddcff;
+  font-weight:bold;
+  flex-shrink:0;
+}
+
+.workflowArrow{
+  color:#527684;
+  font-size:8px;
+  padding-left:8px;
+}
+
+/* =========================================================
+   MODE BADGE
+========================================================= */
+
+#modeBadge{
+  position:absolute;
+  z-index:1500;
+  top:66px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(5,20,29,.88);
+  border:1px solid #1d566d;
+  border-radius:20px;
+  padding:6px 11px;
+  font-size:8px;
+  color:#66ddff;
+  white-space:nowrap;
+}
+
+/* =========================================================
+   KPI DASHBOARD
+========================================================= */
+
+#kpiBar{
+  position:absolute;
+  z-index:1500;
+  left:50%;
+  transform:translateX(-50%);
+  bottom:17px;
+  display:flex;
+  gap:7px;
+}
+
+.kpi{
+  min-width:90px;
+  padding:7px 9px;
+  text-align:center;
+  border-radius:9px;
+  background:rgba(4,17,25,.91);
+  border:1px solid rgba(73,170,200,.32);
+  backdrop-filter:blur(8px);
+}
+
+.kpiValue{
+  font-size:15px;
+  font-weight:800;
+  color:#5be0ff;
+}
+
+.kpiLabel{
+  font-size:7px;
+  color:#91aab4;
+  margin-top:2px;
+}
+
+/* =========================================================
+   INFO PANEL
+========================================================= */
+
+#locationInfo{
+  position:absolute;
+  z-index:1600;
+  right:12px;
+  bottom:70px;
+  width:225px;
+  padding:11px;
+  display:none;
+}
+
+.infoTitle{
+  font-size:11px;
+  color:#5edfff;
+  font-weight:bold;
+  margin-bottom:7px;
+}
+
+.infoRow{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  font-size:8px;
+  padding:4px 0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+
+.infoRow span:last-child{
+  color:#dceff4;
+  text-align:right;
+}
+
+.recommend{
+  margin-top:8px;
+  padding:7px;
+  border-radius:7px;
+  background:rgba(0,190,255,.08);
+  color:#b9dce7;
+  font-size:7px;
+  line-height:1.4;
+}
+
+/* =========================================================
+   CONTROL BUTTONS
+========================================================= */
+
+#mapTools{
+  position:absolute;
+  z-index:1600;
+  right:12px;
+  bottom:17px;
+  display:flex;
+  gap:5px;
+}
+
+.toolBtn{
+  width:32px;
+  height:32px;
+  border-radius:8px;
+  border:1px solid #356577;
+  background:rgba(4,17,25,.9);
+  color:#fff;
+  cursor:pointer;
   font-size:13px;
 }
 
-/* ================= MITIGATION BADGE ================= */
+.toolBtn:hover{
+  background:#0b4054;
+}
 
-.scenario-badge{
+/* =========================================================
+   METHOD MODAL
+========================================================= */
+
+#methodModal{
+  display:none;
   position:absolute;
-  z-index:1000;
-  left:50%;
-  top:88px;
-  transform:translateX(-50%);
-  background:rgba(5,19,32,.92);
-  color:#fff;
-  border:1px solid rgba(67,217,255,.3);
-  padding:7px 13px;
-  border-radius:20px;
+  inset:0;
+  z-index:3000;
+  background:rgba(0,0,0,.62);
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.modalBox{
+  width:min(520px,94vw);
+  max-height:85vh;
+  overflow:auto;
+  padding:18px;
+  background:#071922;
+  border:1px solid #28667d;
+  border-radius:15px;
+  box-shadow:0 20px 60px rgba(0,0,0,.55);
+}
+
+.modalTitle{
+  color:#58ddff;
+  font-size:16px;
+  font-weight:bold;
+  margin-bottom:12px;
+}
+
+.modalText{
   font-size:10px;
-  box-shadow:0 4px 15px rgba(0,0,0,.3);
-  pointer-events:none;
+  line-height:1.7;
+  color:#c7d7dc;
 }
 
-.scenario-badge span{
-  color:#43d9ff;
-  font-weight:800;
+.closeBtn{
+  float:right;
+  border:0;
+  background:transparent;
+  color:#fff;
+  font-size:20px;
+  cursor:pointer;
 }
 
-/* ================= MOBILE ================= */
+/* =========================================================
+   STATUS
+========================================================= */
+
+#status{
+  position:absolute;
+  z-index:1600;
+  left:12px;
+  bottom:17px;
+  padding:7px 10px;
+  background:rgba(4,17,25,.88);
+  border:1px solid rgba(73,170,200,.25);
+  border-radius:8px;
+  font-size:7px;
+  color:#9cb6bf;
+}
+
+/* =========================================================
+   LEAFLET
+========================================================= */
+
+.leaflet-control-layers{
+  font-size:10px;
+}
+
+.leaflet-popup-content{
+  font-size:10px;
+}
+
+.leaflet-popup-content-wrapper{
+  border-radius:10px;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
 
 @media(max-width:700px){
 
-  .header{
-    height:105px;
-    min-height:105px;
-    flex-wrap:wrap;
-    padding:8px;
-    gap:6px;
+  #header{
+    height:54px;
   }
 
   .brand{
-    width:100%;
-    font-size:17px;
+    font-size:13px;
   }
 
-  .search-area{
-    width:100%;
-    max-width:none;
-  }
-
-  .search-area input{
-    height:37px;
+  #searchBox{
     min-width:0;
+    width:100%;
   }
 
-  .btn{
-    height:37px;
-    padding:0 10px;
-    font-size:10px;
-  }
-
-  .scenario-panel{
-    top:115px;
-    left:7px;
-    width:190px;
-    padding:10px;
-  }
-
-  .scenario-title{font-size:13px}
-
-  .scenario-option{
-    padding:6px 3px;
-    font-size:10px;
-  }
-
-  .scenario-note{font-size:8px}
-
-  .map-info{
-    display:none;
-  }
-
-  .scenario-badge{
-    top:112px;
-    font-size:8px;
-    white-space:nowrap;
-  }
-
-  .legend{
+  .topBtn{
+    padding:0 9px;
     font-size:9px;
+  }
+
+  #simulator{
+    width:180px;
+    top:64px;
+    left:7px;
+    padding:9px;
+  }
+
+  #workflow{
+    width:170px;
+    top:64px;
+    right:7px;
     padding:8px;
   }
 
-  .legend-title{
+  .scenario{
+    font-size:7px;
+    padding:5px 3px;
+  }
+
+  .panelTitle{
+    font-size:9px;
+  }
+
+  .panelSub{
+    font-size:6px;
+  }
+
+  .warning{
+    font-size:6px;
+  }
+
+  #modeBadge{
+    top:64px;
+    font-size:6px;
+    padding:5px 7px;
+  }
+
+  #kpiBar{
+    bottom:7px;
+    gap:3px;
+    width:96%;
+    justify-content:center;
+  }
+
+  .kpi{
+    min-width:0;
+    flex:1;
+    padding:5px 3px;
+  }
+
+  .kpiValue{
     font-size:11px;
   }
+
+  .kpiLabel{
+    font-size:5px;
+  }
+
+  #locationInfo{
+    right:7px;
+    bottom:55px;
+    width:190px;
+  }
+
+  #mapTools{
+    right:7px;
+    bottom:7px;
+  }
+
+  #status{
+    left:7px;
+    bottom:7px;
+    font-size:6px;
+  }
 }
+
+.presentation #simulator,
+.presentation #workflow,
+.presentation #locationInfo,
+.presentation #status,
+.presentation #kpiBar{
+  opacity:.94;
+}
+
+.presentation #header{
+  background:#031018;
+}
+
 </style>
 </head>
 
 <body>
 
-<!-- ================= HEADER ================= -->
+<!-- =======================================================
+     HEADER
+======================================================= -->
 
-<div class="header">
+<div id="header">
 
   <div class="brand">
     URBAN SKY <span>SHIELD</span>
   </div>
 
-  <div class="search-area">
+  <input
+    id="searchBox"
+    type="text"
+    placeholder="Search Chennai, Madurai, Ooty..."
+  >
 
-    <input
-      id="searchBox"
-      type="text"
-      placeholder="Search Chennai, Madurai, Ooty..."
-    >
+  <button class="topBtn" onclick="searchPlace()">
+    SEARCH
+  </button>
 
-    <button class="btn" onclick="searchPlace()">
-      SEARCH
-    </button>
-
-    <button
-      class="btn location-btn"
-      onclick="getMyLocation()"
-    >
-      📍 LOCATION
-    </button>
-
-  </div>
+  <button class="topBtn" onclick="getLocation()">
+    📍 LOCATION
+  </button>
 
 </div>
 
-
-<!-- ================= MAP ================= -->
+<!-- =======================================================
+     MAP
+======================================================= -->
 
 <div id="map"></div>
 
+<!-- =======================================================
+     SIMULATOR
+======================================================= -->
 
-<!-- ================= SCENARIO PANEL ================= -->
+<div id="simulator" class="panel">
 
-<div class="scenario-panel">
-
-  <div class="scenario-title">
+  <div class="panelTitle">
     🌌 SKY SHIELD SIMULATOR
   </div>
 
-  <div class="scenario-sub">
+  <div class="panelSub">
     Proposed mitigation planning scenarios
   </div>
 
-  <label class="scenario-option">
+  <label class="scenario active">
     <input
       type="radio"
       name="scenario"
       value="baseline"
       checked
+      onchange="changeScenario(this.value)"
     >
-    💡 Current / Baseline
+    🔵 Current / Baseline
   </label>
 
-  <label class="scenario-option">
+  <label class="scenario">
     <input
       type="radio"
       name="scenario"
       value="shielded"
+      onchange="changeScenario(this.value)"
     >
     🛡️ Shielded Street Lighting
   </label>
 
-  <label class="scenario-option">
+  <label class="scenario">
     <input
       type="radio"
       name="scenario"
       value="dimming"
+      onchange="changeScenario(this.value)"
     >
-    🔽 Adaptive Dimming
+    🟠 Adaptive Dimming
   </label>
 
-  <label class="scenario-option">
+  <label class="scenario">
     <input
       type="radio"
       name="scenario"
       value="curfew"
+      onchange="changeScenario(this.value)"
     >
     🌙 Late-Night Lighting Control
   </label>
 
-  <label class="scenario-option">
+  <label class="scenario">
     <input
       type="radio"
       name="scenario"
       value="darksky"
+      onchange="changeScenario(this.value)"
     >
     🌌 Dark-Sky Protected Zone
   </label>
 
-  <div class="scenario-note">
+  <div class="warning">
     ⚠️ Conceptual planning visualization.
-    Visual changes do not represent measured
-    pollution-reduction percentages.
+    Visual changes do not represent measured pollution
+    reduction percentages.
   </div>
 
 </div>
 
+<!-- =======================================================
+     AI WORKFLOW
+======================================================= -->
 
-<!-- ================= SCENARIO BADGE ================= -->
+<div id="workflow" class="panel">
 
-<div class="scenario-badge">
-  MODE: <span id="scenarioName">CURRENT / BASELINE</span>
+  <div class="panelTitle">
+    🧠 AI-ASSISTED WORKFLOW
+  </div>
+
+  <div class="panelSub">
+    Spatial planning prototype
+  </div>
+
+  <div class="workflowItem">
+    <div class="workflowNum">1</div>
+    Satellite night-light proxy
+  </div>
+
+  <div class="workflowArrow">↓</div>
+
+  <div class="workflowItem">
+    <div class="workflowNum">2</div>
+    Urban & infrastructure influence
+  </div>
+
+  <div class="workflowArrow">↓</div>
+
+  <div class="workflowItem">
+    <div class="workflowNum">3</div>
+    Spatial analysis
+  </div>
+
+  <div class="workflowArrow">↓</div>
+
+  <div class="workflowItem">
+    <div class="workflowNum">4</div>
+    Risk / pressure visualization
+  </div>
+
+  <div class="workflowArrow">↓</div>
+
+  <div class="workflowItem">
+    <div class="workflowNum">5</div>
+    Mitigation planning
+  </div>
+
 </div>
 
+<!-- =======================================================
+     MODE BADGE
+======================================================= -->
 
-<!-- ================= INFO PANEL ================= -->
+<div id="modeBadge">
+  MODE: CURRENT / BASELINE
+</div>
 
-<div class="map-info">
+<!-- =======================================================
+     LOCATION ANALYSIS
+======================================================= -->
 
-  <div class="info-title">
-    🌌 URBAN SKY SHIELD
+<div id="locationInfo" class="panel">
+
+  <div class="infoTitle">
+    📍 SMART LOCATION ANALYSIS
   </div>
 
-  <div class="info-line">
-    AI-assisted spatial planning concept
+  <div class="infoRow">
+    <span>Latitude</span>
+    <span id="infoLat">—</span>
   </div>
 
-  <div class="info-line">
-    📡 Satellite night-light:
-    proxy / indicator
+  <div class="infoRow">
+    <span>Longitude</span>
+    <span id="infoLon">—</span>
   </div>
 
-  <div class="info-line">
-    📍 GPS:
-    live user location
+  <div class="infoRow">
+    <span>Nearest Zone</span>
+    <span id="infoZone">—</span>
   </div>
 
-  <div class="info-line">
-    🛰️ Map:
-    OpenStreetMap + satellite
+  <div class="infoRow">
+    <span>Pressure</span>
+    <span id="infoPressure">—</span>
+  </div>
+
+  <div class="infoRow">
+    <span>Urban Influence</span>
+    <span id="infoUrban">—</span>
+  </div>
+
+  <div class="infoRow">
+    <span>Dark-Sky Potential</span>
+    <span id="infoDark">—</span>
+  </div>
+
+  <div class="recommend" id="infoRecommendation">
+    Select a location on the map for planning guidance.
   </div>
 
 </div>
 
+<!-- =======================================================
+     KPI
+======================================================= -->
+
+<div id="kpiBar">
+
+  <div class="kpi">
+    <div class="kpiValue" id="kpiZones">0</div>
+    <div class="kpiLabel">PLANNING ZONES</div>
+  </div>
+
+  <div class="kpi">
+    <div class="kpiValue" id="kpiDark">0</div>
+    <div class="kpiLabel">DARK-SKY AREAS</div>
+  </div>
+
+  <div class="kpi">
+    <div class="kpiValue">5</div>
+    <div class="kpiLabel">SCENARIOS</div>
+  </div>
+
+  <div class="kpi">
+    <div class="kpiValue">LIVE</div>
+    <div class="kpiLabel">GPS STATUS</div>
+  </div>
+
+</div>
+
+<!-- =======================================================
+     MAP TOOLS
+======================================================= -->
+
+<div id="mapTools">
+
+  <button
+    class="toolBtn"
+    onclick="toggleFullscreen()"
+    title="Fullscreen"
+  >
+    ⛶
+  </button>
+
+  <button
+    class="toolBtn"
+    onclick="togglePresentation()"
+    title="Presentation Mode"
+  >
+    ▶
+  </button>
+
+  <button
+    class="toolBtn"
+    onclick="openMethod()"
+    title="Methodology"
+  >
+    ℹ
+  </button>
+
+</div>
+
+<!-- =======================================================
+     STATUS
+======================================================= -->
+
+<div id="status">
+  Conceptual / planning visualization
+</div>
+
+<!-- =======================================================
+     METHOD MODAL
+======================================================= -->
+
+<div id="methodModal">
+
+  <div class="modalBox">
+
+    <button class="closeBtn" onclick="closeMethod()">
+      ×
+    </button>
+
+    <div class="modalTitle">
+      URBAN SKY SHIELD — METHODOLOGY
+    </div>
+
+    <div class="modalText">
+
+      <b>Objective</b><br>
+      AI-assisted spatial planning for understanding
+      light-pollution pressure and identifying potential
+      dark-sky protection areas in Tamil Nadu.
+
+      <br><br>
+
+      <b>Conceptual Inputs</b><br>
+      • Satellite night-light proxy / indicator<br>
+      • Urban and built-up influence<br>
+      • Road / infrastructure influence<br>
+      • Population / activity indicators<br>
+      • Future field-based sky-brightness measurements
+
+      <br><br>
+
+      <b>Processing Concept</b><br>
+      Multi-source spatial indicators →
+      AI-assisted spatial analysis →
+      pollution-pressure visualization →
+      mitigation planning.
+
+      <br><br>
+
+      <b>Mitigation Scenarios</b><br>
+      Shielded street lighting, adaptive dimming,
+      late-night lighting control and dark-sky
+      protected zones can be explored as planning
+      scenarios.
+
+      <br><br>
+
+      <b>Scientific Scope</b><br>
+      The current map is a conceptual prototype.
+      Displayed zones are planning visualizations,
+      not direct ground measurements.
+
+      <br><br>
+
+      No fabricated AI accuracy, R², Bortle measurements
+      or field-validation results are represented.
+
+    </div>
+
+  </div>
+
+</div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -546,722 +894,511 @@ body{display:flex;flex-direction:column}
 ========================================================= */
 
 const map = L.map("map",{
-
-  zoomControl:false,
-
+  zoomControl:true,
   minZoom:5,
-
-  maxZoom:19
-
+  maxZoom:18
 }).setView(
-
   [11.1271,78.6569],
-
-  8
-
+  7
 );
 
 
 /* =========================================================
-   2. NORMAL MAP
+   2. BASE MAPS
 ========================================================= */
 
-const normalMap=L.tileLayer(
+const normalMap =
+  L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+      maxZoom:19,
+      attribution:
+      "&copy; OpenStreetMap contributors"
+    }
+  );
 
-  "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-
-  {
-
-    maxZoom:19,
-
-    attribution:
-    '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
-
-  }
-
-);
+const satellite =
+  L.tileLayer(
+    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    {
+      maxZoom:19,
+      attribution:
+      "Tiles &copy; Esri"
+    }
+  );
 
 normalMap.addTo(map);
 
 
 /* =========================================================
-   3. SATELLITE
+   3. POLLUTION DATA
 ========================================================= */
 
-const satelliteMap=L.tileLayer(
-
-  "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+const pollutionData = [
 
   {
+    name:"Chennai",
+    lat:13.0827,
+    lon:80.2707,
+    level:"Very High",
+    color:"#ef4444",
+    radius:65000
+  },
 
-    maxZoom:19,
+  {
+    name:"Vellore",
+    lat:12.9165,
+    lon:79.1325,
+    level:"Very High",
+    color:"#ef4444",
+    radius:30000
+  },
 
-    attribution:"Tiles &copy; Esri"
+  {
+    name:"Coimbatore",
+    lat:11.0168,
+    lon:76.9558,
+    level:"Very High",
+    color:"#ef4444",
+    radius:42000
+  },
 
+  {
+    name:"Madurai",
+    lat:9.9252,
+    lon:78.1198,
+    level:"Very High",
+    color:"#ef4444",
+    radius:42000
+  },
+
+  {
+    name:"Tiruchirappalli",
+    lat:10.7905,
+    lon:78.7047,
+    level:"High",
+    color:"#f97316",
+    radius:35000
+  },
+
+  {
+    name:"Salem",
+    lat:11.6643,
+    lon:78.1460,
+    level:"High",
+    color:"#f97316",
+    radius:35000
+  },
+
+  {
+    name:"Kumbakonam",
+    lat:10.9601,
+    lon:79.3845,
+    level:"High",
+    color:"#f97316",
+    radius:26000
+  },
+
+  {
+    name:"Thanjavur",
+    lat:10.7870,
+    lon:79.1378,
+    level:"High",
+    color:"#f97316",
+    radius:28000
+  },
+
+  {
+    name:"Tirunelveli",
+    lat:8.7139,
+    lon:77.7567,
+    level:"High",
+    color:"#f97316",
+    radius:30000
+  },
+
+  {
+    name:"Tiruppur",
+    lat:11.1085,
+    lon:77.3411,
+    level:"High",
+    color:"#f97316",
+    radius:30000
+  },
+
+  {
+    name:"Erode",
+    lat:11.3410,
+    lon:77.7172,
+    level:"Moderate",
+    color:"#f59e0b",
+    radius:28000
+  },
+
+  {
+    name:"Namakkal",
+    lat:11.2194,
+    lon:78.1677,
+    level:"Moderate",
+    color:"#f59e0b",
+    radius:23000
+  },
+
+  {
+    name:"Dindigul",
+    lat:10.3673,
+    lon:77.9803,
+    level:"Moderate",
+    color:"#f59e0b",
+    radius:25000
+  },
+
+  {
+    name:"Karur",
+    lat:10.9601,
+    lon:78.0766,
+    level:"Moderate",
+    color:"#f59e0b",
+    radius:23000
+  },
+
+  {
+    name:"Thoothukudi",
+    lat:8.7642,
+    lon:78.1348,
+    level:"Moderate",
+    color:"#f59e0b",
+    radius:26000
+  },
+
+  {
+    name:"Ramanathapuram",
+    lat:9.3639,
+    lon:78.8395,
+    level:"Moderate",
+    color:"#f59e0b",
+    radius:22000
+  },
+
+  {
+    name:"Sivaganga",
+    lat:9.8433,
+    lon:78.4809,
+    level:"Moderate",
+    color:"#f59e0b",
+    radius:22000
+  },
+
+  {
+    name:"Kanchipuram",
+    lat:12.8342,
+    lon:79.7036,
+    level:"Moderate",
+    color:"#f59e0b",
+    radius:23000
+  },
+
+  {
+    name:"Ooty",
+    lat:11.4064,
+    lon:76.6932,
+    level:"Low",
+    color:"#22c55e",
+    radius:26000
+  },
+
+  {
+    name:"Tiruvannamalai",
+    lat:12.2253,
+    lon:79.0747,
+    level:"Low",
+    color:"#22c55e",
+    radius:22000
+  },
+
+  {
+    name:"Kanyakumari Interior",
+    lat:8.3000,
+    lon:77.3500,
+    level:"Low",
+    color:"#22c55e",
+    radius:22000
+  },
+
+  {
+    name:"Nilgiri Interior",
+    lat:11.45,
+    lon:76.60,
+    level:"Very Low / Dark-sky",
+    color:"#0284c7",
+    radius:32000
   }
-
-);
-
-
-/* =========================================================
-   4. POLLUTION DATA
-========================================================= */
-
-const pollutionData=[
-
-  [13.0827,80.2707,30000,"#ff3030","Chennai Metropolitan Region","Very High"],
-
-  [11.0168,76.9558,22000,"#ff3030","Coimbatore","Very High"],
-
-  [9.9252,78.1198,20000,"#ff3030","Madurai","Very High"],
-
-  [12.9165,79.1325,18000,"#ff3030","Vellore","Very High"],
-
-  [10.7905,78.7047,18000,"#ff922b","Tiruchirappalli","High"],
-
-  [11.6643,78.1460,18000,"#ff922b","Salem","High"],
-
-  [10.7867,79.1378,15000,"#ff922b","Thanjavur","High"],
-
-  [8.7139,77.7567,15000,"#ff922b","Tirunelveli","High"],
-
-  [11.1085,77.3411,15000,"#ff922b","Tiruppur","High"],
-
-  [11.3410,77.7172,16000,"#ffd43b","Erode","Moderate"],
-
-  [10.9601,78.0766,14000,"#ffd43b","Karur","Moderate"],
-
-  [10.3624,77.9695,14000,"#ffd43b","Dindigul","Moderate"],
-
-  [9.2881,79.3129,15000,"#ffd43b","Ramanathapuram","Moderate"],
-
-  [8.7642,78.1348,15000,"#ffd43b","Thoothukudi","Moderate"],
-
-  [11.4102,76.6950,26000,"#74c947","Nilgiris / Ooty","Low"],
-
-  [12.2253,79.0747,17000,"#74c947","Tiruvannamalai","Low"],
-
-  [8.0883,77.5385,18000,"#74c947","Kanyakumari Interior","Low"],
-
-  [11.45,76.40,35000,"#087f5b","Nilgiri Interior","Very Low / Dark-sky potential"],
-
-  [10.00,78.00,30000,"#087f5b","Southern Interior","Very Low / Dark-sky potential"],
-
-  [10.75,79.35,30000,"#087f5b","Delta Rural Region","Very Low / Dark-sky potential"]
 
 ];
 
 
 /* =========================================================
-   5. POLLUTION LAYER
+   4. POLLUTION LAYER
 ========================================================= */
 
-const pollutionLayer=L.layerGroup().addTo(map);
+let pollutionLayer =
+  L.layerGroup().addTo(map);
 
-
-/*
-   Creates multiple transparent rings.
-
-   This gives the visual impression of:
-   HIGHER intensity near urban cores
-   +
-   GRADUAL FALL-OFF toward surrounding areas.
-*/
-
-function drawPollution(data,opacityFactor=1){
-
-  pollutionLayer.clearLayers();
-
-  data.forEach(item=>{
-
-    const lat=item[0];
-    const lon=item[1];
-    const radius=item[2];
-    const color=item[3];
-    const place=item[4];
-    const level=item[5];
-
-
-    /* OUTER DIFFUSE GLOW */
-
-    L.circle([lat,lon],{
-
-      radius:radius,
-
-      stroke:false,
-
-      fillColor:color,
-
-      fillOpacity:.055*opacityFactor
-
-    }).addTo(pollutionLayer);
-
-
-    /* SECONDARY GLOW */
-
-    L.circle([lat,lon],{
-
-      radius:radius*.70,
-
-      stroke:false,
-
-      fillColor:color,
-
-      fillOpacity:.075*opacityFactor
-
-    }).addTo(pollutionLayer);
-
-
-    /* INNER ZONE */
-
-    L.circle([lat,lon],{
-
-      radius:radius*.42,
-
-      stroke:false,
-
-      fillColor:color,
-
-      fillOpacity:.105*opacityFactor
-
-    }).addTo(pollutionLayer);
-
-
-    /* URBAN CORE */
-
-    L.circle([lat,lon],{
-
-      radius:radius*.18,
-
-      color:color,
-
-      weight:1,
-
-      opacity:.55*opacityFactor,
-
-      fillColor:color,
-
-      fillOpacity:.17*opacityFactor
-
-    }).addTo(pollutionLayer);
-
-
-    /* CITY CORE MARKER */
-
-    const marker=L.circleMarker(
-
-      [lat,lon],
-
-      {
-
-        radius:4,
-
-        color:"#ffffff",
-
-        weight:1,
-
-        fillColor:color,
-
-        fillOpacity:1
-
-      }
-
-    );
-
-
-    marker.bindPopup(`
-
-      <div style="font-family:Arial">
-
-        <div style="
-          font-size:16px;
-          font-weight:900;
-          margin-bottom:7px;
-        ">
-
-          💡 ${place}
-
-        </div>
-
-        <b>Conceptual Lighting Pressure:</b>
-        ${level}
-
-        <br><br>
-
-        <b>Planning Interpretation:</b>
-
-        <br>
-
-        ${
-          level.includes("Very Low") ||
-          level.includes("Low")
-          ?
-          "Potential lower-light / dark-sky planning area."
-          :
-          "Area where artificial-light management may be considered."
-        }
-
-        <br><br>
-
-        <small style="color:#555">
-
-          Conceptual planning visualization.
-          Not a ground-measured Bortle value.
-
-        </small>
-
-      </div>
-
-    `);
-
-
-    pollutionLayer.addLayer(marker);
-
-  });
-
-}
-
-
-drawPollution(pollutionData,1);
+let pollutionObjects=[];
 
 
 /* =========================================================
-   6. DARK SKY LAYER
+   5. CREATE SOFT GRADIENT ZONES
 ========================================================= */
 
-const darkSkyLayer=L.layerGroup();
+function createPollutionZone(item){
 
+  const group = L.layerGroup();
 
-function addDarkSky(lat,lon,name,description){
+  const factors = [
+    1,
+    .78,
+    .57,
+    .36,
+    .18
+  ];
 
-  const icon=L.divIcon({
+  factors.forEach(
+    function(factor,index){
 
-    className:"",
+      const circle =
+        L.circle(
+          [item.lat,item.lon],
+          {
+            radius:item.radius * (1 + index*.42),
+            stroke:false,
+            fillColor:item.color,
+            fillOpacity:.055 * (6-index),
+            className:"pollutionGlow"
+          }
+        );
 
-    html:
-    '<div class="darksky-marker">★</div>',
+      circle.addTo(group);
 
-    iconSize:[28,28],
-
-    iconAnchor:[14,14]
-
-  });
-
-
-  const marker=L.marker(
-
-    [lat,lon],
-
-    {icon:icon}
-
+    }
   );
 
 
-  marker.bindPopup(`
+  const core =
+    L.circleMarker(
+      [item.lat,item.lon],
+      {
+        radius:4,
+        color:item.color,
+        fillColor:item.color,
+        fillOpacity:.9,
+        weight:1
+      }
+    );
 
-    <div style="font-family:Arial">
-
-      <b style="
-        font-size:16px;
-        color:#1683ff;
-      ">
-
-        🌌 ${name}
-
-      </b>
-
-      <br><br>
-
-      ${description}
-
-      <br><br>
-
-      <small>
-
-        Dark-sky potential marker.
-        Actual suitability requires
-        field-based night-sky validation.
-
-      </small>
-
-    </div>
-
-  `);
+  core.addTo(group);
 
 
-  darkSkyLayer.addLayer(marker);
+  core.bindPopup(
+    "<b>"+item.name+"</b><br>"+
+    "Conceptual pressure: <b>"+item.level+
+    "</b><br><small>Planning visualization only.</small>"
+  );
+
+  group.addTo(pollutionLayer);
+
+  pollutionObjects.push({
+    data:item,
+    group:group
+  });
 
 }
 
 
-addDarkSky(
-  11.4102,
-  76.6950,
-  "Nilgiris / Ooty",
-  "Potential lower-light region."
-);
-
-addDarkSky(
-  12.2253,
-  79.0747,
-  "Tiruvannamalai",
-  "Potential lower-light region."
-);
-
-addDarkSky(
-  8.0883,
-  77.5385,
-  "Kanyakumari Interior",
-  "Potential lower-light region."
-);
-
-addDarkSky(
-  11.45,
-  76.40,
-  "Nilgiri Interior",
-  "Candidate area for future dark-sky assessment."
-);
-
-
-darkSkyLayer.addTo(map);
+pollutionData.forEach(createPollutionZone);
 
 
 /* =========================================================
-   7. ZOOM CONTROL
+   6. DARK SKY LOCATIONS
 ========================================================= */
 
-L.control.zoom({
+const darkSkyData = [
 
-  position:"topright"
+  {
+    name:"Nilgiri Interior",
+    lat:11.45,
+    lon:76.60
+  },
 
-}).addTo(map);
+  {
+    name:"Western Hill Region",
+    lat:10.85,
+    lon:77.00
+  },
+
+  {
+    name:"Sivaganga Rural",
+    lat:9.75,
+    lon:78.60
+  },
+
+  {
+    name:"Kanyakumari Interior",
+    lat:8.30,
+    lon:77.35
+  }
+
+];
+
+
+const darkSkyLayer =
+  L.layerGroup().addTo(map);
+
+
+darkSkyData.forEach(
+  function(item){
+
+    const marker =
+      L.circleMarker(
+        [item.lat,item.lon],
+        {
+          radius:6,
+          color:"#38bdf8",
+          fillColor:"#38bdf8",
+          fillOpacity:.85,
+          weight:1
+        }
+      );
+
+    marker.bindPopup(
+      "<b>🌌 "+item.name+
+      "</b><br>Dark-sky potential candidate"+
+      "<br><small>Future field validation recommended.</small>"
+    );
+
+    marker.addTo(darkSkyLayer);
+
+  }
+);
 
 
 /* =========================================================
-   8. LAYER CONTROL
+   7. LAYERS
 ========================================================= */
 
 L.control.layers(
-
   {
-
-    "🗺️ Normal Map":normalMap,
-
-    "🛰️ Satellite":satelliteMap
-
+    "Normal Map":normalMap,
+    "Satellite":satellite
   },
-
   {
-
     "💡 Light Pollution":pollutionLayer,
-
     "🌌 Dark-sky Potential":darkSkyLayer
-
   },
-
   {
-
-    collapsed:false,
-
-    position:"topright"
-
+    collapsed:false
   }
-
 ).addTo(map);
 
 
 /* =========================================================
-   9. PREMIUM LEGEND
+   8. LEGEND
 ========================================================= */
 
-const legend=L.control({
-
-  position:"bottomright"
-
-});
-
-
-legend.onAdd=function(){
-
-  const div=L.DomUtil.create(
-
-    "div",
-
-    "legend"
-
-  );
+const legend =
+  L.control({
+    position:"bottomright"
+  });
 
 
-  div.innerHTML=`
+legend.onAdd =
+  function(){
 
-    <div class="legend-title">
-      💡 LIGHT-POLLUTION PRESSURE
-    </div>
+    const div =
+      L.DomUtil.create(
+        "div",
+        "panel"
+      );
 
-    <div class="gradient-bar"></div>
+    div.style.padding="9px";
+    div.style.width="165px";
+    div.style.fontSize="8px";
 
-    <div style="
-      display:flex;
-      justify-content:space-between;
-      font-size:9px;
-    ">
+    div.innerHTML =
 
-      <span>LOW</span>
+      "<b>💡 LIGHT-POLLUTION PRESSURE</b>"+
+      "<div style='height:8px;margin:7px 0;border-radius:8px;background:linear-gradient(90deg,#0284c7,#22c55e,#f59e0b,#f97316,#ef4444)'></div>"+
+      "<div style='display:flex;justify-content:space-between;font-size:7px'>"+
+      "<span>LOW</span><span>HIGH</span>"+
+      "</div>"+
+      "<br>"+
+      "<span style='color:#ef4444'>●</span> Very High<br>"+
+      "<span style='color:#f97316'>●</span> High<br>"+
+      "<span style='color:#f59e0b'>●</span> Moderate<br>"+
+      "<span style='color:#22c55e'>●</span> Low<br>"+
+      "<span style='color:#0284c7'>●</span> Very Low / Dark-sky"+
+      "<br><br>"+
+      "<small>Conceptual / planning visualization</small>";
 
-      <span>HIGH</span>
+    return div;
 
-    </div>
+  };
 
-    <div class="legend-row">
-      <span
-        class="legend-dot"
-        style="background:#ff3030">
-      </span>
-      Very High
-    </div>
-
-    <div class="legend-row">
-      <span
-        class="legend-dot"
-        style="background:#ff922b">
-      </span>
-      High
-    </div>
-
-    <div class="legend-row">
-      <span
-        class="legend-dot"
-        style="background:#ffd43b">
-      </span>
-      Moderate
-    </div>
-
-    <div class="legend-row">
-      <span
-        class="legend-dot"
-        style="background:#74c947">
-      </span>
-      Low
-    </div>
-
-    <div class="legend-row">
-      <span
-        class="legend-dot"
-        style="background:#087f5b">
-      </span>
-      Very Low / Dark-sky
-    </div>
-
-    <div class="legend-note">
-      Conceptual / planning visualization
-    </div>
-
-  `;
-
-  return div;
-
-};
 
 legend.addTo(map);
 
 
 /* =========================================================
-   10. SCALE
+   9. SCALE
 ========================================================= */
 
 L.control.scale({
-
-  position:"bottomleft",
-
   imperial:false
-
 }).addTo(map);
 
 
 /* =========================================================
-   11. LOCATION CONTROL
+   10. GPS
 ========================================================= */
 
-const LocationControl=L.Control.extend({
-
-  options:{
-    position:"topright"
-  },
-
-  onAdd:function(){
-
-    const container=L.DomUtil.create(
-
-      "div",
-
-      "location-control"
-
-    );
-
-    container.innerHTML="📍";
-
-    container.title="Find my current location";
-
-    container.onclick=function(){
-
-      getMyLocation();
-
-    };
-
-    L.DomEvent.disableClickPropagation(container);
-
-    return container;
-
-  }
-
-});
-
-map.addControl(
-  new LocationControl()
-);
-
-
-/* =========================================================
-   12. STATUS
-========================================================= */
-
-const statusControl=L.control({
-
-  position:"topleft"
-
-});
-
-
-statusControl.onAdd=function(){
-
-  const div=L.DomUtil.create(
-
-    "div",
-
-    "status-control"
-
-  );
-
-  div.id="mapStatus";
-
-  div.innerHTML=`
-
-    <div class="status-title">
-      URBAN SKY SHIELD
-    </div>
-
-    Tamil Nadu
-
-  `;
-
-  return div;
-
-};
-
-
-statusControl.addTo(map);
-
-
-/* =========================================================
-   13. MAP STATUS
-========================================================= */
-
-function updateStatus(){
-
-  const center=map.getCenter();
-
-  const zoom=map.getZoom();
-
-  const status=document.getElementById(
-    "mapStatus"
-  );
-
-  if(status){
-
-    status.innerHTML=`
-
-      <div class="status-title">
-        URBAN SKY SHIELD
-      </div>
-
-      Lat: ${center.lat.toFixed(4)}
-
-      <br>
-
-      Lon: ${center.lng.toFixed(4)}
-
-      <br>
-
-      Zoom: ${zoom}
-
-    `;
-
-  }
-
-}
-
-
-map.on(
-  "moveend",
-  updateStatus
-);
-
-updateStatus();
-
-
-/* =========================================================
-   14. CURRENT LOCATION
-========================================================= */
-
-let currentMarker=null;
-
+let userMarker=null;
 let accuracyCircle=null;
 
 
-function getMyLocation(){
+function getLocation(){
 
   if(!navigator.geolocation){
 
-    alert(
-      "Location is not supported by this browser."
+    updateStatus(
+      "GPS is not supported by this browser."
     );
 
     return;
-
   }
 
+  updateStatus(
+    "Requesting high-accuracy GPS..."
+  );
 
   navigator.geolocation.getCurrentPosition(
 
     function(position){
 
-      const lat=
+      const lat =
         position.coords.latitude;
 
-      const lon=
+      const lon =
         position.coords.longitude;
 
-      const accuracy=
+      const accuracy =
         position.coords.accuracy;
 
 
-      map.setView(
+      if(userMarker){
 
-        [lat,lon],
-
-        17,
-
-        {animate:true}
-
-      );
-
-
-      if(currentMarker){
-
-        map.removeLayer(currentMarker);
+        map.removeLayer(userMarker);
 
       }
-
 
       if(accuracyCircle){
 
@@ -1270,107 +1407,69 @@ function getMyLocation(){
       }
 
 
-      const icon=L.divIcon({
+      accuracyCircle =
+        L.circle(
+          [lat,lon],
+          {
+            radius:accuracy,
+            color:"#16a3ff",
+            fillColor:"#16a3ff",
+            fillOpacity:.08,
+            weight:1
+          }
+        ).addTo(map);
 
-        className:"",
 
-        html:
-        '<div class="location-dot"></div>',
+      userMarker =
+        L.circleMarker(
+          [lat,lon],
+          {
+            radius:8,
+            color:"#fff",
+            weight:3,
+            fillColor:"#168cff",
+            fillOpacity:1
+          }
+        ).addTo(map);
 
-        iconSize:[18,18],
 
-        iconAnchor:[9,9]
+      userMarker.bindPopup(
+        "<b>📍 Current Location</b><br>"+
+        "Accuracy: "+
+        Math.round(accuracy)+" m"
+      );
 
-      });
 
-
-      currentMarker=L.marker(
-
+      map.setView(
         [lat,lon],
-
-        {icon:icon}
-
-      ).addTo(map);
+        Math.max(map.getZoom(),9)
+      );
 
 
-      accuracyCircle=L.circle(
-
-        [lat,lon],
-
-        {
-
-          radius:accuracy,
-
-          color:"#1683ff",
-
-          fillColor:"#1683ff",
-
-          fillOpacity:.12,
-
-          weight:1
-
-        }
-
-      ).addTo(map);
+      updateStatus(
+        "GPS active • Accuracy "+
+        Math.round(accuracy)+" m"
+      );
 
 
-      currentMarker.bindPopup(`
+      analyzeLocation(lat,lon);
 
-        <b>📍 Your Current Location</b>
-
-        <br><br>
-
-        GPS accuracy:
-        approximately
-        ${Math.round(accuracy)}
-        metres
-
-      `).openPopup();
-
-
-      reverseLocation(lat,lon);
+      reverseGeocode(lat,lon);
 
     },
 
-
     function(error){
 
-      if(error.code===1){
-
-        alert(
-          "Location permission denied.\n\n" +
-          "Please allow Location permission " +
-          "for Chrome and try again."
-        );
-
-      }
-
-      else if(error.code===2){
-
-        alert(
-          "Location could not be determined."
-        );
-
-      }
-
-      else if(error.code===3){
-
-        alert(
-          "Location request timed out. Try again."
-        );
-
-      }
+      updateStatus(
+        "Unable to access GPS. Check location permission."
+      );
 
     },
 
     {
-
       enableHighAccuracy:true,
-
       timeout:15000,
-
       maximumAge:0
-
     }
 
   );
@@ -1379,78 +1478,38 @@ function getMyLocation(){
 
 
 /* =========================================================
-   15. REVERSE GEOCODING
+   11. REVERSE GEOCODING
 ========================================================= */
 
-async function reverseLocation(lat,lon){
+async function reverseGeocode(lat,lon){
 
   try{
 
-    const response=await fetch(
+    const response =
+      await fetch(
+        "https://nominatim.openstreetmap.org/reverse?format=json&lat="+
+        lat+
+        "&lon="+
+        lon+
+        "&zoom=12"
+      );
 
-      "https://nominatim.openstreetmap.org/reverse"+
-      "?format=json"+
-      "&lat="+encodeURIComponent(lat)+
-      "&lon="+encodeURIComponent(lon)+
-      "&zoom=18"+
-      "&addressdetails=1"
+    const data =
+      await response.json();
 
-    );
+    if(data && data.display_name){
 
-
-    const data=await response.json();
-
-
-    if(
-
-      currentMarker &&
-      data &&
-      data.address
-
-    ){
-
-      const address=data.address;
-
-      const road=
-        address.road ||
-        address.pedestrian ||
-        address.neighbourhood ||
-        "Location";
-
-      const city=
-        address.city ||
-        address.town ||
-        address.village ||
-        address.suburb ||
-        "";
-
-
-      currentMarker.bindPopup(`
-
-        <b>📍 Current Location</b>
-
-        <br><br>
-
-        <b>${road}</b>
-
-        <br>
-
-        ${city}
-
-        <br>
-
-        ${address.state || "Tamil Nadu"}
-
-      `);
+      userMarker.bindPopup(
+        "<b>📍 Your Location</b><br>"+
+        data.display_name
+      );
 
     }
 
-  }
-
-  catch(error){
+  }catch(error){
 
     console.log(
-      "Reverse geocoding unavailable"
+      "Reverse geocoding failed."
     );
 
   }
@@ -1459,53 +1518,44 @@ async function reverseLocation(lat,lon){
 
 
 /* =========================================================
-   16. SEARCH
+   12. SEARCH
 ========================================================= */
-
-let searchMarker=null;
-
 
 async function searchPlace(){
 
-  const query=document
-
-    .getElementById("searchBox")
-
-    .value
-
-    .trim();
-
+  const query =
+    document
+      .getElementById("searchBox")
+      .value
+      .trim();
 
   if(!query){
-
-    alert(
-      "Type a place name first."
-    );
 
     return;
 
   }
 
 
+  updateStatus(
+    "Searching for "+query+"..."
+  );
+
+
   try{
 
-    const response=await fetch(
+    const response =
+      await fetch(
+        "https://nominatim.openstreetmap.org/search?format=json&limit=1&q="+
+        encodeURIComponent(query+", Tamil Nadu")
+      );
 
-      "https://nominatim.openstreetmap.org/search"+
-      "?format=json"+
-      "&q="+encodeURIComponent(query)+
-      "&limit=1"+
-      "&countrycodes=in"
-
-    );
-
-
-    const results=await response.json();
+    const data =
+      await response.json();
 
 
-    if(!results.length){
+    if(!data.length){
 
-      alert(
+      updateStatus(
         "Location not found."
       );
 
@@ -1514,57 +1564,41 @@ async function searchPlace(){
     }
 
 
-    const place=results[0];
+    const lat =
+      parseFloat(data[0].lat);
 
-    const lat=parseFloat(place.lat);
-
-    const lon=parseFloat(place.lon);
+    const lon =
+      parseFloat(data[0].lon);
 
 
     map.setView(
-
       [lat,lon],
-
-      15,
-
-      {animate:true}
-
+      11
     );
 
 
-    if(searchMarker){
-
-      map.removeLayer(searchMarker);
-
-    }
-
-
-    searchMarker=L.marker(
-
-      [lat,lon]
-
-    ).addTo(map);
+    L.popup()
+      .setLatLng([lat,lon])
+      .setContent(
+        "<b>📍 "+query+
+        "</b><br>Click the map for spatial analysis."
+      )
+      .openOn(map);
 
 
-    searchMarker.bindPopup(`
+    analyzeLocation(lat,lon);
 
-      <b>🔎 Search Result</b>
 
-      <br><br>
+    updateStatus(
+      "Location found."
+    );
 
-      ${place.display_name}
 
-    `).openPopup();
+  }catch(error){
 
-  }
-
-  catch(error){
-
-    alert(
+    updateStatus(
       "Search service unavailable."
     );
-
-    console.log(error);
 
   }
 
@@ -1572,50 +1606,268 @@ async function searchPlace(){
 
 
 /* =========================================================
-   17. ENTER SEARCH
+   13. CLICK ANYWHERE ANALYSIS
 ========================================================= */
 
-document
-
-.getElementById("searchBox")
-
-.addEventListener(
-
-  "keydown",
-
+map.on(
+  "click",
   function(event){
 
-    if(event.key==="Enter"){
+    const lat =
+      event.latlng.lat;
 
-      searchPlace();
+    const lon =
+      event.latlng.lng;
 
-    }
+    analyzeLocation(
+      lat,
+      lon
+    );
 
   }
-
 );
 
 
 /* =========================================================
-   18. MITIGATION SCENARIO ENGINE
+   14. DISTANCE
 ========================================================= */
 
-const scenarioNames={
+function distanceKm(
+  lat1,
+  lon1,
+  lat2,
+  lon2
+){
 
-  baseline:"CURRENT / BASELINE",
+  const R=6371;
 
-  shielded:"SHIELDED STREET LIGHTING",
+  const dLat =
+    (lat2-lat1) *
+    Math.PI/180;
 
-  dimming:"ADAPTIVE DIMMING",
+  const dLon =
+    (lon2-lon1) *
+    Math.PI/180;
 
-  curfew:"LATE-NIGHT LIGHTING CONTROL",
+  const a =
+    Math.sin(dLat/2) *
+    Math.sin(dLat/2) +
 
-  darksky:"DARK-SKY PROTECTED ZONE"
+    Math.cos(lat1*Math.PI/180) *
+    Math.cos(lat2*Math.PI/180) *
+    Math.sin(dLon/2) *
+    Math.sin(dLon/2);
+
+  const c =
+    2*Math.atan2(
+      Math.sqrt(a),
+      Math.sqrt(1-a)
+    );
+
+  return R*c;
+
+}
+
+
+/* =========================================================
+   15. LOCATION ANALYSIS ENGINE
+========================================================= */
+
+function analyzeLocation(
+  lat,
+  lon
+){
+
+  let nearest=null;
+  let nearestDistance=Infinity;
+
+
+  pollutionData.forEach(
+    function(item){
+
+      const d =
+        distanceKm(
+          lat,
+          lon,
+          item.lat,
+          item.lon
+        );
+
+      if(d < nearestDistance){
+
+        nearestDistance=d;
+        nearest=item;
+
+      }
+
+    }
+  );
+
+
+  let pressure =
+    nearest ?
+    nearest.level :
+    "Unknown";
+
+
+  let urbanInfluence =
+    "Low";
+
+
+  if(nearestDistance < 15){
+
+    urbanInfluence="Very High";
+
+  }else if(nearestDistance < 35){
+
+    urbanInfluence="High";
+
+  }else if(nearestDistance < 70){
+
+    urbanInfluence="Moderate";
+
+  }
+
+
+  let darkPotential =
+    "Requires assessment";
+
+
+  if(
+    pressure==="Low" ||
+    pressure==="Very Low / Dark-sky"
+  ){
+
+    darkPotential =
+      "Potential candidate";
+
+  }else if(
+    pressure==="Moderate"
+  ){
+
+    darkPotential =
+      "Possible candidate";
+
+  }else{
+
+    darkPotential =
+      "Low potential";
+
+  }
+
+
+  let recommendation;
+
+
+  if(
+    pressure==="Very High" ||
+    pressure==="High"
+  ){
+
+    recommendation =
+      "Prioritize upward-light shielding, adaptive dimming and late-night lighting controls.";
+
+  }else if(
+    pressure==="Moderate"
+  ){
+
+    recommendation =
+      "Consider efficient lighting, shielding and targeted nighttime controls.";
+
+  }else{
+
+    recommendation =
+      "Potential area for future field-based dark-sky assessment and protection planning.";
+
+  }
+
+
+  document
+    .getElementById("infoLat")
+    .textContent =
+    lat.toFixed(5);
+
+  document
+    .getElementById("infoLon")
+    .textContent =
+    lon.toFixed(5);
+
+  document
+    .getElementById("infoZone")
+    .textContent =
+    nearest ?
+    nearest.name+" ("+
+    nearestDistance.toFixed(1)+
+    " km)" :
+    "—";
+
+  document
+    .getElementById("infoPressure")
+    .textContent =
+    pressure;
+
+  document
+    .getElementById("infoUrban")
+    .textContent =
+    urbanInfluence;
+
+  document
+    .getElementById("infoDark")
+    .textContent =
+    darkPotential;
+
+  document
+    .getElementById("infoRecommendation")
+    .textContent =
+    "💡 "+recommendation;
+
+
+  document
+    .getElementById("locationInfo")
+    .style.display =
+    "block";
+
+
+  L.popup()
+    .setLatLng([lat,lon])
+    .setContent(
+      "<b>🧠 Spatial Analysis</b><br>"+
+      "Pressure: "+pressure+
+      "<br>Urban influence: "+
+      urbanInfluence+
+      "<br>Dark-sky: "+
+      darkPotential
+    )
+    .openOn(map);
+
+}
+
+
+/* =========================================================
+   16. SCENARIO ENGINE
+========================================================= */
+
+const scenarioNames = {
+
+  baseline:
+    "CURRENT / BASELINE",
+
+  shielded:
+    "SHIELDED STREET LIGHTING",
+
+  dimming:
+    "ADAPTIVE DIMMING",
+
+  curfew:
+    "LATE-NIGHT LIGHTING CONTROL",
+
+  darksky:
+    "DARK-SKY PROTECTED ZONE"
 
 };
 
 
-const scenarioOpacity={
+const scenarioOpacity = {
 
   baseline:1,
 
@@ -1630,84 +1882,265 @@ const scenarioOpacity={
 };
 
 
-document
+function changeScenario(
+  scenario
+){
 
-.querySelectorAll(
-  'input[name="scenario"]'
-)
-
-.forEach(
-
-  function(option){
-
-    option.addEventListener(
-
-      "change",
-
-      function(){
-
-        const mode=this.value;
-
-        const opacity=
-          scenarioOpacity[mode];
+  const opacity =
+    scenarioOpacity[scenario];
 
 
-        drawPollution(
-          pollutionData,
-          opacity
+  pollutionObjects.forEach(
+    function(object){
+
+      const circles =
+        object.group
+          .getLayers();
+
+      circles.forEach(
+        function(layer){
+
+          if(
+            layer.setStyle &&
+            layer.options.fillColor
+          ){
+
+            layer.setStyle({
+              fillOpacity:
+              .055 *
+              (scenario==="baseline"
+                ? 1
+                : opacity)
+            });
+
+          }
+
+        }
+      );
+
+    }
+  );
+
+
+  document
+    .getElementById("modeBadge")
+    .textContent =
+    "MODE: "+
+    scenarioNames[scenario];
+
+
+  document
+    .querySelectorAll(".scenario")
+    .forEach(
+      function(item){
+
+        item.classList.remove(
+          "active"
         );
 
-
-        document
-
-        .getElementById(
-          "scenarioName"
-        )
-
-        .textContent=
-          scenarioNames[mode];
-
       }
-
     );
+
+
+  const checked =
+    document.querySelector(
+      'input[value="'+scenario+'"]'
+    );
+
+
+  if(checked){
+
+    checked
+      .parentElement
+      .classList.add("active");
 
   }
 
-);
+
+  updateStatus(
+    scenarioNames[scenario]+
+    " • conceptual planning scenario"
+  );
+
+}
 
 
 /* =========================================================
-   19. MAP RESIZE
+   17. KPI
+========================================================= */
+
+document
+  .getElementById("kpiZones")
+  .textContent =
+  pollutionData.length;
+
+
+document
+  .getElementById("kpiDark")
+  .textContent =
+  darkSkyData.length;
+
+
+/* =========================================================
+   18. STATUS
+========================================================= */
+
+function updateStatus(
+  message
+){
+
+  document
+    .getElementById("status")
+    .textContent =
+    message;
+
+}
+
+
+/* =========================================================
+   19. FULLSCREEN
+========================================================= */
+
+function toggleFullscreen(){
+
+  if(!document.fullscreenElement){
+
+    document
+      .documentElement
+      .requestFullscreen()
+      .catch(
+        function(){}
+      );
+
+  }else{
+
+    document.exitFullscreen();
+
+  }
+
+}
+
+
+/* =========================================================
+   20. PRESENTATION MODE
+========================================================= */
+
+function togglePresentation(){
+
+  document
+    .body
+    .classList
+    .toggle("presentation");
+
+
+  updateStatus(
+    document.body.classList.contains(
+      "presentation"
+    )
+    ?
+    "Presentation mode enabled."
+    :
+    "Presentation mode disabled."
+  );
+
+}
+
+
+/* =========================================================
+   21. METHODOLOGY
+========================================================= */
+
+function openMethod(){
+
+  document
+    .getElementById("methodModal")
+    .style.display =
+    "flex";
+
+}
+
+
+function closeMethod(){
+
+  document
+    .getElementById("methodModal")
+    .style.display =
+    "none";
+
+}
+
+
+document
+  .getElementById("methodModal")
+  .addEventListener(
+    "click",
+    function(event){
+
+      if(
+        event.target ===
+        this
+      ){
+
+        closeMethod();
+
+      }
+
+    }
+  );
+
+
+/* =========================================================
+   22. SEARCH ENTER
+========================================================= */
+
+document
+  .getElementById("searchBox")
+  .addEventListener(
+    "keydown",
+    function(event){
+
+      if(
+        event.key === "Enter"
+      ){
+
+        searchPlace();
+
+      }
+
+    }
+  );
+
+
+/* =========================================================
+   23. INITIAL MAP RESIZE
 ========================================================= */
 
 setTimeout(
-
   function(){
 
     map.invalidateSize();
 
   },
-
   500
-
 );
 
 
 window.addEventListener(
-
   "resize",
-
   function(){
 
     map.invalidateSize();
 
   }
-
 );
 
 
+/* =========================================================
+   24. CONSOLE
+========================================================= */
+
 console.log(
-  "URBAN SKY SHIELD — Premium Conceptual Prototype loaded."
+  "URBAN SKY SHIELD — Professional GIS prototype loaded."
 );
 
 </script>
