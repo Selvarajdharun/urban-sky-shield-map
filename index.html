@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
@@ -10,11 +11,15 @@
 <title>Urban Sky Shield</title>
 
 <link
-rel="stylesheet"
-href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
 />
 
 <style>
+
+/* =========================
+   BASIC
+========================= */
 
 * {
   box-sizing: border-box;
@@ -36,9 +41,9 @@ body {
 }
 
 
-/* ==============================
-   TOP AREA
-============================== */
+/* =========================
+   TOP PANEL
+========================= */
 
 .top-panel {
 
@@ -46,11 +51,11 @@ body {
 
   z-index: 1000;
 
-  top: 10px;
+  top: 8px;
 
-  left: 10px;
+  left: 8px;
 
-  right: 10px;
+  right: 8px;
 
   max-width: 720px;
 
@@ -58,39 +63,39 @@ body {
 }
 
 
-/* ==============================
+/* =========================
    TITLE
-============================== */
+========================= */
 
 .title-box {
 
   background: rgba(255,255,255,0.97);
 
-  padding: 12px 16px;
+  padding: 10px 14px;
 
-  border-radius: 17px;
+  border-radius: 16px;
 
   box-shadow:
-  0 3px 15px rgba(0,0,0,0.25);
+    0 3px 14px rgba(0,0,0,0.25);
 
-  margin-bottom: 8px;
+  margin-bottom: 7px;
 }
 
 .title {
 
-  font-size: 22px;
+  font-size: 21px;
 
   font-weight: bold;
 
   color: #123b4a;
 
-  letter-spacing: 0.7px;
+  letter-spacing: 0.6px;
 }
 
 
-/* ==============================
-   SEARCH
-============================== */
+/* =========================
+   SEARCH ROW
+========================= */
 
 .search-row {
 
@@ -118,7 +123,7 @@ body {
   outline: none;
 
   box-shadow:
-  0 3px 13px rgba(0,0,0,0.25);
+    0 3px 13px rgba(0,0,0,0.25);
 }
 
 .search-btn,
@@ -130,16 +135,16 @@ body {
 
   border-radius: 14px;
 
-  padding: 0 17px;
-
-  font-weight: bold;
+  padding: 0 16px;
 
   font-size: 14px;
 
-  box-shadow:
-  0 3px 13px rgba(0,0,0,0.25);
+  font-weight: bold;
 
   cursor: pointer;
+
+  box-shadow:
+    0 3px 13px rgba(0,0,0,0.25);
 }
 
 .search-btn {
@@ -157,9 +162,9 @@ body {
 }
 
 
-/* ==============================
-   LOCATION BUTTON
-============================== */
+/* =========================
+   LOCATION FLOAT BUTTON
+========================= */
 
 .locate-control {
 
@@ -169,7 +174,7 @@ body {
 
   right: 15px;
 
-  bottom: 30px;
+  bottom: 28px;
 }
 
 .locate-big {
@@ -186,24 +191,24 @@ body {
 
   color: #1769ff;
 
-  font-size: 28px;
-
-  box-shadow:
-  0 4px 15px rgba(0,0,0,0.30);
+  font-size: 29px;
 
   cursor: pointer;
+
+  box-shadow:
+    0 4px 15px rgba(0,0,0,0.30);
 }
 
 
-/* ==============================
-   USER LOCATION DOT
-============================== */
+/* =========================
+   BLUE GPS DOT
+========================= */
 
 .user-dot {
 
-  width: 20px;
+  width: 22px;
 
-  height: 20px;
+  height: 22px;
 
   background: #1769ff;
 
@@ -213,24 +218,23 @@ body {
 
   box-shadow:
 
-  0 0 0 5px
-  rgba(23,105,255,0.20),
+    0 0 0 6px
+    rgba(23,105,255,0.20),
 
-  0 3px 10px
-  rgba(0,0,0,0.35);
+    0 3px 12px
+    rgba(0,0,0,0.40);
 }
 
 
-/* ==============================
-   LEAFLET ZOOM BUTTON
-============================== */
+/* =========================
+   ZOOM BUTTONS
+========================= */
 
 .leaflet-control-zoom {
 
-  margin-top: 135px !important;
+  margin-top: 130px !important;
 
-  margin-left: 10px !important;
-
+  margin-left: 8px !important;
 }
 
 .leaflet-control-zoom a {
@@ -246,38 +250,68 @@ body {
   background: white !important;
 
   color: #123b4a !important;
-
 }
 
 
-/* ==============================
+/* =========================
+   LOCATION POPUP
+========================= */
+
+.location-popup {
+
+  font-family: Arial, sans-serif;
+
+  min-width: 190px;
+}
+
+.location-popup .heading {
+
+  font-size: 16px;
+
+  font-weight: bold;
+
+  color: #1769ff;
+
+  margin-bottom: 6px;
+}
+
+.location-popup .street {
+
+  font-size: 14px;
+
+  font-weight: bold;
+
+  color: #222;
+
+  line-height: 1.4;
+}
+
+.location-popup .accuracy {
+
+  margin-top: 5px;
+
+  font-size: 11px;
+
+  color: #666;
+}
+
+
+/* =========================
    MOBILE
-============================== */
+========================= */
 
-@media (max-width: 600px) {
-
-  .top-panel {
-
-    top: 7px;
-
-    left: 7px;
-
-    right: 7px;
-  }
-
-  .title-box {
-
-    padding: 10px 13px;
-  }
+@media (max-width:600px) {
 
   .title {
 
-    font-size: 19px;
+    font-size: 18px;
+
   }
 
   .search-row {
 
     flex-wrap: wrap;
+
   }
 
   .search-row input {
@@ -285,12 +319,14 @@ body {
     width: 100%;
 
     flex: none;
+
   }
 
   .search-btn,
   .location-btn {
 
     flex: 1;
+
   }
 
 }
@@ -303,27 +339,33 @@ body {
 <body>
 
 
-<!-- MAP -->
+<!-- =========================
+     MAP
+========================= -->
 
 <div id="map"></div>
 
 
-<!-- ==============================
+<!-- =========================
      TOP PANEL
-============================== -->
+========================= -->
 
 <div class="top-panel">
+
 
   <div class="title-box">
 
     <div class="title">
+
       🌌 URBAN SKY SHIELD
+
     </div>
 
   </div>
 
 
   <div class="search-row">
+
 
     <input
       id="searchBox"
@@ -342,25 +384,26 @@ body {
 
     <button
       class="location-btn"
-      onclick="findMyLocation()"
+      onclick="startLocation()"
     >
       📍 LOCATION
     </button>
+
 
   </div>
 
 </div>
 
 
-<!-- ==============================
-     LOCATION BUTTON
-============================== -->
+<!-- =========================
+     FLOAT LOCATION
+========================= -->
 
 <div class="locate-control">
 
   <button
     class="locate-big"
-    onclick="findMyLocation()"
+    onclick="startLocation()"
     title="My Location"
   >
     ⦿
@@ -376,9 +419,9 @@ src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
 
 <script>
 
-/* =================================
+/* =====================================================
    CREATE MAP
-================================= */
+===================================================== */
 
 const map = L.map("map", {
 
@@ -397,34 +440,32 @@ const map = L.map("map", {
 );
 
 
-/* =================================
-   NORMAL CLEAR STREET MAP
-================================= */
+/* =====================================================
+   DETAILED OPENSTREETMAP
+===================================================== */
 
 const streetMap = L.tileLayer(
 
-  "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+  "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
 
   {
 
     maxZoom: 19,
 
     attribution:
-      "© Esri, OpenStreetMap contributors"
+      '&copy; OpenStreetMap contributors'
 
   }
 
 );
 
 
-/* ADD MAP */
-
 streetMap.addTo(map);
 
 
-/* =================================
+/* =====================================================
    LIGHT POLLUTION ZONES
-================================= */
+===================================================== */
 
 const cities = [
 
@@ -433,8 +474,7 @@ const cities = [
     lat: 13.0827,
     lon: 80.2707,
     color: "#ff3030",
-    radius: 22000,
-    level: "Very High"
+    radius: 22000
   },
 
   {
@@ -442,8 +482,7 @@ const cities = [
     lat: 11.0168,
     lon: 76.9558,
     color: "#ff8c00",
-    radius: 15000,
-    level: "High"
+    radius: 15000
   },
 
   {
@@ -451,8 +490,7 @@ const cities = [
     lat: 9.9252,
     lon: 78.1198,
     color: "#ff8c00",
-    radius: 14000,
-    level: "High"
+    radius: 14000
   },
 
   {
@@ -460,8 +498,7 @@ const cities = [
     lat: 10.7905,
     lon: 78.7047,
     color: "#ffc107",
-    radius: 12000,
-    level: "Moderate"
+    radius: 12000
   },
 
   {
@@ -469,8 +506,7 @@ const cities = [
     lat: 11.6643,
     lon: 78.1460,
     color: "#ffc107",
-    radius: 12000,
-    level: "Moderate"
+    radius: 12000
   },
 
   {
@@ -478,8 +514,7 @@ const cities = [
     lat: 12.9165,
     lon: 79.1325,
     color: "#ffc107",
-    radius: 10000,
-    level: "Moderate"
+    radius: 10000
   },
 
   {
@@ -487,8 +522,7 @@ const cities = [
     lat: 8.7139,
     lon: 77.7567,
     color: "#2ecc71",
-    radius: 9000,
-    level: "Lower"
+    radius: 9000
   },
 
   {
@@ -496,8 +530,7 @@ const cities = [
     lat: 11.4102,
     lon: 76.6950,
     color: "#2ecc71",
-    radius: 7000,
-    level: "Lower"
+    radius: 7000
   },
 
   {
@@ -505,16 +538,13 @@ const cities = [
     lat: 10.7870,
     lon: 79.1378,
     color: "#ffc107",
-    radius: 8000,
-    level: "Moderate"
+    radius: 8000
   }
 
 ];
 
 
-/* =================================
-   DRAW POLLUTION ZONES
-================================= */
+/* DRAW POLLUTION CIRCLES */
 
 cities.forEach(function(city) {
 
@@ -530,7 +560,7 @@ cities.forEach(function(city) {
 
       fillColor: city.color,
 
-      fillOpacity: 0.15,
+      fillOpacity: 0.13,
 
       weight: 2
 
@@ -544,19 +574,10 @@ cities.forEach(function(city) {
 
     "<b>" +
     city.name +
-    "</b><br>" +
-
-    "Planning zone: " +
-    city.level +
-
-    "<br><br>" +
+    "</b><br><br>" +
 
     "<small>" +
-
-    "Visualization only — " +
-
-    "not direct ground measurement." +
-
+    "Planning visualization only" +
     "</small>"
 
   );
@@ -564,25 +585,32 @@ cities.forEach(function(city) {
 });
 
 
-/* =================================
-   USER LOCATION VARIABLES
-================================= */
+/* =====================================================
+   GPS VARIABLES
+===================================================== */
 
 let userMarker = null;
 
 let accuracyCircle = null;
 
+let locationWatch = null;
 
-/* =================================
-   FIND MY LOCATION
-================================= */
+let firstLocationFound = false;
 
-function findMyLocation() {
+
+/* =====================================================
+   START LOCATION
+===================================================== */
+
+function startLocation() {
+
+
+  /* CHECK GPS SUPPORT */
 
   if (!navigator.geolocation) {
 
     alert(
-      "Location is not supported by this browser."
+      "Your browser does not support location."
     );
 
     return;
@@ -590,41 +618,75 @@ function findMyLocation() {
   }
 
 
-  navigator.geolocation.getCurrentPosition(
+  /* STOP OLD WATCH */
+
+  if (locationWatch !== null) {
+
+    navigator.geolocation.clearWatch(
+      locationWatch
+    );
+
+  }
+
+
+  firstLocationFound = false;
+
+
+  /* START HIGH ACCURACY GPS */
+
+  locationWatch =
+
+  navigator.geolocation.watchPosition(
 
     function(position) {
+
 
       const lat =
         position.coords.latitude;
 
+
       const lon =
         position.coords.longitude;
+
 
       const accuracy =
         position.coords.accuracy;
 
 
+      console.log(
+        "Current GPS:",
+        lat,
+        lon,
+        "Accuracy:",
+        accuracy
+      );
+
+
       /* REMOVE OLD MARKER */
 
-      if (userMarker) {
+      if (userMarker !== null) {
 
-        map.removeLayer(userMarker);
+        map.removeLayer(
+          userMarker
+        );
 
       }
 
 
       /* REMOVE OLD ACCURACY */
 
-      if (accuracyCircle) {
+      if (accuracyCircle !== null) {
 
-        map.removeLayer(accuracyCircle);
+        map.removeLayer(
+          accuracyCircle
+        );
 
       }
 
 
-      /* ==========================
-         BLUE LOCATION MARKER
-      ========================== */
+      /* =================================================
+         BLUE CURRENT LOCATION
+      ================================================= */
 
       userMarker = L.marker(
 
@@ -639,22 +701,20 @@ function findMyLocation() {
             html:
               '<div class="user-dot"></div>',
 
-            iconSize: [20,20],
+            iconSize: [22, 22],
 
-            iconAnchor: [10,10]
+            iconAnchor: [11, 11]
 
           })
 
         }
 
-      )
-
-      .addTo(map);
+      ).addTo(map);
 
 
-      /* ==========================
+      /* =================================================
          ACCURACY CIRCLE
-      ========================== */
+      ================================================= */
 
       accuracyCircle = L.circle(
 
@@ -674,54 +734,50 @@ function findMyLocation() {
 
         }
 
-      )
-
-      .addTo(map);
+      ).addTo(map);
 
 
-      /* ==========================
-         MOVE TO CURRENT LOCATION
-      ========================== */
+      /* =================================================
+         FIRST GPS FIX
+      ================================================= */
 
-      map.flyTo(
+      if (!firstLocationFound) {
 
-        [lat, lon],
+        firstLocationFound = true;
 
-        18,
 
-        {
+        map.flyTo(
 
-          duration: 1.5
+          [lat, lon],
 
-        }
+          18,
 
+          {
+
+            duration: 1.5
+
+          }
+
+        );
+
+      }
+
+
+      /* =================================================
+         GET STREET NAME
+      ================================================= */
+
+      getStreetName(
+        lat,
+        lon,
+        accuracy
       );
-
-
-      /* ==========================
-         POPUP
-      ========================== */
-
-      userMarker
-
-        .bindPopup(
-
-          "<b>📍 You are here</b><br>" +
-
-          "Accuracy: approximately " +
-
-          Math.round(accuracy) +
-
-          " metres"
-
-        )
-
-        .openPopup();
 
     },
 
 
     function(error) {
+
 
       if (error.code === 1) {
 
@@ -731,11 +787,14 @@ function findMyLocation() {
 
           "Please allow Location permission " +
 
-          "for this website in your browser settings."
+          "for this website.\n\n" +
+
+          "Also enable Precise Location."
 
         );
 
       }
+
 
       else if (error.code === 2) {
 
@@ -743,17 +802,18 @@ function findMyLocation() {
 
           "Location unavailable.\n\n" +
 
-          "Please turn ON your phone GPS/Location."
+          "Please turn ON your phone Location/GPS."
 
         );
 
       }
 
+
       else {
 
         alert(
 
-          "Could not get your location.\n\n" +
+          "GPS could not get your location.\n\n" +
 
           "Please try again."
 
@@ -768,7 +828,7 @@ function findMyLocation() {
 
       enableHighAccuracy: true,
 
-      timeout: 15000,
+      timeout: 30000,
 
       maximumAge: 0
 
@@ -779,26 +839,204 @@ function findMyLocation() {
 }
 
 
-/* =================================
-   SEARCH LOCATION
-================================= */
+/* =====================================================
+   REVERSE GEOCODING
+   GET STREET NAME FROM GPS
+===================================================== */
+
+async function getStreetName(
+  lat,
+  lon,
+  accuracy
+) {
+
+
+  try {
+
+
+    const url =
+
+      "https://nominatim.openstreetmap.org/reverse" +
+
+      "?format=json" +
+
+      "&lat=" +
+      encodeURIComponent(lat) +
+
+      "&lon=" +
+      encodeURIComponent(lon) +
+
+      "&zoom=18" +
+
+      "&addressdetails=1";
+
+
+    const response =
+      await fetch(url);
+
+
+    const data =
+      await response.json();
+
+
+    const address =
+      data.address || {};
+
+
+    /* STREET */
+
+    const road =
+      address.road ||
+      address.pedestrian ||
+      address.footway ||
+      address.path ||
+      "Street name unavailable";
+
+
+    /* AREA */
+
+    const area =
+      address.suburb ||
+      address.neighbourhood ||
+      address.village ||
+      address.town ||
+      address.city_district ||
+      "";
+
+
+    /* CITY */
+
+    const city =
+      address.city ||
+      address.town ||
+      address.municipality ||
+      address.village ||
+      "";
+
+
+    let locationText = road;
+
+
+    if (area) {
+
+      locationText +=
+        "<br>" + area;
+
+    }
+
+
+    if (
+      city &&
+      city !== area
+    ) {
+
+      locationText +=
+        "<br>" + city;
+
+    }
+
+
+    /* POPUP */
+
+    if (userMarker) {
+
+      userMarker.bindPopup(
+
+        '<div class="location-popup">' +
+
+        '<div class="heading">' +
+
+        '📍 You are here' +
+
+        '</div>' +
+
+        '<div class="street">' +
+
+        locationText +
+
+        '</div>' +
+
+        '<div class="accuracy">' +
+
+        'GPS accuracy: approximately ' +
+
+        Math.round(accuracy) +
+
+        ' metres' +
+
+        '</div>' +
+
+        '</div>'
+
+      ).openPopup();
+
+    }
+
+
+  }
+
+  catch(error) {
+
+
+    if (userMarker) {
+
+      userMarker.bindPopup(
+
+        '<div class="location-popup">' +
+
+        '<div class="heading">' +
+
+        '📍 You are here' +
+
+        '</div>' +
+
+        '<div class="street">' +
+
+        'Street name unavailable' +
+
+        '</div>' +
+
+        '<div class="accuracy">' +
+
+        'GPS accuracy: approximately ' +
+
+        Math.round(accuracy) +
+
+        ' metres' +
+
+        '</div>' +
+
+        '</div>'
+
+      ).openPopup();
+
+    }
+
+  }
+
+}
+
+
+/* =====================================================
+   SEARCH
+===================================================== */
 
 async function searchPlace() {
+
 
   const query =
 
     document
-
       .getElementById("searchBox")
-
       .value
-
       .trim();
 
 
   if (!query) {
 
-    alert("Enter a place name.");
+    alert(
+      "Enter a place name."
+    );
 
     return;
 
@@ -806,6 +1044,7 @@ async function searchPlace() {
 
 
   try {
+
 
     const url =
 
@@ -823,18 +1062,18 @@ async function searchPlace() {
 
 
     const response =
-
       await fetch(url);
 
 
     const data =
-
       await response.json();
 
 
     if (!data.length) {
 
-      alert("Location not found.");
+      alert(
+        "Location not found."
+      );
 
       return;
 
@@ -842,12 +1081,10 @@ async function searchPlace() {
 
 
     const lat =
-
       parseFloat(data[0].lat);
 
 
     const lon =
-
       parseFloat(data[0].lon);
 
 
@@ -855,7 +1092,7 @@ async function searchPlace() {
 
       [lat, lon],
 
-      15,
+      17,
 
       {
 
@@ -873,24 +1110,20 @@ async function searchPlace() {
       .setContent(
 
         "<b>" +
-
         data[0].display_name +
-
         "</b>"
 
       )
 
       .openOn(map);
 
+
   }
 
-
-  catch (error) {
+  catch(error) {
 
     alert(
-
       "Search temporarily unavailable."
-
     );
 
   }
@@ -898,9 +1131,9 @@ async function searchPlace() {
 }
 
 
-/* =================================
-   ENTER KEY SEARCH
-================================= */
+/* =====================================================
+   ENTER KEY
+===================================================== */
 
 document
 
@@ -922,8 +1155,8 @@ document
 
   );
 
-
 </script>
 
 </body>
+
 </html>
