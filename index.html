@@ -1,3703 +1,2865 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Urban Sky Shield — YASSC 2026</title>
-
-<link
-  rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-/>
-
-<style>
-:root{
-  --bg:#06121b;
-  --panel:rgba(7,20,30,.94);
-  --panel-soft:rgba(8,24,35,.86);
-  --line:rgba(255,255,255,.12);
-  --text:#edf8ff;
-  --muted:#91a8b8;
-  --cyan:#57e5ff;
-  --blue:#5d8dff;
-  --green:#62efad;
-  --yellow:#ffd365;
-  --orange:#ff9b58;
-  --red:#ff5870;
-  --shadow:0 22px 65px rgba(0,0,0,.38);
-}
-
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
-
-html,body{
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  font-family:Inter,ui-sans-serif,system-ui,-apple-system,
-  BlinkMacSystemFont,"Segoe UI",sans-serif;
-  background:#06121b;
-  color:var(--text);
-}
-
-#map{
-  position:fixed;
-  inset:0;
-  z-index:1;
-  background:#dfe7e9;
-}
-
-/* =========================================================
-   LEAFLET
-========================================================= */
-
-.leaflet-control-attribution{
-  font-size:9px!important;
-  background:rgba(255,255,255,.78)!important;
-}
-
-.leaflet-control-zoom{
-  display:none;
-}
-
-.leaflet-popup-content-wrapper,
-.leaflet-popup-tip{
-  background:#091923;
-  color:white;
-}
-
-.leaflet-popup-content{
-  font-size:11px;
-}
-
-/* =========================================================
-   TOP NAV
-========================================================= */
-
-.topbar{
-  position:fixed;
-  top:16px;
-  left:50%;
-  transform:translateX(-50%);
-  z-index:1200;
-
-  width:min(780px,calc(100% - 24px));
-
-  display:flex;
-  align-items:center;
-  gap:4px;
-
-  padding:5px;
-
-  border:1px solid var(--line);
-  border-radius:23px;
-
-  background:rgba(4,14,23,.88);
-  backdrop-filter:blur(20px);
-
-  box-shadow:var(--shadow);
-}
-
-.brand{
-  display:flex;
-  align-items:center;
-  gap:8px;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Urban Sky Shield — AI Light Pollution Planning</title>
+
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+
+  <style>
+    :root {
+      --navy: #061923;
+      --navy2: #0b2530;
+      --cyan: #38d9ff;
+      --cyan2: #19bfe8;
+      --green: #46d98b;
+      --white: #ffffff;
+      --muted: #8fa6ae;
+      --panel: rgba(7, 28, 37, 0.94);
+      --border: rgba(82, 221, 255, 0.28);
+      --shadow: 0 16px 45px rgba(0, 0, 0, 0.28);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+      background: #d9eef2;
+    }
+
+    #map {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+
+    /* =========================================================
+       TOP HEADER
+    ========================================================= */
+
+    .topbar {
+      position: absolute;
+      z-index: 1000;
+      top: 18px;
+      left: 18px;
+      right: 18px;
+      height: 76px;
+
+      display: flex;
+      align-items: center;
+      gap: 14px;
+
+      padding: 12px 14px;
+
+      background: rgba(4, 25, 34, 0.96);
+      border: 1px solid rgba(80, 220, 255, 0.16);
+      border-radius: 22px;
+
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.28);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .brand {
+      flex-shrink: 0;
+      color: #f2fbfd;
+      font-size: 20px;
+      font-weight: 850;
+      letter-spacing: 0.7px;
+      white-space: nowrap;
+    }
+
+    .brand span {
+      color: var(--cyan);
+    }
+
+    .search-wrap {
+      flex: 1;
+      max-width: 510px;
+      display: flex;
+      gap: 10px;
+      margin-left: auto;
+    }
+
+    #searchInput {
+      width: 100%;
+      height: 54px;
+      border: 0;
+      outline: none;
+      border-radius: 30px;
+
+      padding: 0 22px;
+
+      background: #f8fbfc;
+      color: #26343a;
+      font-size: 16px;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+    }
+
+    #searchInput::placeholder {
+      color: #77868d;
+    }
+
+    .header-btn {
+      height: 54px;
+      border-radius: 28px;
+      padding: 0 19px;
+
+      border: 1px solid rgba(69, 215, 255, 0.42);
+      background: rgba(12, 54, 68, 0.92);
+      color: white;
+
+      font-size: 12px;
+      font-weight: 800;
+
+      cursor: pointer;
+      transition: 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .header-btn:hover {
+      background: rgba(20, 81, 99, 0.98);
+      transform: translateY(-1px);
+    }
 
-  padding:8px 12px;
+    /* =========================================================
+       PILL NAVIGATION
+    ========================================================= */
 
-  font-size:12px;
-  font-weight:900;
-  letter-spacing:.06em;
-  white-space:nowrap;
-}
+    .pill-nav {
+      position: absolute;
+      z-index: 1000;
+      top: 108px;
+      left: 20px;
+      right: 20px;
 
-.brand-dot{
-  width:9px;
-  height:9px;
-  border-radius:50%;
-  background:var(--cyan);
-  box-shadow:0 0 16px var(--cyan);
-}
+      display: flex;
+      gap: 10px;
+
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding: 2px 0;
+    }
+
+    .pill-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-pill {
+      flex-shrink: 0;
+
+      padding: 11px 17px;
+
+      border-radius: 30px;
+      border: 1px solid rgba(50, 110, 125, 0.25);
+
+      background: rgba(255, 255, 255, 0.91);
+      color: #18343d;
+
+      font-size: 12px;
+      font-weight: 800;
+
+      box-shadow: 0 5px 16px rgba(0, 0, 0, 0.13);
+      cursor: pointer;
+
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+
+      transition: 0.2s ease;
+    }
+
+    .nav-pill:hover {
+      transform: translateY(-1px);
+      background: #ffffff;
+    }
+
+    .nav-pill.active {
+      color: #ffffff;
+      background: #092b36;
+      border-color: rgba(55, 216, 255, 0.5);
+    }
+
+    /* =========================================================
+       MAP CONTROLS
+    ========================================================= */
+
+    .map-controls {
+      position: absolute;
+      z-index: 1000;
+
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .left-controls {
+      left: 20px;
+      top: 165px;
+    }
+
+    .right-controls {
+      right: 20px;
+      top: 165px;
+    }
+
+    .map-btn {
+      width: 52px;
+      height: 52px;
+
+      border: 0;
+      border-radius: 17px;
+
+      background: rgba(255, 255, 255, 0.93);
+      color: #092b34;
+
+      display: grid;
+      place-items: center;
+
+      font-size: 21px;
+      font-weight: 900;
+
+      box-shadow: 0 7px 20px rgba(0, 0, 0, 0.18);
+
+      cursor: pointer;
+      transition: 0.2s ease;
+
+      backdrop-filter: blur(12px);
+    }
+
+    .map-btn:hover {
+      transform: translateY(-2px);
+      background: #ffffff;
+    }
+
+    .map-btn.active {
+      background: #092d39;
+      color: white;
+      box-shadow:
+        0 0 0 2px rgba(61, 220, 255, 0.25),
+        0 9px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    /* =========================================================
+       CUSTOM LEAFLET CONTROLS
+    ========================================================= */
 
-.nav-btn{
-  border:0;
-  border-radius:17px;
+    .leaflet-control-zoom {
+      border: 0 !important;
+      box-shadow: none !important;
+    }
 
-  padding:9px 12px;
+    .leaflet-control-zoom a {
+      width: 48px !important;
+      height: 40px !important;
+      line-height: 40px !important;
 
-  background:transparent;
-  color:#a5b8c7;
-
-  font-size:10px;
-  font-weight:800;
-
-  cursor:pointer;
-  white-space:nowrap;
-
-  transition:.2s ease;
-}
-
-.nav-btn:hover,
-.nav-btn.active{
-  background:rgba(255,255,255,.10);
-  color:#fff;
-}
-
-/* =========================================================
-   STATUS
-========================================================= */
-
-.status-pill{
-  position:fixed;
-  top:76px;
-  left:50%;
-  transform:translateX(-50%);
-
-  z-index:1100;
-
-  padding:7px 12px;
-
-  display:flex;
-  align-items:center;
-  gap:7px;
-
-  border:1px solid var(--line);
-  border-radius:30px;
-
-  background:rgba(5,15,24,.75);
-  backdrop-filter:blur(16px);
-
-  color:#a8bbc8;
-
-  font-size:9px;
-  font-weight:800;
-  letter-spacing:.04em;
-}
-
-.status-dot{
-  width:7px;
-  height:7px;
-  border-radius:50%;
-
-  background:var(--green);
-  box-shadow:0 0 11px var(--green);
-}
-
-/* =========================================================
-   FLOATING CONTROLS
-========================================================= */
-
-.control-stack{
-  position:fixed;
-  z-index:1100;
-
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-
-.left-controls{
-  left:16px;
-  top:105px;
-}
-
-.right-controls{
-  right:16px;
-  top:105px;
-}
-
-.map-control{
-  width:43px;
-  height:43px;
-
-  border:1px solid var(--line);
-  border-radius:15px;
-
-  background:rgba(5,16,26,.87);
-  backdrop-filter:blur(17px);
-
-  color:#e9f7ff;
-
-  cursor:pointer;
-
-  font-size:17px;
-
-  box-shadow:0 10px 30px rgba(0,0,0,.25);
-
-  transition:.2s ease;
-}
-
-.map-control:hover{
-  transform:translateY(-2px);
-  border-color:rgba(87,229,255,.45);
-}
-
-.map-control.active{
-  color:var(--cyan);
-  border-color:rgba(87,229,255,.42);
-}
-
-/* =========================================================
-   SEARCH
-========================================================= */
-
-.search-box{
-  position:fixed;
-
-  left:16px;
-  top:162px;
-
-  z-index:1100;
-
-  width:295px;
-
-  display:flex;
-  gap:6px;
-
-  padding:6px;
-
-  border:1px solid var(--line);
-  border-radius:18px;
-
-  background:rgba(5,16,26,.88);
-  backdrop-filter:blur(18px);
-
-  box-shadow:var(--shadow);
-}
-
-.search-box input{
-  flex:1;
-  min-width:0;
-
-  border:0;
-  outline:0;
-
-  background:transparent;
-  color:white;
-
-  padding:8px 10px;
-
-  font-size:12px;
-}
-
-.search-box input::placeholder{
-  color:#788d9d;
-}
-
-.search-btn{
-  flex:0 0 42px;
-
-  border:0;
-  border-radius:12px;
-
-  background:rgba(87,229,255,.13);
-  color:white;
-
-  font-size:11px;
-  font-weight:800;
-
-  cursor:pointer;
-}
-
-.search-results{
-  position:fixed;
-
-  left:16px;
-  top:215px;
-
-  z-index:1200;
-
-  width:295px;
-
-  display:none;
-
-  overflow:hidden;
-
-  border:1px solid var(--line);
-  border-radius:15px;
-
-  background:rgba(6,17,27,.97);
-  backdrop-filter:blur(20px);
-
-  box-shadow:var(--shadow);
-}
-
-.search-result{
-  padding:11px 13px;
-
-  border-bottom:1px solid rgba(255,255,255,.06);
-
-  color:#cbd9e3;
-
-  font-size:10px;
-
-  cursor:pointer;
-}
-
-.search-result:hover{
-  background:rgba(255,255,255,.07);
-}
-
-/* =========================================================
-   LEGEND
-========================================================= */
-
-.legend{
-  position:fixed;
-
-  right:16px;
-  bottom:145px;
-
-  z-index:1050;
-
-  width:184px;
-
-  padding:13px;
-
-  border:1px solid var(--line);
-  border-radius:17px;
-
-  background:rgba(5,16,26,.87);
-  backdrop-filter:blur(18px);
-
-  box-shadow:var(--shadow);
-}
-
-.legend-title{
-  font-size:10px;
-  font-weight:900;
-  text-transform:uppercase;
-  letter-spacing:.08em;
-}
-
-.legend-sub{
-  margin-top:4px;
-  margin-bottom:9px;
-
-  color:#718797;
-
-  font-size:8px;
-  line-height:1.4;
-}
-
-.legend-row{
-  display:flex;
-  align-items:center;
-  gap:8px;
-
-  margin:6px 0;
-
-  color:#c1ced7;
-
-  font-size:9px;
-}
-
-.legend-dot{
-  width:9px;
-  height:9px;
-
-  border-radius:50%;
-
-  flex:none;
-}
-
-/* =========================================================
-   KPI
-========================================================= */
-
-.kpi-bar{
-  position:fixed;
-
-  left:50%;
-  bottom:13px;
-
-  transform:translateX(-50%);
-
-  z-index:1100;
-
-  width:min(850px,calc(100% - 30px));
-
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-
-  gap:8px;
-}
-
-.kpi{
-  min-width:0;
-
-  padding:11px 13px;
-
-  border:1px solid var(--line);
-  border-radius:16px;
-
-  background:rgba(5,16,26,.88);
-  backdrop-filter:blur(18px);
-
-  box-shadow:var(--shadow);
-}
-
-.kpi-label{
-  color:#7890a0;
-
-  font-size:8px;
-  font-weight:900;
-
-  letter-spacing:.08em;
-  text-transform:uppercase;
-
-  white-space:nowrap;
-}
-
-.kpi-value{
-  margin-top:4px;
-
-  color:white;
-
-  font-size:17px;
-  font-weight:900;
-}
-
-.kpi-note{
-  margin-top:2px;
-
-  color:#6f8594;
-
-  font-size:8px;
-}
-
-/* =========================================================
-   PANELS
-========================================================= */
-
-.panel{
-  position:fixed;
-
-  top:92px;
-  right:70px;
-
-  z-index:1500;
-
-  width:min(385px,calc(100% - 30px));
-  max-height:calc(100vh - 125px);
-
-  overflow-y:auto;
-
-  display:none;
-
-  border:1px solid var(--line);
-  border-radius:22px;
-
-  background:rgba(5,16,27,.96);
-  backdrop-filter:blur(25px);
-
-  box-shadow:0 30px 90px rgba(0,0,0,.5);
-}
-
-.panel.show{
-  display:block;
-  animation:panelIn .2s ease;
-}
-
-@keyframes panelIn{
-  from{
-    opacity:0;
-    transform:translateY(-8px);
-  }
-
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
-}
-
-.panel-header{
-  position:sticky;
-  top:0;
-  z-index:2;
-
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-
-  padding:16px;
-
-  border-bottom:1px solid var(--line);
-
-  background:rgba(5,16,27,.94);
-}
-
-.panel-kicker{
-  margin-bottom:4px;
-
-  color:var(--cyan);
-
-  font-size:8px;
-  font-weight:900;
-
-  letter-spacing:.13em;
-  text-transform:uppercase;
-}
-
-.panel-title{
-  font-size:14px;
-  font-weight:900;
-}
-
-.close-panel{
-  border:0;
-  background:transparent;
-
-  color:#9eb1bf;
-
-  font-size:21px;
-
-  cursor:pointer;
-}
-
-.panel-body{
-  padding:16px;
-}
-
-.info-card{
-  margin-bottom:10px;
-
-  padding:13px;
-
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:15px;
-
-  background:rgba(255,255,255,.035);
-}
-
-.info-card h4{
-  margin-bottom:6px;
-
-  font-size:11px;
-}
-
-.info-card p{
-  color:#91a6b6;
-
-  font-size:10px;
-  line-height:1.55;
-}
-
-/* =========================================================
-   PIPELINE
-========================================================= */
-
-.pipeline{
-  display:flex;
-  flex-direction:column;
-  gap:7px;
-}
-
-.pipeline-item{
-  display:flex;
-  align-items:center;
-  gap:9px;
-
-  padding:9px 10px;
-
-  border-radius:11px;
-
-  background:rgba(255,255,255,.04);
-
-  color:#c8d5df;
-
-  font-size:10px;
-}
-
-.pipeline-item span{
-  width:22px;
-  height:22px;
-
-  display:grid;
-  place-items:center;
-
-  border-radius:7px;
-
-  background:rgba(87,229,255,.10);
-
-  color:var(--cyan);
-
-  font-size:9px;
-  font-weight:900;
-}
-
-/* =========================================================
-   SCENARIO
-========================================================= */
-
-.scenario-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:7px;
-}
-
-.scenario{
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:12px;
-
-  padding:10px;
-
-  background:rgba(255,255,255,.035);
-
-  color:#9eb0bf;
-
-  font-size:9px;
-  text-align:left;
-
-  cursor:pointer;
-}
-
-.scenario.active{
-  color:white;
-
-  border-color:rgba(87,229,255,.45);
-
-  background:rgba(87,229,255,.09);
-}
-
-.slider-wrap{
-  margin-top:15px;
-}
-
-.slider-head{
-  display:flex;
-  justify-content:space-between;
-
-  margin-bottom:7px;
-
-  color:#91a7b7;
-
-  font-size:9px;
-}
-
-input[type=range]{
-  width:100%;
-  accent-color:var(--cyan);
-}
-
-.simulation-note{
-  margin-top:10px;
-
-  color:#708796;
-
-  font-size:9px;
-  line-height:1.5;
-}
-
-/* =========================================================
-   ANALYSIS
-========================================================= */
-
-.analysis-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-}
-
-.analysis-item{
-  padding:10px;
-
-  border-radius:12px;
-
-  background:rgba(255,255,255,.04);
-}
-
-.analysis-label{
-  color:#708796;
-
-  font-size:8px;
-
-  text-transform:uppercase;
-  letter-spacing:.06em;
-}
-
-.analysis-value{
-  margin-top:4px;
-
-  color:#e7f3f8;
-
-  font-size:10px;
-  font-weight:800;
-}
-
-/* =========================================================
-   PRESENTATION
-========================================================= */
-
-.presentation-overlay{
-  position:fixed;
-  inset:0;
-
-  z-index:2000;
-
-  display:none;
-
-  pointer-events:none;
-
-  border:2px solid rgba(87,229,255,.22);
-}
-
-.presentation-overlay.show{
-  display:block;
-}
-
-.presentation-title{
-  position:fixed;
-
-  left:25px;
-  top:25px;
-
-  z-index:2001;
-
-  display:none;
-
-  font-size:15px;
-  font-weight:900;
-  letter-spacing:.08em;
-}
-
-.presentation-overlay.show + .presentation-title{
-  display:block;
-}
-
-/* =========================================================
-   MARKERS
-========================================================= */
-
-.sky-marker{
-  width:15px;
-  height:15px;
-
-  border-radius:50%;
-
-  border:2px solid rgba(255,255,255,.95);
-
-  background:#62efad;
-
-  box-shadow:
-    0 0 0 5px rgba(98,239,173,.12),
-    0 0 20px rgba(98,239,173,.7);
-}
-
-.gps-marker{
-  width:18px;
-  height:18px;
-
-  border-radius:50%;
-
-  background:#368bff;
-
-  border:3px solid white;
-
-  box-shadow:
-    0 0 0 7px rgba(54,139,255,.18),
-    0 0 22px rgba(54,139,255,.65);
-}
-
-/* =========================================================
-   MOBILE
-========================================================= */
-
-@media(max-width:760px){
-
-  .topbar{
-    top:9px;
-
-    width:calc(100% - 16px);
-
-    overflow-x:auto;
-
-    justify-content:flex-start;
-
-    border-radius:18px;
-  }
-
-  .brand{
-    padding:7px 8px;
-    font-size:10px;
-  }
-
-  .nav-btn{
-    padding:8px 9px;
-    font-size:8.5px;
-  }
-
-  .status-pill{
-    top:59px;
-    font-size:7.5px;
-  }
-
-  .left-controls{
-    left:9px;
-    top:103px;
-  }
-
-  .right-controls{
-    right:9px;
-    top:103px;
-  }
-
-  .map-control{
-    width:39px;
-    height:39px;
-    border-radius:14px;
-  }
-
-  .search-box{
-    left:9px;
-    right:57px;
-
-    top:154px;
-
-    width:auto;
-
-    border-radius:17px;
-  }
-
-  .search-results{
-    left:9px;
-    right:57px;
-
-    top:205px;
-
-    width:auto;
-  }
-
-  .legend{
-    right:9px;
-    bottom:124px;
-
-    width:150px;
-
-    padding:10px;
-  }
-
-  .legend-title{
-    font-size:8px;
-  }
-
-  .legend-row{
-    margin:5px 0;
-    font-size:8px;
-  }
-
-  .kpi-bar{
-    width:calc(100% - 18px);
-    bottom:8px;
-    gap:5px;
-  }
-
-  .kpi{
-    padding:8px 7px;
-    border-radius:13px;
-  }
-
-  .kpi-label{
-    font-size:6.5px;
-  }
-
-  .kpi-value{
-    font-size:13px;
-  }
-
-  .kpi-note{
-    display:none;
-  }
-
-  .panel{
-    top:64px;
-    right:8px;
-
-    width:calc(100% - 16px);
-
-    max-height:calc(100vh - 73px);
-
-    border-radius:19px;
-  }
-}
-
-@media(max-width:430px){
-
-  .brand{
-    display:none;
-  }
-
-  .topbar{
-    justify-content:space-around;
-  }
-
-  .nav-btn{
-    flex:1;
-    padding-left:6px;
-    padding-right:6px;
-  }
-
-  .legend{
-    display:none;
-  }
-
-  .kpi-label{
-    font-size:6px;
-  }
-
-  .kpi-value{
-    font-size:12px;
-  }
-
-}
-</style>
+      border: 0 !important;
+      background: rgba(255, 255, 255, 0.92) !important;
+      color: #102c35 !important;
+
+      font-size: 22px !important;
+      font-weight: 800 !important;
+    }
+
+    .leaflet-control-zoom a:first-child {
+      border-radius: 14px 14px 0 0 !important;
+    }
+
+    .leaflet-control-zoom a:last-child {
+      border-radius: 0 0 14px 14px !important;
+      border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
+    }
+
+    .leaflet-control-attribution {
+      background: rgba(255,255,255,0.82) !important;
+      border-radius: 8px 0 0 0;
+      font-size: 10px !important;
+    }
+
+    /* =========================================================
+       PRESSURE CANVAS
+    ========================================================= */
+
+    #pressureCanvas {
+      position: absolute;
+      inset: 0;
+      z-index: 300;
+      pointer-events: none;
+      transition: opacity 0.45s ease;
+    }
+
+    #pressureCanvas.hidden {
+      opacity: 0;
+    }
+
+    /* =========================================================
+       MAP STATUS
+    ========================================================= */
+
+    .map-status {
+      position: absolute;
+      z-index: 1000;
+      left: 20px;
+      bottom: 154px;
+
+      max-width: 290px;
+
+      padding: 10px 14px;
+
+      color: #e8fbff;
+      background: rgba(5, 29, 38, 0.88);
+
+      border: 1px solid rgba(65, 219, 255, 0.22);
+      border-radius: 18px;
+
+      font-size: 10px;
+      line-height: 1.45;
+
+      box-shadow: var(--shadow);
+
+      backdrop-filter: blur(12px);
+    }
+
+    /* =========================================================
+       LEGEND
+    ========================================================= */
+
+    .legend {
+      position: absolute;
+      z-index: 1000;
+      left: 20px;
+      bottom: 205px;
+
+      width: 220px;
+
+      padding: 15px;
+
+      background: rgba(255, 255, 255, 0.94);
+      border-radius: 18px;
+
+      box-shadow: 0 10px 28px rgba(0,0,0,0.16);
+
+      backdrop-filter: blur(10px);
+
+      transition: 0.3s ease;
+    }
+
+    .legend.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(8px);
+    }
+
+    .legend-title {
+      font-size: 12px;
+      font-weight: 900;
+      color: #15353e;
+      margin-bottom: 9px;
+    }
+
+    .gradient-bar {
+      width: 100%;
+      height: 9px;
+      border-radius: 8px;
+
+      background:
+        linear-gradient(
+          90deg,
+          rgba(40, 205, 210, 0.55),
+          rgba(71, 215, 120, 0.55),
+          rgba(245, 206, 55, 0.62),
+          rgba(255, 112, 34, 0.72),
+          rgba(212, 25, 25, 0.82)
+        );
+    }
+
+    .legend-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 6px;
+
+      color: #52676d;
+      font-size: 8px;
+      font-weight: 700;
+    }
+
+    .concept-note {
+      margin-top: 9px;
+      color: #697c82;
+      font-size: 8px;
+      line-height: 1.4;
+    }
+
+    /* =========================================================
+       SMART ANALYSIS
+    ========================================================= */
+
+    .analysis-card {
+      position: absolute;
+      z-index: 1100;
+
+      right: 20px;
+      bottom: 160px;
+
+      width: 375px;
+      max-width: calc(100vw - 40px);
+
+      padding: 21px 23px;
+
+      background: rgba(5, 25, 34, 0.95);
+
+      border: 1px solid rgba(68, 216, 255, 0.35);
+      border-radius: 23px;
+
+      color: white;
+
+      box-shadow:
+        0 18px 45px rgba(0, 0, 0, 0.32),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+
+      transform: translateY(0);
+      transition: 0.3s ease;
+    }
+
+    .analysis-card.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px);
+    }
+
+    .analysis-title {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+
+      color: var(--cyan);
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 0.4px;
+    }
+
+    .analysis-location {
+      margin-top: 7px;
+      color: #8ea5ad;
+      font-size: 11px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .analysis-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 13px 15px;
+      margin-top: 21px;
+    }
+
+    .analysis-grid .label {
+      color: #dcebee;
+      font-size: 12px;
+    }
+
+    .analysis-grid .value {
+      color: #f4fbfd;
+      font-size: 12px;
+      text-align: right;
+    }
+
+    .recommendation {
+      margin-top: 20px;
+
+      padding: 13px 15px;
+
+      background: rgba(0, 152, 197, 0.2);
+      border: 1px solid rgba(51, 209, 255, 0.1);
+      border-radius: 15px;
+
+      color: #bcebf5;
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
+    /* =========================================================
+       BOTTOM KPI
+    ========================================================= */
+
+    .kpi-bar {
+      position: absolute;
+      z-index: 1000;
+
+      left: 20px;
+      right: 20px;
+      bottom: 20px;
+
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .kpi {
+      min-height: 76px;
+
+      padding: 13px 15px;
+
+      border-radius: 18px;
+
+      background: rgba(5, 29, 38, 0.94);
+      border: 1px solid rgba(71, 217, 255, 0.2);
+
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+
+      text-align: center;
+      color: white;
+
+      backdrop-filter: blur(14px);
+    }
+
+    .kpi-number {
+      color: var(--cyan);
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .kpi-label {
+      margin-top: 5px;
+      color: #91a8af;
+      font-size: 8px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+    }
+
+    /* =========================================================
+       MODALS
+    ========================================================= */
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 5000;
+
+      display: none;
+      align-items: center;
+      justify-content: center;
+
+      padding: 20px;
+
+      background: rgba(0, 10, 15, 0.65);
+      backdrop-filter: blur(8px);
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-card {
+      width: 720px;
+      max-width: 100%;
+      max-height: 86vh;
+      overflow-y: auto;
+
+      padding: 28px;
+
+      background: #08212b;
+      border: 1px solid rgba(62, 216, 255, 0.27);
+      border-radius: 25px;
+
+      color: white;
+
+      box-shadow: 0 30px 90px rgba(0,0,0,0.42);
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .modal-head h2 {
+      margin: 0;
+      color: var(--cyan);
+      font-size: 21px;
+    }
+
+    .close-btn {
+      width: 36px;
+      height: 36px;
+      border: 0;
+      border-radius: 50%;
+
+      background: rgba(255,255,255,0.08);
+      color: white;
+
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .modal-card p {
+      color: #b5cbd1;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .modal-card h3 {
+      color: #f1fbfd;
+      font-size: 14px;
+      margin-top: 22px;
+    }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .pipeline-item {
+      padding: 13px 8px;
+      text-align: center;
+
+      border-radius: 13px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.07);
+
+      color: #d9edf1;
+      font-size: 10px;
+      line-height: 1.4;
+    }
+
+    /* =========================================================
+       MITIGATION PANEL
+    ========================================================= */
+
+    .scenario-panel {
+      position: fixed;
+      z-index: 4500;
+
+      left: 50%;
+      bottom: 112px;
+      transform: translateX(-50%);
+
+      width: 550px;
+      max-width: calc(100vw - 30px);
+
+      padding: 18px;
+
+      background: rgba(5, 26, 35, 0.96);
+      border: 1px solid rgba(70, 217, 255, 0.25);
+      border-radius: 21px;
+
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+
+      backdrop-filter: blur(18px);
+
+      display: none;
+    }
+
+    .scenario-panel.show {
+      display: block;
+    }
+
+    .scenario-title {
+      color: var(--cyan);
+      font-size: 14px;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .scenario-buttons {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .scenario-btn {
+      padding: 8px 11px;
+      border-radius: 20px;
+
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.05);
+
+      color: #cce4e9;
+      font-size: 9px;
+      font-weight: 700;
+
+      cursor: pointer;
+    }
+
+    .scenario-btn.active {
+      background: rgba(29, 190, 226, 0.2);
+      border-color: rgba(43, 211, 255, 0.55);
+      color: #6ee4ff;
+    }
+
+    .time-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 17px;
+    }
+
+    .time-row span {
+      color: #9eb5bc;
+      font-size: 10px;
+      white-space: nowrap;
+    }
+
+    #timeSlider {
+      flex: 1;
+      accent-color: #37d8ff;
+    }
+
+    #timeValue {
+      color: white !important;
+      font-weight: 900;
+    }
+
+    .simulation-note {
+      margin-top: 11px;
+      color: #78939b;
+      font-size: 9px;
+    }
+
+    /* =========================================================
+       SEARCH RESULTS
+    ========================================================= */
+
+    .search-results {
+      position: absolute;
+      z-index: 2000;
+
+      top: 80px;
+      left: 0;
+      right: 0;
+
+      max-height: 280px;
+      overflow-y: auto;
+
+      background: rgba(255,255,255,0.98);
+      border-radius: 17px;
+
+      box-shadow: 0 14px 35px rgba(0,0,0,0.22);
+
+      display: none;
+    }
+
+    .search-results.show {
+      display: block;
+    }
+
+    .search-result {
+      padding: 13px 17px;
+      border-bottom: 1px solid #e8edef;
+
+      color: #29434a;
+      font-size: 11px;
+
+      cursor: pointer;
+    }
+
+    .search-result:hover {
+      background: #eefafd;
+    }
+
+    /* =========================================================
+       PRESENTATION MODE
+    ========================================================= */
+
+    body.presentation .topbar {
+      opacity: 0.96;
+    }
+
+    body.presentation .kpi {
+      transform: scale(1.03);
+    }
+
+    body.presentation .map-status {
+      display: none;
+    }
+
+    body.presentation .analysis-card {
+      width: 400px;
+    }
+
+    /* =========================================================
+       GPS MARKER
+    ========================================================= */
+
+    .gps-marker {
+      width: 18px;
+      height: 18px;
+
+      border-radius: 50%;
+
+      background: #2b8cff;
+      border: 4px solid white;
+
+      box-shadow:
+        0 0 0 6px rgba(43, 140, 255, 0.18),
+        0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    /* =========================================================
+       DARK SKY MARKER
+    ========================================================= */
+
+    .dark-marker {
+      width: 28px;
+      height: 28px;
+
+      border-radius: 50%;
+
+      display: grid;
+      place-items: center;
+
+      background: rgba(17, 106, 84, 0.94);
+      border: 2px solid rgba(151, 255, 210, 0.9);
+
+      color: #b9ffe1;
+      font-size: 13px;
+
+      box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+    }
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+
+    @media (max-width: 800px) {
+      .topbar {
+        top: 8px;
+        left: 10px;
+        right: 10px;
+        height: 62px;
+        padding: 8px;
+        border-radius: 19px;
+        gap: 7px;
+      }
+
+      .brand {
+        font-size: 14px;
+      }
+
+      .search-wrap {
+        gap: 5px;
+      }
+
+      #searchInput {
+        height: 46px;
+        min-width: 0;
+        padding: 0 15px;
+        font-size: 14px;
+      }
+
+      .header-btn {
+        height: 46px;
+        padding: 0 13px;
+        font-size: 9px;
+      }
+
+      .pill-nav {
+        top: 80px;
+        left: 12px;
+        right: 12px;
+      }
+
+      .nav-pill {
+        padding: 10px 13px;
+        font-size: 10px;
+      }
+
+      .left-controls {
+        left: 12px;
+        top: 138px;
+      }
+
+      .right-controls {
+        right: 12px;
+        top: 138px;
+      }
+
+      .map-btn {
+        width: 47px;
+        height: 47px;
+        border-radius: 15px;
+      }
+
+      .analysis-card {
+        right: 12px;
+        left: 12px;
+        bottom: 108px;
+        width: auto;
+        max-width: none;
+        padding: 17px 18px;
+      }
+
+      .analysis-grid {
+        margin-top: 15px;
+        gap: 10px 12px;
+      }
+
+      .legend {
+        left: 12px;
+        bottom: 188px;
+        width: 190px;
+        padding: 12px;
+      }
+
+      .map-status {
+        left: 12px;
+        bottom: 92px;
+        font-size: 8px;
+      }
+
+      .kpi-bar {
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
+        gap: 5px;
+      }
+
+      .kpi {
+        min-height: 55px;
+        padding: 8px 4px;
+        border-radius: 14px;
+      }
+
+      .kpi-number {
+        font-size: 15px;
+      }
+
+      .kpi-label {
+        font-size: 6px;
+      }
+
+      .pipeline {
+        grid-template-columns: 1fr;
+      }
+
+      .scenario-panel {
+        bottom: 75px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .brand {
+        display: none;
+      }
+
+      .search-wrap {
+        width: 100%;
+      }
+
+      .header-btn {
+        padding: 0 11px;
+      }
+
+      .analysis-card {
+        bottom: 84px;
+        max-height: 42vh;
+        overflow-y: auto;
+      }
+
+      .legend {
+        display: none;
+      }
+
+      .map-status {
+        bottom: 68px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<div id="map"></div>
+  <!-- =======================================================
+       MAP
+  ======================================================== -->
 
-<!-- ========================================================
-     TOP NAV
-========================================================= -->
+  <div id="map"></div>
+  <canvas id="pressureCanvas"></canvas>
 
-<div class="topbar">
+  <!-- =======================================================
+       TOP BAR
+  ======================================================== -->
 
-  <div class="brand">
-    <span class="brand-dot"></span>
-    URBAN SKY <span style="color:var(--cyan)">SHIELD</span>
-  </div>
+  <div class="topbar">
 
-  <button class="nav-btn active" data-panel="shield">
-    🌌 Sky Shield
-  </button>
-
-  <button class="nav-btn" data-panel="layers">
-    🗺️ Layers
-  </button>
-
-  <button class="nav-btn" data-panel="simulator">
-    🌈 Pressure
-  </button>
-
-  <button class="nav-btn" data-panel="planning">
-    🤖 AI Planning
-  </button>
-
-  <button class="nav-btn" data-panel="science">
-    📊 Data & Science
-  </button>
-
-</div>
-
-<!-- STATUS -->
-
-<div class="status-pill">
-  <span class="status-dot"></span>
-  CONCEPTUAL SPATIAL PLANNING • TAMIL NADU
-</div>
-
-<!-- LEFT CONTROLS -->
-
-<div class="control-stack left-controls">
-
-  <button
-    class="map-control"
-    id="fullscreenBtn"
-    title="Fullscreen"
-  >
-    ⛶
-  </button>
-
-  <button
-    class="map-control"
-    id="presentationBtn"
-    title="Presentation Mode"
-  >
-    ▶
-  </button>
-
-</div>
-
-<!-- RIGHT CONTROLS -->
-
-<div class="control-stack right-controls">
-
-  <button
-    class="map-control"
-    id="baseBtn"
-    title="Basemap"
-  >
-    🌈
-  </button>
-
-  <button
-    class="map-control active"
-    id="layersBtn"
-    title="Layers"
-  >
-    ◈
-  </button>
-
-  <button
-    class="map-control active"
-    id="pressureBtn"
-    title="Pressure"
-  >
-    🌈
-  </button>
-
-  <button
-    class="map-control"
-    id="locationBtn"
-    title="My Location"
-  >
-    ⌖
-  </button>
-
-</div>
-
-<!-- SEARCH -->
-
-<div class="search-box">
-
-  <input
-    id="searchInput"
-    type="text"
-    autocomplete="off"
-    placeholder="Search Chennai, Madurai, Ooty..."
-  >
-
-  <button
-    class="search-btn"
-    id="searchBtn"
-  >
-    SEARCH
-  </button>
-
-</div>
-
-<div
-  class="search-results"
-  id="searchResults"
-></div>
-
-<!-- ========================================================
-     LEGEND
-========================================================= -->
-
-<div class="legend">
-
-  <div class="legend-title">
-    Light Pollution Pressure
-  </div>
-
-  <div class="legend-sub">
-    Conceptual / planning visualization
-  </div>
-
-  <div class="legend-row">
-    <span
-      class="legend-dot"
-      style="background:#ff5870"
-    ></span>
-    Very High
-  </div>
-
-  <div class="legend-row">
-    <span
-      class="legend-dot"
-      style="background:#ff9b58"
-    ></span>
-    High
-  </div>
-
-  <div class="legend-row">
-    <span
-      class="legend-dot"
-      style="background:#ffd365"
-    ></span>
-    Moderate
-  </div>
-
-  <div class="legend-row">
-    <span
-      class="legend-dot"
-      style="background:#62efad"
-    ></span>
-    Low
-  </div>
-
-  <div class="legend-row">
-    <span
-      class="legend-dot"
-      style="background:#57c7ff"
-    ></span>
-    Very Low / Dark-Sky
-  </div>
-
-</div>
-
-<!-- ========================================================
-     KPI
-========================================================= -->
-
-<div class="kpi-bar">
-
-  <div class="kpi">
-
-    <div class="kpi-label">
-      Planning Zones
+    <div class="brand">
+      URBAN SKY <span>SHIELD</span>
     </div>
 
-    <div class="kpi-value">
-      22
-    </div>
+    <div class="search-wrap">
 
-    <div class="kpi-note">
-      Conceptual zones
+      <input
+        id="searchInput"
+        type="text"
+        placeholder="Search Chennai, Madurai, Ooty..."
+        autocomplete="off"
+      />
+
+      <button class="header-btn" id="searchBtn">
+        SEARCH
+      </button>
+
+      <button class="header-btn" id="locationBtn">
+        LOCATION
+      </button>
+
+      <div class="search-results" id="searchResults"></div>
+
     </div>
 
   </div>
 
-  <div class="kpi">
+  <!-- =======================================================
+       PILL NAV
+  ======================================================== -->
 
-    <div class="kpi-label">
-      Dark-Sky Candidates
-    </div>
+  <div class="pill-nav">
 
-    <div class="kpi-value">
-      04
-    </div>
+    <button class="nav-pill active" data-action="sky">
+      🌌 Sky Shield
+    </button>
 
-    <div class="kpi-note">
-      Planning candidates
-    </div>
+    <button class="nav-pill" data-action="layers">
+      🗺️ Layers
+    </button>
 
-  </div>
+    <button class="nav-pill" data-action="pressure">
+      🌈 Pressure
+    </button>
 
-  <div class="kpi">
+    <button class="nav-pill" data-action="ai">
+      🧠 AI Planning
+    </button>
 
-    <div class="kpi-label">
-      Mitigation Scenarios
-    </div>
-
-    <div class="kpi-value">
-      05
-    </div>
-
-    <div class="kpi-note">
-      Conceptual simulations
-    </div>
-
-  </div>
-
-  <div class="kpi">
-
-    <div class="kpi-label">
-      GPS Status
-    </div>
-
-    <div
-      class="kpi-value"
-      id="gpsKpi"
-    >
-      READY
-    </div>
-
-    <div
-      class="kpi-note"
-      id="gpsNote"
-    >
-      Location permission
-    </div>
-
-  </div>
-
-</div>
-
-<!-- ========================================================
-     SKY SHIELD
-========================================================= -->
-
-<section
-  class="panel"
-  id="panel-shield"
->
-
-  <div class="panel-header">
-
-    <div>
-
-      <div class="panel-kicker">
-        Urban Sky Shield
-      </div>
-
-      <div class="panel-title">
-        Dark-Sky Protection Lab
-      </div>
-
-    </div>
-
-    <button class="close-panel">
-      ×
+    <button class="nav-pill" data-action="science">
+      📊 Data & Science
     </button>
 
   </div>
 
-  <div class="panel-body">
+  <!-- =======================================================
+       LEFT MAP CONTROLS
+  ======================================================== -->
 
-    <div class="info-card">
+  <div class="map-controls left-controls">
 
-      <h4>
-        AI-Assisted Light-Pollution Planning
-      </h4>
+    <button class="map-btn" id="fullscreenBtn" title="Fullscreen">
+      ⛶
+    </button>
 
-      <p>
-        Urban Sky Shield is a spatial planning concept
-        for understanding light-pollution pressure,
-        identifying potential dark-sky areas and
-        supporting future mitigation planning across
-        Tamil Nadu.
-      </p>
+    <button class="map-btn" id="presentationBtn" title="Presentation Mode">
+      ▶
+    </button>
 
-    </div>
+    <button class="map-btn" id="zoomInBtn" title="Zoom In">
+      +
+    </button>
 
-    <div class="info-card">
-
-      <h4>
-        Current Visualization
-      </h4>
-
-      <p>
-        The pressure surface shown on the map is a
-        conceptual planning visualization and is not a
-        direct measurement of sky brightness.
-      </p>
-
-    </div>
-
-    <div class="info-card">
-
-      <h4>
-        Night-Light Proxy
-      </h4>
-
-      <p>
-        Night-light proxy • conceptual / planned VIIRS
-        integration. Satellite night-light information
-        is intended as an indicator, not direct
-        ground-based sky-brightness measurement.
-      </p>
-
-    </div>
-
-    <div class="info-card">
-
-      <h4>
-        Planning Objective
-      </h4>
-
-      <p>
-        Connect urbanization, infrastructure and
-        night-light indicators with spatial modelling
-        to support explainable dark-sky planning.
-      </p>
-
-    </div>
-
-  </div>
-
-</section>
-
-<!-- ========================================================
-     LAYERS
-========================================================= -->
-
-<section
-  class="panel"
-  id="panel-layers"
->
-
-  <div class="panel-header">
-
-    <div>
-
-      <div class="panel-kicker">
-        Map Intelligence
-      </div>
-
-      <div class="panel-title">
-        Visualization Layers
-      </div>
-
-    </div>
-
-    <button class="close-panel">
-      ×
+    <button class="map-btn" id="zoomOutBtn" title="Zoom Out">
+      −
     </button>
 
   </div>
 
-  <div class="panel-body">
+  <!-- =======================================================
+       RIGHT MAP CONTROLS
+  ======================================================== -->
 
-    <div class="info-card">
+  <div class="map-controls right-controls">
 
-      <h4>
-        Light Pollution Pressure
-      </h4>
+    <button class="map-btn" id="basemapBtn" title="Basemap">
+      ◫
+    </button>
 
-      <p>
-        Soft conceptual pressure surface with
-        gradual spatial fading.
-      </p>
+    <button class="map-btn" id="layersBtn" title="Layers">
+      ◈
+    </button>
 
-      <button
-        class="scenario active"
-        id="pressureToggle"
-        style="margin-top:9px;width:100%"
-      >
-        ● Pressure Surface ON
-      </button>
+    <button class="map-btn active" id="pressureBtn" title="Pressure">
+      🌈
+    </button>
 
-    </div>
-
-    <div class="info-card">
-
-      <h4>
-        Night-Light Proxy
-      </h4>
-
-      <p>
-        Conceptual urban/night-light indicator.
-        Planned future integration can use suitable
-        satellite night-light datasets such as VIIRS.
-      </p>
-
-      <button
-        class="scenario"
-        id="proxyToggle"
-        style="margin-top:9px;width:100%"
-      >
-        ○ Night-Light Proxy OFF
-      </button>
-
-    </div>
-
-    <div class="info-card">
-
-      <h4>
-        Dark-Sky Candidates
-      </h4>
-
-      <p>
-        Candidate areas shown for planning and
-        future field validation.
-      </p>
-
-      <button
-        class="scenario active"
-        id="darkSkyToggle"
-        style="margin-top:9px;width:100%"
-      >
-        ● Dark-Sky Candidates ON
-      </button>
-
-    </div>
-
-  </div>
-
-</section>
-
-<!-- ========================================================
-     PRESSURE SIMULATOR
-========================================================= -->
-
-<section
-  class="panel"
-  id="panel-simulator"
->
-
-  <div class="panel-header">
-
-    <div>
-
-      <div class="panel-kicker">
-        Mitigation Lab
-      </div>
-
-      <div class="panel-title">
-        Smart Sky Simulator
-      </div>
-
-    </div>
-
-    <button class="close-panel">
-      ×
+    <button class="map-btn" id="gpsBtn" title="My Location">
+      ◎
     </button>
 
   </div>
 
-  <div class="panel-body">
+  <!-- =======================================================
+       LEGEND
+  ======================================================== -->
 
-    <div class="scenario-grid">
+  <div class="legend" id="legend">
 
-      <button
-        class="scenario active"
-        data-scenario="baseline"
-      >
+    <div class="legend-title">
+      LIGHT-POLLUTION PRESSURE
+    </div>
+
+    <div class="gradient-bar"></div>
+
+    <div class="legend-labels">
+      <span>VERY LOW</span>
+      <span>LOW</span>
+      <span>MODERATE</span>
+      <span>HIGH</span>
+      <span>VERY HIGH</span>
+    </div>
+
+    <div class="concept-note">
+      Conceptual spatial planning visualization •
+      not direct sky-brightness measurement.
+    </div>
+
+  </div>
+
+  <!-- =======================================================
+       SMART ANALYSIS
+  ======================================================== -->
+
+  <div class="analysis-card" id="analysisCard">
+
+    <div class="analysis-title">
+      📍 SMART SKY ANALYSIS
+    </div>
+
+    <div class="analysis-location" id="analysisLocation">
+      Click anywhere on the map
+    </div>
+
+    <div class="analysis-grid">
+
+      <div class="label">Coordinates</div>
+      <div class="value" id="analysisCoordinates">—</div>
+
+      <div class="label">Nearest zone</div>
+      <div class="value" id="analysisZone">—</div>
+
+      <div class="label">Pressure</div>
+      <div class="value" id="analysisPressure">—</div>
+
+      <div class="label">Urban influence</div>
+      <div class="value" id="analysisUrban">—</div>
+
+      <div class="label">Dark-sky potential</div>
+      <div class="value" id="analysisDark">—</div>
+
+    </div>
+
+    <div class="recommendation" id="recommendation">
+      Select a location to generate a conceptual planning recommendation.
+    </div>
+
+  </div>
+
+  <!-- =======================================================
+       MAP STATUS
+  ======================================================== -->
+
+  <div class="map-status" id="mapStatus">
+    OpenStreetMap + conceptual spatial pressure model
+  </div>
+
+  <!-- =======================================================
+       KPI
+  ======================================================== -->
+
+  <div class="kpi-bar">
+
+    <div class="kpi">
+      <div class="kpi-number">22</div>
+      <div class="kpi-label">PLANNING ZONES</div>
+    </div>
+
+    <div class="kpi">
+      <div class="kpi-number">04</div>
+      <div class="kpi-label">DARK-SKY CANDIDATES</div>
+    </div>
+
+    <div class="kpi">
+      <div class="kpi-number">05</div>
+      <div class="kpi-label">MITIGATION SCENARIOS</div>
+    </div>
+
+    <div class="kpi">
+      <div class="kpi-number" id="gpsKpi">READY</div>
+      <div class="kpi-label">GPS STATUS</div>
+    </div>
+
+  </div>
+
+  <!-- =======================================================
+       SCIENCE MODAL
+  ======================================================== -->
+
+  <div class="modal" id="scienceModal">
+
+    <div class="modal-card">
+
+      <div class="modal-head">
+
+        <h2>
+          Data & Science
+        </h2>
+
+        <button class="close-btn" data-close="scienceModal">
+          ×
+        </button>
+
+      </div>
+
+      <p>
+        <strong>Urban Sky Shield</strong> is an AI-assisted spatial
+        planning concept for understanding light-pollution pressure
+        and identifying potential dark-sky areas in Tamil Nadu.
+      </p>
+
+      <h3>
+        Proposed Spatial Modelling Pipeline
+      </h3>
+
+      <div class="pipeline">
+
+        <div class="pipeline-item">
+          🌃<br>
+          Night-light<br>
+          proxy
+        </div>
+
+        <div class="pipeline-item">
+          🏙️<br>
+          Urban / built-up<br>
+          indicators
+        </div>
+
+        <div class="pipeline-item">
+          🛣️<br>
+          Road & infrastructure<br>
+          density
+        </div>
+
+        <div class="pipeline-item">
+          🧠<br>
+          AI-assisted<br>
+          spatial model
+        </div>
+
+        <div class="pipeline-item">
+          🌌<br>
+          Dark-sky<br>
+          planning
+        </div>
+
+      </div>
+
+      <h3>
+        Night-light Proxy
+      </h3>
+
+      <p>
+        Satellite-derived night-light information can be used as an
+        indicator of artificial-light pressure. It is a proxy and
+        should not be interpreted as direct measurement of sky
+        brightness.
+      </p>
+
+      <h3>
+        Validation Roadmap
+      </h3>
+
+      <p>
+        Future validation can combine real satellite datasets,
+        calibrated field observations, sky-quality measurements,
+        weather information and local infrastructure data.
+      </p>
+
+      <h3>
+        Scientific Status
+      </h3>
+
+      <p>
+        The current pressure visualization is <strong>conceptual /
+        planning visualization</strong>. No measured experimental
+        accuracy, R², field-derived percentage reduction or trained
+        AI performance is claimed by this interface.
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- =======================================================
+       AI MODAL
+  ======================================================== -->
+
+  <div class="modal" id="aiModal">
+
+    <div class="modal-card">
+
+      <div class="modal-head">
+
+        <h2>
+          AI-Assisted Spatial Planning
+        </h2>
+
+        <button class="close-btn" data-close="aiModal">
+          ×
+        </button>
+
+      </div>
+
+      <p>
+        The proposed AI workflow combines spatial indicators to
+        support explainable light-pollution planning.
+      </p>
+
+      <div class="pipeline">
+
+        <div class="pipeline-item">
+          🌃<br>
+          Night-light<br>
+          proxy
+        </div>
+
+        <div class="pipeline-item">
+          🏙️<br>
+          Urban density<br>
+          indicators
+        </div>
+
+        <div class="pipeline-item">
+          🛣️<br>
+          Infrastructure<br>
+          influence
+        </div>
+
+        <div class="pipeline-item">
+          🧠<br>
+          Spatial prediction<br>
+          concept
+        </div>
+
+        <div class="pipeline-item">
+          💡<br>
+          Mitigation<br>
+          planning
+        </div>
+
+      </div>
+
+      <h3>
+        Explainable Factors
+      </h3>
+
+      <p>
+        Higher urbanisation, infrastructure concentration and
+        artificial-light indicators can conceptually increase
+        predicted pressure. These are relative planning factors,
+        not measured percentages in the current prototype.
+      </p>
+
+      <h3>
+        Validation Roadmap
+      </h3>
+
+      <p>
+        The model can later be trained and validated using actual
+        geospatial datasets and independent field observations.
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- =======================================================
+       MITIGATION SIMULATOR
+  ======================================================== -->
+
+  <div class="scenario-panel" id="scenarioPanel">
+
+    <div class="scenario-title">
+      💡 MITIGATION SIMULATOR
+    </div>
+
+    <div class="scenario-buttons">
+
+      <button class="scenario-btn active" data-scenario="baseline">
         Current / Baseline
       </button>
 
-      <button
-        class="scenario"
-        data-scenario="shielded"
-      >
+      <button class="scenario-btn" data-scenario="shielded">
         Shielded Street Lighting
       </button>
 
-      <button
-        class="scenario"
-        data-scenario="dimming"
-      >
+      <button class="scenario-btn" data-scenario="adaptive">
         Adaptive Dimming
       </button>
 
-      <button
-        class="scenario"
-        data-scenario="late"
-      >
-        Late-Night Lighting Control
+      <button class="scenario-btn" data-scenario="late">
+        Late-Night Control
       </button>
 
-      <button
-        class="scenario"
-        data-scenario="darksky"
-      >
+      <button class="scenario-btn" data-scenario="darksky">
         Dark-Sky Protection
       </button>
 
     </div>
 
-    <div class="slider-wrap">
+    <div class="time-row">
 
-      <div class="slider-head">
-
-        <span>
-          Conceptual time
-        </span>
-
-        <strong id="timeValue">
-          18:00
-        </strong>
-
-      </div>
+      <span>18:00</span>
 
       <input
-        type="range"
         id="timeSlider"
+        type="range"
         min="18"
         max="24"
-        step="1"
         value="18"
-      >
+        step="1"
+      />
 
-    </div>
+      <span id="timeValue">
+        18:00
+      </span>
 
-    <div
-      class="info-card"
-      style="margin-top:14px"
-    >
-
-      <h4 id="scenarioTitle">
-        Current / Baseline
-      </h4>
-
-      <p id="scenarioDescription">
-        Reference visualization for the current
-        conceptual pressure surface.
-      </p>
+      <span>24:00</span>
 
     </div>
 
     <div class="simulation-note">
-
-      Conceptual temporal simulation.
-      Changes are visual planning scenarios only
-      and must not be interpreted as measured
-      percentage reductions.
-
+      Conceptual temporal simulation • visualization only •
+      not measured percentage reduction.
     </div>
 
   </div>
 
-</section>
-
-<!-- ========================================================
-     AI PLANNING
-========================================================= -->
-
-<section
-  class="panel"
-  id="panel-planning"
->
-
-  <div class="panel-header">
-
-    <div>
-
-      <div class="panel-kicker">
-        Explainable Planning
-      </div>
-
-      <div class="panel-title">
-        AI-Assisted Spatial Planning
-      </div>
-
-    </div>
-
-    <button class="close-panel">
-      ×
-    </button>
-
-  </div>
-
-  <div class="panel-body">
-
-    <div class="pipeline">
-
-      <div class="pipeline-item">
-        <span>01</span>
-        Night-light proxy
-      </div>
-
-      <div class="pipeline-item">
-        <span>02</span>
-        Urban / built-up indicators
-      </div>
-
-      <div class="pipeline-item">
-        <span>03</span>
-        Road & infrastructure density
-      </div>
-
-      <div class="pipeline-item">
-        <span>04</span>
-        Spatial analysis model
-      </div>
-
-      <div class="pipeline-item">
-        <span>05</span>
-        Pressure visualization
-      </div>
-
-      <div class="pipeline-item">
-        <span>06</span>
-        Dark-sky planning action
-      </div>
-
-    </div>
-
-    <div
-      class="info-card"
-      style="margin-top:12px"
-    >
-
-      <h4>
-        Explainable Factors
-      </h4>
-
-      <p>
-        Conceptually, urban density, road/infrastructure
-        intensity, night-light indicators and other
-        available spatial factors can influence predicted
-        pressure. Relative influence values are not
-        quantified here because the model has not yet
-        been trained and validated with a reference dataset.
-      </p>
-
-    </div>
-
-    <div class="info-card">
-
-      <h4>
-        Validation Roadmap
-      </h4>
-
-      <p>
-        Future validation can combine satellite
-        night-light datasets, calibrated sky-brightness
-        observations, field measurements, weather
-        information and independent locations for testing.
-      </p>
-
-    </div>
-
-  </div>
-
-</section>
-
-<!-- ========================================================
-     SCIENCE
-========================================================= -->
-
-<section
-  class="panel"
-  id="panel-science"
->
-
-  <div class="panel-header">
-
-    <div>
-
-      <div class="panel-kicker">
-        Scientific Foundation
-      </div>
-
-      <div class="panel-title">
-        Data & Science
-      </div>
-
-    </div>
-
-    <button class="close-panel">
-      ×
-    </button>
-
-  </div>
-
-  <div class="panel-body">
-
-    <div class="info-card">
-
-      <h4>
-        Why Light Pollution Matters
-      </h4>
-
-      <p>
-        Excessive and poorly directed artificial light
-        can affect astronomical observation, night-time
-        ecosystems and visibility of the night sky.
-      </p>
-
-    </div>
-
-    <div class="info-card">
-
-      <h4>
-        Night-Light Proxy
-      </h4>
-
-      <p>
-        Satellite-derived night-light information can
-        act as a spatial indicator of artificial
-        lighting activity. It should not be treated as
-        a direct measurement of human-visible sky brightness.
-      </p>
-
-    </div>
-
-    <div class="info-card">
-
-      <h4>
-        Spatial Modelling
-      </h4>
-
-      <p>
-        Urban density, road infrastructure, built-up
-        indicators and other contextual variables can
-        be combined in a future explainable
-        spatial-prediction workflow.
-      </p>
-
-    </div>
-
-    <div class="info-card">
-
-      <h4>
-        AI-Assisted Prediction
-      </h4>
-
-      <p>
-        The proposed AI layer is currently a planning
-        concept. No training accuracy, R² value,
-        field-validation score or predictive performance
-        is claimed by this prototype.
-      </p>
-
-    </div>
-
-    <div class="info-card">
-
-      <h4>
-        Future Dark-Sky Validation
-      </h4>
-
-      <p>
-        Candidate areas should be validated through
-        field observations, calibrated sky-quality
-        measurements and independent datasets before
-        being classified as officially protected
-        dark-sky locations.
-      </p>
-
-    </div>
-
-  </div>
-
-</section>
-
-<!-- ========================================================
-     SMART SKY ANALYSIS
-========================================================= -->
-
-<section
-  class="panel"
-  id="analysisPanel"
->
-
-  <div class="panel-header">
-
-    <div>
-
-      <div class="panel-kicker">
-        Map Intelligence
-      </div>
-
-      <div class="panel-title">
-        Smart Sky Analysis
-      </div>
-
-    </div>
-
-    <button class="close-panel">
-      ×
-    </button>
-
-  </div>
-
-  <div class="panel-body">
-
-    <div class="info-card">
-
-      <h4>
-        Selected Location
-      </h4>
-
-      <p id="selectedPlace">
-        Click the map, search a location or use GPS
-        to inspect its conceptual planning context.
-      </p>
-
-    </div>
-
-    <div class="analysis-grid">
-
-      <div class="analysis-item">
-        <div class="analysis-label">
-          Latitude
-        </div>
-        <div class="analysis-value" id="aLat">
-          —
-        </div>
-      </div>
-
-      <div class="analysis-item">
-        <div class="analysis-label">
-          Longitude
-        </div>
-        <div class="analysis-value" id="aLng">
-          —
-        </div>
-      </div>
-
-      <div class="analysis-item">
-        <div class="analysis-label">
-          Planning Zone
-        </div>
-        <div class="analysis-value" id="aZone">
-          —
-        </div>
-      </div>
-
-      <div class="analysis-item">
-        <div class="analysis-label">
-          Pressure Class
-        </div>
-        <div class="analysis-value" id="aPressure">
-          —
-        </div>
-      </div>
-
-      <div class="analysis-item">
-        <div class="analysis-label">
-          Urban Influence
-        </div>
-        <div class="analysis-value" id="aUrban">
-          —
-        </div>
-      </div>
-
-      <div class="analysis-item">
-        <div class="analysis-label">
-          Dark-Sky Potential
-        </div>
-        <div class="analysis-value" id="aDark">
-          —
-        </div>
-      </div>
-
-    </div>
-
-    <div
-      class="info-card"
-      style="margin-top:10px"
-    >
-
-      <h4>
-        Suggested Planning Action
-      </h4>
-
-      <p id="aAction">
-        —
-      </p>
-
-    </div>
-
-  </div>
-
-</section>
-
-<div class="presentation-overlay"></div>
-
-<div class="presentation-title">
-  URBAN SKY SHIELD • YASSC 2026
-</div>
-
-<script
-  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-></script>
-
-<script>
-
-/* =========================================================
-   MAP
-========================================================= */
-
-const map = L.map("map",{
-  zoomControl:false,
-  preferCanvas:true,
-  minZoom:6,
-  maxZoom:18
-});
-
-/* =========================================================
-   BASEMAPS
-========================================================= */
-
-const osm = L.tileLayer(
-  "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-  {
-    maxZoom:19,
-    attribution:"&copy; OpenStreetMap contributors"
-  }
-);
-
-const satellite = L.tileLayer(
-  "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-  {
-    maxZoom:18,
-    attribution:
-      "Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics"
-  }
-);
-
-osm.addTo(map);
-
-/* =========================================================
-   TAMIL NADU BOUNDS
-========================================================= */
-
-const tamilNaduBounds = L.latLngBounds(
-  [8.00,76.35],
-  [13.60,80.50]
-);
-
-map.fitBounds(
-  tamilNaduBounds,
-  {
-    paddingTopLeft:[18,95],
-    paddingBottomRight:[18,120]
-  }
-);
-
-/* =========================================================
-   PRESSURE DATA
-========================================================= */
-
-const pressureCenters = [
-
-  {
-    name:"Chennai Metropolitan Region",
-    lat:13.08,
-    lng:80.27,
-    pressure:"Very High",
-    radiusKm:115,
-    intensity:1
-  },
-
-  {
-    name:"Vellore",
-    lat:12.92,
-    lng:79.13,
-    pressure:"Very High",
-    radiusKm:45,
-    intensity:.72
-  },
-
-  {
-    name:"Coimbatore",
-    lat:11.02,
-    lng:76.96,
-    pressure:"Very High",
-    radiusKm:58,
-    intensity:.84
-  },
-
-  {
-    name:"Madurai",
-    lat:9.93,
-    lng:78.12,
-    pressure:"Very High",
-    radiusKm:55,
-    intensity:.84
-  },
-
-  {
-    name:"Tiruchirappalli",
-    lat:10.79,
-    lng:78.70,
-    pressure:"High",
-    radiusKm:48,
-    intensity:.66
-  },
-
-  {
-    name:"Salem",
-    lat:11.66,
-    lng:78.16,
-    pressure:"High",
-    radiusKm:45,
-    intensity:.64
-  },
-
-  {
-    name:"Kumbakonam",
-    lat:10.96,
-    lng:79.38,
-    pressure:"High",
-    radiusKm:35,
-    intensity:.52
-  },
-
-  {
-    name:"Thanjavur",
-    lat:10.79,
-    lng:79.14,
-    pressure:"High",
-    radiusKm:36,
-    intensity:.54
-  },
-
-  {
-    name:"Tirunelveli",
-    lat:8.73,
-    lng:77.70,
-    pressure:"High",
-    radiusKm:40,
-    intensity:.55
-  },
-
-  {
-    name:"Tiruppur",
-    lat:11.11,
-    lng:77.34,
-    pressure:"High",
-    radiusKm:42,
-    intensity:.60
-  },
-
-  {
-    name:"Erode",
-    lat:11.34,
-    lng:77.72,
-    pressure:"Moderate",
-    radiusKm:40,
-    intensity:.45
-  },
-
-  {
-    name:"Namakkal",
-    lat:11.22,
-    lng:78.17,
-    pressure:"Moderate",
-    radiusKm:30,
-    intensity:.39
-  },
-
-  {
-    name:"Tiruchengode",
-    lat:11.38,
-    lng:77.89,
-    pressure:"Moderate",
-    radiusKm:28,
-    intensity:.37
-  },
-
-  {
-    name:"Ramanathapuram",
-    lat:9.37,
-    lng:78.83,
-    pressure:"Moderate",
-    radiusKm:38,
-    intensity:.34
-  },
-
-  {
-    name:"Sivaganga",
-    lat:9.84,
-    lng:78.48,
-    pressure:"Moderate",
-    radiusKm:34,
-    intensity:.31
-  },
-
-  {
-    name:"Thoothukudi",
-    lat:8.81,
-    lng:78.14,
-    pressure:"Moderate",
-    radiusKm:42,
-    intensity:.43
-  },
-
-  {
-    name:"Dindigul",
-    lat:10.36,
-    lng:77.98,
-    pressure:"Moderate",
-    radiusKm:34,
-    intensity:.35
-  },
-
-  {
-    name:"Karur",
-    lat:10.96,
-    lng:78.08,
-    pressure:"Moderate",
-    radiusKm:31,
-    intensity:.31
-  },
-
-  {
-    name:"Kanchipuram",
-    lat:12.83,
-    lng:79.70,
-    pressure:"Moderate",
-    radiusKm:42,
-    intensity:.41
-  }
-
-];
-
-/* =========================================================
-   DARK SKY CANDIDATES
-========================================================= */
-
-const darkSkyCandidates = [
-
-  {
-    name:"Nilgiri Interior",
-    lat:11.42,
-    lng:76.70
-  },
-
-  {
-    name:"Western Hill Region",
-    lat:10.40,
-    lng:77.05
-  },
-
-  {
-    name:"Tiruvannamalai Rural",
-    lat:12.23,
-    lng:79.07
-  },
-
-  {
-    name:"Kanyakumari Interior",
-    lat:8.36,
-    lng:77.38
-  }
-
-];
-
-/* =========================================================
-   PRESSURE CANVAS
-========================================================= */
-
-const pressureCanvas =
-  L.DomUtil.create(
-    "canvas",
-    "pressure-canvas"
-  );
-
-pressureCanvas.style.position="absolute";
-pressureCanvas.style.pointerEvents="none";
-pressureCanvas.style.zIndex="350";
-
-map.getPanes().overlayPane.appendChild(
-  pressureCanvas
-);
-
-const ctx =
-  pressureCanvas.getContext("2d");
-
-let pressureVisible=true;
-let proxyVisible=false;
-
-let activeScenario="baseline";
-let simulationHour=18;
-
-/* =========================================================
-   COLOR
-========================================================= */
-
-function getPressureColor(type){
-
-  if(type==="Very High")
-    return [255,82,105];
-
-  if(type==="High")
-    return [255,153,82];
-
-  if(type==="Moderate")
-    return [255,208,98];
-
-  if(type==="Low")
-    return [102,225,154];
-
-  return [82,195,255];
-}
-
-/* =========================================================
-   RADIUS IN PIXELS
-   Converts real-world km into screen pixels.
-========================================================= */
-
-function kmToPixels(lat,lng,km){
-
-  const center =
-    map.latLngToContainerPoint(
-      [lat,lng]
-    );
-
-  const offset =
-    map.latLngToContainerPoint(
-      [
-        lat,
-        lng +
-        km /
-        (111.32 *
-        Math.cos(lat*Math.PI/180))
-      ]
-    );
-
-  return Math.abs(
-    offset.x-center.x
-  );
-}
-
-/* =========================================================
-   SCENARIO FACTOR
-========================================================= */
-
-function scenarioFactor(){
-
-  const timeFactor =
-    Math.max(
-      .42,
-      1-
-      Math.max(
-        0,
-        simulationHour-18
-      )*.045
-    );
-
-  const factors={
-
-    baseline:1,
-
-    shielded:.86,
-
-    dimming:.74,
-
-    late:.63,
-
-    darksky:.48
-
-  };
-
-  return timeFactor *
-    factors[activeScenario];
-}
-
-/* =========================================================
-   DRAW SOFT PRESSURE
-========================================================= */
-
-function drawPressureSurface(){
-
-  const size=map.getSize();
-
-  const dpr=
-    window.devicePixelRatio||1;
-
-  pressureCanvas.width=
-    size.x*dpr;
-
-  pressureCanvas.height=
-    size.y*dpr;
-
-  pressureCanvas.style.width=
-    size.x+"px";
-
-  pressureCanvas.style.height=
-    size.y+"px";
-
-  ctx.setTransform(
-    dpr,0,0,dpr,0,0
-  );
-
-  ctx.clearRect(
-    0,
-    0,
-    size.x,
-    size.y
-  );
-
-  if(!pressureVisible)
-    return;
-
-  const factor=
-    scenarioFactor();
-
-  /*
-    Main urban pressure fields.
-    Each field has a very soft edge.
-  */
-
-  pressureCenters.forEach(zone=>{
-
-    const p=
-      map.latLngToContainerPoint([
-        zone.lat,
-        zone.lng
-      ]);
-
-    const radius=
-      kmToPixels(
-        zone.lat,
-        zone.lng,
-        zone.radiusKm
-      );
-
-    const [r,g,b]=
-      getPressureColor(
-        zone.pressure
-      );
-
-    const baseOpacity=
-      zone.intensity *
-      factor *
-      (
-        zone.pressure==="Very High"
-        ? .30
-        : zone.pressure==="High"
-        ? .23
-        : .16
-      );
-
-    const gradient=
-      ctx.createRadialGradient(
-        p.x,
-        p.y,
-        0,
-        p.x,
-        p.y,
-        radius
-      );
-
-    gradient.addColorStop(
-      0,
-      `rgba(${r},${g},${b},${baseOpacity})`
-    );
-
-    gradient.addColorStop(
-      .16,
-      `rgba(${r},${g},${b},${baseOpacity*.92})`
-    );
-
-    gradient.addColorStop(
-      .36,
-      `rgba(${r},${g},${b},${baseOpacity*.62})`
-    );
-
-    gradient.addColorStop(
-      .58,
-      `rgba(${r},${g},${b},${baseOpacity*.30})`
-    );
-
-    gradient.addColorStop(
-      .78,
-      `rgba(${r},${g},${b},${baseOpacity*.09})`
-    );
-
-    gradient.addColorStop(
-      1,
-      `rgba(${r},${g},${b},0)`
-    );
-
-    ctx.fillStyle=gradient;
-
-    ctx.beginPath();
-
-    ctx.arc(
-      p.x,
-      p.y,
-      radius,
-      0,
-      Math.PI*2
-    );
-
-    ctx.fill();
-
-  });
-
-  /*
-    Subtle regional blending fields.
-    These are intentionally weak so the map geography
-    remains visible.
-  */
-
-  const regionalFields=[
-
-    {
-      lat:12.85,
-      lng:79.85,
-      km:125,
-      color:[255,105,90],
-      alpha:.035
-    },
-
-    {
-      lat:11.15,
-      lng:77.65,
-      km:135,
-      color:[255,167,85],
-      alpha:.027
-    },
-
-    {
-      lat:10.25,
-      lng:78.55,
-      km:145,
-      color:[255,190,90],
-      alpha:.022
-    },
-
-    {
-      lat:9.05,
-      lng:78.15,
-      km:125,
-      color:[255,180,95],
-      alpha:.020
-    }
-
-  ];
-
-  regionalFields.forEach(field=>{
-
-    const p=
-      map.latLngToContainerPoint([
-        field.lat,
-        field.lng
-      ]);
-
-    const radius=
-      kmToPixels(
-        field.lat,
-        field.lng,
-        field.km
-      );
-
-    const grad=
-      ctx.createRadialGradient(
-        p.x,
-        p.y,
-        0,
-        p.x,
-        p.y,
-        radius
-      );
-
-    grad.addColorStop(
-      0,
-      `rgba(
-        ${field.color[0]},
-        ${field.color[1]},
-        ${field.color[2]},
-        ${field.alpha}
-      )`
-    );
-
-    grad.addColorStop(
-      .5,
-      `rgba(
-        ${field.color[0]},
-        ${field.color[1]},
-        ${field.color[2]},
-        ${field.alpha*.35}
-      )`
-    );
-
-    grad.addColorStop(
-      1,
-      "rgba(0,0,0,0)"
-    );
-
-    ctx.fillStyle=grad;
-
-    ctx.beginPath();
-
-    ctx.arc(
-      p.x,
-      p.y,
-      radius,
-      0,
-      Math.PI*2
-    );
-
-    ctx.fill();
-
-  });
-
-}
-
-/* =========================================================
-   MAP EVENTS
-========================================================= */
-
-map.on(
-  "moveend zoomend resize",
-  drawPressureSurface
-);
-
-window.addEventListener(
-  "resize",
-  drawPressureSurface
-);
-
-/* =========================================================
-   DARK SKY LAYER
-========================================================= */
-
-const darkSkyLayer=
-  L.layerGroup().addTo(map);
-
-darkSkyCandidates.forEach(place=>{
-
-  const marker=
-    L.marker(
-      [place.lat,place.lng],
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script>
+    /* =========================================================
+       MAP INITIALIZATION
+    ========================================================= */
+
+    const map = L.map("map", {
+      zoomControl: true,
+      minZoom: 5,
+      maxZoom: 18,
+      preferCanvas: true
+    });
+
+    /*
+      IMPORTANT:
+      Main basemap = OpenStreetMap
+      No API key required.
+    */
+
+    const osm = L.tileLayer(
+      "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
       {
-        icon:L.divIcon({
-          className:"",
-          html:
-            '<div class="sky-marker"></div>',
-          iconSize:[15,15],
-          iconAnchor:[7.5,7.5]
-        })
+        maxZoom: 19,
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+      }
+    ).addTo(map);
+
+    /*
+      Optional satellite layer.
+      No user API key required.
+    */
+
+    const satellite = L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      {
+        maxZoom: 19,
+        attribution:
+          'Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community'
       }
     );
 
-  marker.bindTooltip(
-    `
-    <strong>${place.name}</strong><br>
-    <span style="font-size:9px;color:#8fa5b5">
-    Dark-sky potential • conceptual candidate
-    </span>
-    `,
-    {
-      direction:"top",
-      opacity:.95
-    }
-  );
+    /*
+      Tamil Nadu focused initial view.
+    */
 
-  marker.addTo(
-    darkSkyLayer
-  );
+    map.setView([10.85, 78.65], 7);
 
-});
+    /* =========================================================
+       PLANNING ZONES
+    ========================================================= */
 
-/* =========================================================
-   NIGHT LIGHT PROXY
-========================================================= */
-
-const proxyLayer=
-  L.layerGroup();
-
-pressureCenters.forEach(zone=>{
-
-  const circle=
-    L.circle(
-      [zone.lat,zone.lng],
+    const zones = [
       {
-        radius:
-          zone.radiusKm*1000,
-
-        stroke:false,
-
-        fillColor:"#f3edbd",
-
-        fillOpacity:.035
+        name: "Chennai Metro",
+        lat: 13.0827,
+        lng: 80.2707,
+        pressure: 1.00,
+        urban: 1.00
+      },
+      {
+        name: "Vellore",
+        lat: 12.9165,
+        lng: 79.1325,
+        pressure: 0.86,
+        urban: 0.82
+      },
+      {
+        name: "Coimbatore",
+        lat: 11.0168,
+        lng: 76.9558,
+        pressure: 0.90,
+        urban: 0.90
+      },
+      {
+        name: "Madurai",
+        lat: 9.9252,
+        lng: 78.1198,
+        pressure: 0.88,
+        urban: 0.86
+      },
+      {
+        name: "Tiruchirappalli",
+        lat: 10.7905,
+        lng: 78.7047,
+        pressure: 0.72,
+        urban: 0.72
+      },
+      {
+        name: "Salem",
+        lat: 11.6643,
+        lng: 78.1460,
+        pressure: 0.70,
+        urban: 0.73
+      },
+      {
+        name: "Kumbakonam",
+        lat: 10.9601,
+        lng: 79.3845,
+        pressure: 0.67,
+        urban: 0.62
+      },
+      {
+        name: "Thanjavur",
+        lat: 10.7870,
+        lng: 79.1378,
+        pressure: 0.65,
+        urban: 0.61
+      },
+      {
+        name: "Tirunelveli",
+        lat: 8.7139,
+        lng: 77.7567,
+        pressure: 0.64,
+        urban: 0.61
+      },
+      {
+        name: "Tiruppur",
+        lat: 11.1085,
+        lng: 77.3411,
+        pressure: 0.72,
+        urban: 0.74
+      },
+      {
+        name: "Erode",
+        lat: 11.3410,
+        lng: 77.7172,
+        pressure: 0.57,
+        urban: 0.59
+      },
+      {
+        name: "Namakkal",
+        lat: 11.2194,
+        lng: 78.1677,
+        pressure: 0.51,
+        urban: 0.50
+      },
+      {
+        name: "Dindigul",
+        lat: 10.3673,
+        lng: 77.9803,
+        pressure: 0.50,
+        urban: 0.48
+      },
+      {
+        name: "Karur",
+        lat: 10.9601,
+        lng: 78.0766,
+        pressure: 0.48,
+        urban: 0.46
+      },
+      {
+        name: "Thoothukudi",
+        lat: 8.7642,
+        lng: 78.1348,
+        pressure: 0.55,
+        urban: 0.55
+      },
+      {
+        name: "Ramanathapuram",
+        lat: 9.3639,
+        lng: 78.8395,
+        pressure: 0.43,
+        urban: 0.40
+      },
+      {
+        name: "Sivaganga",
+        lat: 9.8433,
+        lng: 78.4809,
+        pressure: 0.42,
+        urban: 0.39
+      },
+      {
+        name: "Tiruvannamalai",
+        lat: 12.2253,
+        lng: 79.0747,
+        pressure: 0.35,
+        urban: 0.34
+      },
+      {
+        name: "Nilgiri Interior",
+        lat: 11.4102,
+        lng: 76.6950,
+        pressure: 0.14,
+        urban: 0.17
+      },
+      {
+        name: "Western Hill Region",
+        lat: 10.5500,
+        lng: 77.0000,
+        pressure: 0.18,
+        urban: 0.20
       }
-    );
+    ];
 
-  circle.bindTooltip(
-    "Night-light proxy • conceptual / planned VIIRS integration"
-  );
+    /* =========================================================
+       DARK SKY CANDIDATES
+    ========================================================= */
 
-  proxyLayer.addLayer(circle);
+    const darkSkyCandidates = [
+      {
+        name: "Nilgiri Interior",
+        lat: 11.4102,
+        lng: 76.6950
+      },
+      {
+        name: "Western Hill Region",
+        lat: 10.5500,
+        lng: 77.0000
+      },
+      {
+        name: "Kanyakumari Interior",
+        lat: 8.4500,
+        lng: 77.4500
+      },
+      {
+        name: "Sivaganga Rural",
+        lat: 9.7800,
+        lng: 78.6000
+      }
+    ];
 
-});
+    let darkSkyLayer = L.layerGroup();
+    let darkSkyVisible = true;
 
-/* =========================================================
-   SEARCH
-========================================================= */
+    darkSkyCandidates.forEach(item => {
 
-const searchInput=
-  document.getElementById(
-    "searchInput"
-  );
-
-const searchResults=
-  document.getElementById(
-    "searchResults"
-  );
-
-async function searchLocation(){
-
-  const query=
-    searchInput.value.trim();
-
-  if(!query)
-    return;
-
-  searchResults.style.display=
-    "block";
-
-  searchResults.innerHTML=
-    `
-    <div class="search-result">
-      Searching Tamil Nadu...
-    </div>
-    `;
-
-  try{
-
-    const url=
-      "https://nominatim.openstreetmap.org/search?"+
-      new URLSearchParams({
-        q:
-          query+
-          ", Tamil Nadu, India",
-
-        format:"json",
-
-        limit:"5"
+      const icon = L.divIcon({
+        className: "",
+        html: `<div class="dark-marker">✦</div>`,
+        iconSize: [28, 28],
+        iconAnchor: [14, 14]
       });
 
-    const response=
-      await fetch(url);
+      const marker = L.marker(
+        [item.lat, item.lng],
+        { icon }
+      ).bindPopup(`
+        <strong>${item.name}</strong><br>
+        <span style="font-size:11px">
+        Dark-sky potential candidate<br>
+        Conceptual planning location
+        </span>
+      `);
 
-    const data=
-      await response.json();
+      darkSkyLayer.addLayer(marker);
+    });
 
-    if(!data.length){
+    darkSkyLayer.addTo(map);
 
-      searchResults.innerHTML=
-        `
-        <div class="search-result">
-          No location found.
-        </div>
-        `;
+    /* =========================================================
+       PRESSURE CANVAS
+       SOFT MAP-INTEGRATED SURFACE
+    ========================================================= */
 
-      return;
+    const canvas = document.getElementById("pressureCanvas");
+    const ctx = canvas.getContext("2d");
+
+    let pressureVisible = true;
+
+    function resizeCanvas() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+
+      canvas.style.width = window.innerWidth + "px";
+      canvas.style.height = window.innerHeight + "px";
+
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      drawPressureSurface();
     }
 
-    searchResults.innerHTML="";
+    function pressureColor(value, alpha) {
 
-    data.forEach(item=>{
+      /*
+        Cyan → Green → Yellow → Orange → Red
+        Smooth conceptual pressure scale.
+      */
 
-      const row=
-        document.createElement(
-          "div"
+      let r, g, b;
+
+      if (value < 0.25) {
+        const t = value / 0.25;
+
+        r = 40;
+        g = 195 + (30 * t);
+        b = 205 - (20 * t);
+
+      } else if (value < 0.5) {
+
+        const t = (value - 0.25) / 0.25;
+
+        r = 40 + (205 * t);
+        g = 225 - (15 * t);
+        b = 185 - (120 * t);
+
+      } else if (value < 0.75) {
+
+        const t = (value - 0.5) / 0.25;
+
+        r = 245 + (10 * t);
+        g = 210 - (100 * t);
+        b = 65 - (25 * t);
+
+      } else {
+
+        const t = (value - 0.75) / 0.25;
+
+        r = 255 - (45 * t);
+        g = 110 - (85 * t);
+        b = 40 - (15 * t);
+      }
+
+      return `rgba(${Math.round(r)},${Math.round(g)},${Math.round(b)},${alpha})`;
+    }
+
+    /*
+      Gaussian-style pressure function.
+      It creates a continuous field rather than separate
+      visible circles.
+    */
+
+    function calculatePressure(lat, lng) {
+
+      let total = 0;
+      let weight = 0;
+
+      zones.forEach(z => {
+
+        const dx =
+          (lng - z.lng) *
+          Math.cos((lat * Math.PI) / 180);
+
+        const dy = lat - z.lat;
+
+        const distance = Math.sqrt(
+          dx * dx + dy * dy
         );
 
-      row.className=
-        "search-result";
+        /*
+          Wide spatial influence.
+          No hard zone boundaries.
+        */
 
-      row.textContent=
-        item.display_name;
+        const sigma =
+          z.pressure > 0.8
+            ? 1.45
+            : z.pressure > 0.55
+            ? 1.25
+            : 1.05;
 
-      row.addEventListener(
-        "click",
-        ()=>{
-
-          const lat=
-            Number(item.lat);
-
-          const lng=
-            Number(item.lon);
-
-          map.flyTo(
-            [lat,lng],
-            12,
-            {
-              duration:1.2
-            }
+        const influence =
+          Math.exp(
+            -(distance * distance) /
+            (2 * sigma * sigma)
           );
 
-          searchResults.style.display=
-            "none";
+        total += z.pressure * influence;
+        weight += influence;
+      });
 
-          openSmartAnalysis(
-            lat,
-            lng,
-            item.display_name
-          );
+      let result = weight > 0
+        ? total / weight
+        : 0;
 
-        }
+      /*
+        Scenario modifier.
+      */
+
+      const hour =
+        Number(document.getElementById("timeSlider").value);
+
+      const activeScenario =
+        document.querySelector(".scenario-btn.active")?.dataset.scenario
+        || "baseline";
+
+      let modifier = 1;
+
+      if (activeScenario === "shielded") {
+        modifier = 0.88;
+      }
+
+      if (activeScenario === "adaptive") {
+        modifier = hour >= 20 ? 0.78 : 0.94;
+      }
+
+      if (activeScenario === "late") {
+        modifier = hour >= 22 ? 0.66 : 0.97;
+      }
+
+      if (activeScenario === "darksky") {
+        modifier = hour >= 21 ? 0.55 : 0.92;
+      }
+
+      return Math.max(
+        0,
+        Math.min(1, result * modifier)
       );
+    }
 
-      searchResults.appendChild(row);
+    function drawPressureSurface() {
+
+      if (!map || !canvas) return;
+
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+
+      ctx.clearRect(0, 0, width, height);
+
+      if (!pressureVisible) return;
+
+      /*
+        Draw a smooth multi-scale field.
+
+        Large gradients establish regional pressure.
+        Smaller gradients strengthen urban centres.
+        Very low alpha keeps map labels visible.
+      */
+
+      const broadFields = [
+        {
+          lat: 11.9,
+          lng: 78.0,
+          radius: 300,
+          intensity: 0.18
+        },
+        {
+          lat: 11.3,
+          lng: 77.0,
+          radius: 250,
+          intensity: 0.15
+        },
+        {
+          lat: 10.2,
+          lng: 78.0,
+          radius: 260,
+          intensity: 0.17
+        }
+      ];
+
+      /*
+        Regional soft atmospheric wash.
+      */
+
+      broadFields.forEach(field => {
+
+        const point = map.latLngToContainerPoint([
+          field.lat,
+          field.lng
+        ]);
+
+        const gradient = ctx.createRadialGradient(
+          point.x,
+          point.y,
+          0,
+          point.x,
+          point.y,
+          field.radius
+        );
+
+        gradient.addColorStop(
+          0,
+          pressureColor(0.48, field.intensity * 0.20)
+        );
+
+        gradient.addColorStop(
+          0.42,
+          pressureColor(0.35, field.intensity * 0.13)
+        );
+
+        gradient.addColorStop(
+          0.75,
+          pressureColor(0.20, field.intensity * 0.07)
+        );
+
+        gradient.addColorStop(
+          1,
+          "rgba(0,0,0,0)"
+        );
+
+        ctx.fillStyle = gradient;
+
+        ctx.beginPath();
+        ctx.arc(
+          point.x,
+          point.y,
+          field.radius,
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+      });
+
+      /*
+        Urban pressure centres.
+        Large + low-opacity = natural blending.
+      */
+
+      zones.forEach(z => {
+
+        const point = map.latLngToContainerPoint([
+          z.lat,
+          z.lng
+        ]);
+
+        if (
+          point.x < -500 ||
+          point.x > width + 500 ||
+          point.y < -500 ||
+          point.y > height + 500
+        ) {
+          return;
+        }
+
+        const screenRadius =
+          Math.max(
+            55,
+            Math.min(
+              210,
+              85 + z.pressure * 105
+            )
+          );
+
+        const p = z.pressure;
+
+        const gradient = ctx.createRadialGradient(
+          point.x,
+          point.y,
+          0,
+          point.x,
+          point.y,
+          screenRadius
+        );
+
+        /*
+          Very soft centre.
+        */
+
+        gradient.addColorStop(
+          0,
+          pressureColor(p, 0.23)
+        );
+
+        gradient.addColorStop(
+          0.18,
+          pressureColor(p, 0.19)
+        );
+
+        gradient.addColorStop(
+          0.38,
+          pressureColor(p, 0.13)
+        );
+
+        gradient.addColorStop(
+          0.62,
+          pressureColor(p, 0.075)
+        );
+
+        gradient.addColorStop(
+          0.82,
+          pressureColor(p, 0.03)
+        );
+
+        gradient.addColorStop(
+          1,
+          "rgba(0,0,0,0)"
+        );
+
+        ctx.fillStyle = gradient;
+
+        ctx.beginPath();
+        ctx.arc(
+          point.x,
+          point.y,
+          screenRadius,
+          0,
+          Math.PI * 2
+        );
+
+        ctx.fill();
+      });
+
+      /*
+        Subtle overall smoothing layer.
+      */
+
+      ctx.globalCompositeOperation = "screen";
+      ctx.fillStyle = "rgba(30, 180, 190, 0.015)";
+      ctx.fillRect(0, 0, width, height);
+      ctx.globalCompositeOperation = "source-over";
+    }
+
+    map.on("move zoom resize", drawPressureSurface);
+
+    window.addEventListener("resize", resizeCanvas);
+
+    setTimeout(resizeCanvas, 400);
+
+    /* =========================================================
+       MAP CLICK → SMART SKY ANALYSIS
+    ========================================================= */
+
+    map.on("click", function(e) {
+
+      const lat = e.latlng.lat;
+      const lng = e.latlng.lng;
+
+      let nearest = null;
+      let minDistance = Infinity;
+
+      zones.forEach(z => {
+
+        const dx =
+          (lng - z.lng) *
+          Math.cos((lat * Math.PI) / 180);
+
+        const dy = lat - z.lat;
+
+        const d = Math.sqrt(
+          dx * dx + dy * dy
+        );
+
+        if (d < minDistance) {
+          minDistance = d;
+          nearest = z;
+        }
+
+      });
+
+      const pressure =
+        calculatePressure(lat, lng);
+
+      let pressureClass;
+
+      if (pressure >= 0.78) {
+        pressureClass = "VERY HIGH";
+      } else if (pressure >= 0.60) {
+        pressureClass = "HIGH";
+      } else if (pressure >= 0.40) {
+        pressureClass = "MODERATE";
+      } else if (pressure >= 0.22) {
+        pressureClass = "LOW";
+      } else {
+        pressureClass = "VERY LOW";
+      }
+
+      let urbanClass;
+
+      if (nearest.urban >= 0.78) {
+        urbanClass = "VERY HIGH";
+      } else if (nearest.urban >= 0.60) {
+        urbanClass = "HIGH";
+      } else if (nearest.urban >= 0.40) {
+        urbanClass = "MODERATE";
+      } else {
+        urbanClass = "LOW";
+      }
+
+      let darkPotential;
+
+      if (pressure < 0.25) {
+        darkPotential = "HIGH";
+      } else if (pressure < 0.42) {
+        darkPotential = "MODERATE";
+      } else {
+        darkPotential = "LOW";
+      }
+
+      let action;
+
+      if (pressure >= 0.75) {
+        action =
+          "Prioritize shielded street lighting, adaptive dimming and late-night lighting controls.";
+      } else if (pressure >= 0.55) {
+        action =
+          "Consider targeted shielding, adaptive lighting and infrastructure-aware mitigation.";
+      } else if (pressure >= 0.35) {
+        action =
+          "Monitor artificial-light expansion and evaluate dark-sky friendly lighting practices.";
+      } else {
+        action =
+          "Potential dark-sky planning area. Protect low-light conditions and limit unnecessary upward light.";
+      }
+
+      document.getElementById("analysisLocation").textContent =
+        "Selected planning point";
+
+      document.getElementById("analysisCoordinates").textContent =
+        `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+
+      document.getElementById("analysisZone").textContent =
+        nearest.name;
+
+      document.getElementById("analysisPressure").textContent =
+        pressureClass;
+
+      document.getElementById("analysisUrban").textContent =
+        urbanClass;
+
+      document.getElementById("analysisDark").textContent =
+        darkPotential;
+
+      document.getElementById("recommendation").textContent =
+        action;
+
+      document.getElementById("analysisCard")
+        .classList.remove("hidden");
 
     });
 
-  }catch(error){
+    /* =========================================================
+       SEARCH — NOMINATIM
+    ========================================================= */
 
-    searchResults.innerHTML=
-      `
-      <div class="search-result">
-        Search unavailable. Try again.
-      </div>
-      `;
+    const searchInput =
+      document.getElementById("searchInput");
 
-  }
+    const searchBtn =
+      document.getElementById("searchBtn");
 
-}
+    const searchResults =
+      document.getElementById("searchResults");
 
-document
-  .getElementById("searchBtn")
-  .addEventListener(
-    "click",
-    searchLocation
-  );
+    async function searchLocation() {
 
-searchInput.addEventListener(
-  "keydown",
-  event=>{
+      const query =
+        searchInput.value.trim();
 
-    if(event.key==="Enter")
-      searchLocation();
+      if (!query) return;
 
-  }
-);
+      searchResults.innerHTML =
+        `<div class="search-result">Searching...</div>`;
 
-/* =========================================================
-   SMART ANALYSIS
-========================================================= */
+      searchResults.classList.add("show");
 
-const analysisPanel=
-  document.getElementById(
-    "analysisPanel"
-  );
+      try {
 
-/*
-  Important:
-  A location is NOT assigned to the nearest planning
-  zone if it is too far away.
-*/
+        const url =
+          "https://nominatim.openstreetmap.org/search" +
+          "?format=json" +
+          "&limit=5" +
+          "&countrycodes=in" +
+          "&q=" +
+          encodeURIComponent(query);
 
-function nearestZone(lat,lng){
-
-  let nearest=null;
-  let minDistance=Infinity;
-
-  pressureCenters.forEach(zone=>{
-
-    const latDistance=
-      (lat-zone.lat)*111.32;
-
-    const lngDistance=
-      (lng-zone.lng)*
-      111.32*
-      Math.cos(
-        lat*Math.PI/180
-      );
-
-    const distance=
-      Math.sqrt(
-        latDistance*latDistance+
-        lngDistance*lngDistance
-      );
-
-    if(distance<minDistance){
-
-      minDistance=distance;
-      nearest=zone;
-
-    }
-
-  });
-
-  /*
-    130 km is maximum conceptual influence
-    distance for assigning a planning zone.
-  */
-
-  if(minDistance>130)
-    return null;
-
-  return {
-    zone:nearest,
-    distance:minDistance
-  };
-
-}
-
-function openSmartAnalysis(
-  lat,
-  lng,
-  placeName
-){
-
-  const nearest=
-    nearestZone(
-      lat,
-      lng
-    );
-
-  let pressure=
-    "Very Low";
-
-  let zoneName=
-    "Outside current conceptual zones";
-
-  let urban=
-    "Lower / context dependent";
-
-  let dark=
-    "Potential area";
-
-  let action=
-    "Consider future field validation and local lighting assessment.";
-
-  if(nearest){
-
-    const zone=
-      nearest.zone;
-
-    const distance=
-      nearest.distance;
-
-    zoneName=
-      zone.name;
-
-    if(distance<
-      zone.radiusKm*.45
-    ){
-
-      pressure=
-        zone.pressure;
-
-    }else if(
-      distance<
-      zone.radiusKm*1.15
-    ){
-
-      if(zone.pressure==="Very High")
-        pressure="High";
-
-      else if(zone.pressure==="High")
-        pressure="Moderate";
-
-      else if(zone.pressure==="Moderate")
-        pressure="Low";
-
-    }else{
-
-      pressure="Low";
-
-    }
-
-    if(
-      pressure==="Very High"
-    ){
-
-      urban=
-        "Strong conceptual influence";
-
-      dark=
-        "Lower potential";
-
-      action=
-        "Prioritise assessment of shielded street lighting, adaptive dimming and late-night lighting controls.";
-
-    }else if(
-      pressure==="High"
-    ){
-
-      urban=
-        "Elevated conceptual influence";
-
-      dark=
-        "Limited potential";
-
-      action=
-        "Assess fixture shielding, directional lighting and adaptive controls.";
-
-    }else if(
-      pressure==="Moderate"
-    ){
-
-      urban=
-        "Moderate conceptual influence";
-
-      dark=
-        "Moderate potential";
-
-      action=
-        "Monitor lighting growth and consider dark-sky-aware infrastructure planning.";
-
-    }else{
-
-      urban=
-        "Lower conceptual influence";
-
-      dark=
-        "Higher potential";
-
-      action=
-        "Consider future dark-sky field validation and responsible lighting planning.";
-
-    }
-
-  }
-
-  /*
-    Explicit candidate check.
-  */
-
-  darkSkyCandidates.forEach(candidate=>{
-
-    const dLat=
-      (lat-candidate.lat)*111.32;
-
-    const dLng=
-      (lng-candidate.lng)*
-      111.32*
-      Math.cos(
-        lat*Math.PI/180
-      );
-
-    const d=
-      Math.sqrt(
-        dLat*dLat+
-        dLng*dLng
-      );
-
-    if(d<35){
-
-      dark=
-        "Candidate area";
-
-      action=
-        "Candidate for future dark-sky field validation and protection planning.";
-
-    }
-
-  });
-
-  document.getElementById(
-    "selectedPlace"
-  ).textContent=
-    placeName||
-    "Map-selected location";
-
-  document.getElementById(
-    "aLat"
-  ).textContent=
-    lat.toFixed(5);
-
-  document.getElementById(
-    "aLng"
-  ).textContent=
-    lng.toFixed(5);
-
-  document.getElementById(
-    "aZone"
-  ).textContent=
-    zoneName;
-
-  document.getElementById(
-    "aPressure"
-  ).textContent=
-    pressure;
-
-  document.getElementById(
-    "aUrban"
-  ).textContent=
-    urban;
-
-  document.getElementById(
-    "aDark"
-  ).textContent=
-    dark;
-
-  document.getElementById(
-    "aAction"
-  ).textContent=
-    action;
-
-  closeAllPanels();
-
-  analysisPanel.classList.add(
-    "show"
-  );
-
-}
-
-/* =========================================================
-   MAP CLICK
-========================================================= */
-
-map.on(
-  "click",
-  event=>{
-
-    openSmartAnalysis(
-      event.latlng.lat,
-      event.latlng.lng,
-      "Map-selected location"
-    );
-
-  }
-);
-
-/* =========================================================
-   PANEL SYSTEM
-========================================================= */
-
-const panels={
-
-  shield:
-    document.getElementById(
-      "panel-shield"
-    ),
-
-  layers:
-    document.getElementById(
-      "panel-layers"
-    ),
-
-  simulator:
-    document.getElementById(
-      "panel-simulator"
-    ),
-
-  planning:
-    document.getElementById(
-      "panel-planning"
-    ),
-
-  science:
-    document.getElementById(
-      "panel-science"
-    )
-
-};
-
-function closeAllPanels(){
-
-  Object.values(
-    panels
-  ).forEach(panel=>{
-    panel.classList.remove(
-      "show"
-    );
-  });
-
-  analysisPanel.classList.remove(
-    "show"
-  );
-
-  document.querySelectorAll(
-    ".nav-btn"
-  ).forEach(btn=>{
-    btn.classList.remove(
-      "active"
-    );
-  });
-
-}
-
-document.querySelectorAll(
-  ".nav-btn"
-).forEach(btn=>{
-
-  btn.addEventListener(
-    "click",
-    ()=>{
-
-      const name=
-        btn.dataset.panel;
-
-      const panel=
-        panels[name];
-
-      if(!panel)
-        return;
-
-      const wasOpen=
-        panel.classList.contains(
-          "show"
-        );
-
-      closeAllPanels();
-
-      if(!wasOpen){
-
-        panel.classList.add(
-          "show"
-        );
-
-        btn.classList.add(
-          "active"
-        );
-
-      }
-
-    }
-  );
-
-});
-
-document.querySelectorAll(
-  ".close-panel"
-).forEach(btn=>{
-
-  btn.addEventListener(
-    "click",
-    closeAllPanels
-  );
-
-});
-
-/* =========================================================
-   BASEMAP
-========================================================= */
-
-let satelliteMode=false;
-
-document
-  .getElementById("baseBtn")
-  .addEventListener(
-    "click",
-    ()=>{
-
-      satelliteMode=
-        !satelliteMode;
-
-      if(satelliteMode){
-
-        map.removeLayer(
-          osm
-        );
-
-        satellite.addTo(
-          map
-        );
-
-      }else{
-
-        map.removeLayer(
-          satellite
-        );
-
-        osm.addTo(
-          map
-        );
-
-      }
-
-    }
-  );
-
-/* =========================================================
-   PRESSURE TOGGLE
-========================================================= */
-
-function updatePressureUI(){
-
-  const button=
-    document.getElementById(
-      "pressureBtn"
-    );
-
-  button.classList.toggle(
-    "active",
-    pressureVisible
-  );
-
-  document.getElementById(
-    "pressureToggle"
-  ).textContent=
-    pressureVisible
-      ? "● Pressure Surface ON"
-      : "○ Pressure Surface OFF";
-
-}
-
-document
-  .getElementById(
-    "pressureBtn"
-  )
-  .addEventListener(
-    "click",
-    ()=>{
-
-      pressureVisible=
-        !pressureVisible;
-
-      updatePressureUI();
-
-      drawPressureSurface();
-
-    }
-  );
-
-document
-  .getElementById(
-    "pressureToggle"
-  )
-  .addEventListener(
-    "click",
-    ()=>{
-
-      pressureVisible=
-        !pressureVisible;
-
-      updatePressureUI();
-
-      drawPressureSurface();
-
-    }
-  );
-
-/* =========================================================
-   NIGHT LIGHT PROXY
-========================================================= */
-
-document
-  .getElementById(
-    "proxyToggle"
-  )
-  .addEventListener(
-    "click",
-    ()=>{
-
-      proxyVisible=
-        !proxyVisible;
-
-      if(proxyVisible)
-        proxyLayer.addTo(map);
-      else
-        map.removeLayer(
-          proxyLayer
-        );
-
-      document.getElementById(
-        "proxyToggle"
-      ).textContent=
-        proxyVisible
-          ? "● Night-Light Proxy ON"
-          : "○ Night-Light Proxy OFF";
-
-    }
-  );
-
-/* =========================================================
-   DARK SKY TOGGLE
-========================================================= */
-
-document
-  .getElementById(
-    "darkSkyToggle"
-  )
-  .addEventListener(
-    "click",
-    ()=>{
-
-      const visible=
-        map.hasLayer(
-          darkSkyLayer
-        );
-
-      if(visible)
-        map.removeLayer(
-          darkSkyLayer
-        );
-      else
-        darkSkyLayer.addTo(
-          map
-        );
-
-      document.getElementById(
-        "darkSkyToggle"
-      ).textContent=
-        !visible
-          ? "● Dark-Sky Candidates ON"
-          : "○ Dark-Sky Candidates OFF";
-
-    }
-  );
-
-/* =========================================================
-   SCENARIOS
-========================================================= */
-
-const scenarioInfo={
-
-  baseline:{
-    title:"Current / Baseline",
-    description:
-      "Reference visualization for the current conceptual pressure surface."
-  },
-
-  shielded:{
-    title:"Shielded Street Lighting",
-    description:
-      "Conceptual scenario representing improved fixture shielding and directional control."
-  },
-
-  dimming:{
-    title:"Adaptive Dimming",
-    description:
-      "Conceptual scenario representing adaptive reduction of lighting intensity during lower-demand periods."
-  },
-
-  late:{
-    title:"Late-Night Lighting Control",
-    description:
-      "Conceptual scenario representing scheduled late-night lighting management."
-  },
-
-  darksky:{
-    title:"Dark-Sky Protection",
-    description:
-      "Conceptual scenario combining stronger dark-sky-aware lighting practices and protected-area planning."
-  }
-
-};
-
-document.querySelectorAll(
-  ".scenario[data-scenario]"
-).forEach(button=>{
-
-  button.addEventListener(
-    "click",
-    ()=>{
-
-      document.querySelectorAll(
-        ".scenario[data-scenario]"
-      ).forEach(btn=>{
-        btn.classList.remove(
-          "active"
-        );
-      });
-
-      button.classList.add(
-        "active"
-      );
-
-      activeScenario=
-        button.dataset.scenario;
-
-      document.getElementById(
-        "scenarioTitle"
-      ).textContent=
-        scenarioInfo[
-          activeScenario
-        ].title;
-
-      document.getElementById(
-        "scenarioDescription"
-      ).textContent=
-        scenarioInfo[
-          activeScenario
-        ].description;
-
-      drawPressureSurface();
-
-    }
-  );
-
-});
-
-/* =========================================================
-   TIME
-========================================================= */
-
-const timeSlider=
-  document.getElementById(
-    "timeSlider"
-  );
-
-timeSlider.addEventListener(
-  "input",
-  ()=>{
-
-    simulationHour=
-      Number(
-        timeSlider.value
-      );
-
-    document.getElementById(
-      "timeValue"
-    ).textContent=
-      simulationHour===24
-        ? "24:00"
-        :
-        String(
-          simulationHour
-        ).padStart(2,"0")+
-        ":00";
-
-    drawPressureSurface();
-
-  }
-);
-
-/* =========================================================
-   GPS
-========================================================= */
-
-let gpsMarker=null;
-let gpsAccuracy=null;
-
-const gpsKpi=
-  document.getElementById(
-    "gpsKpi"
-  );
-
-const gpsNote=
-  document.getElementById(
-    "gpsNote"
-  );
-
-function startGPS(){
-
-  if(!navigator.geolocation){
-
-    gpsKpi.textContent=
-      "N/A";
-
-    gpsNote.textContent=
-      "GPS unavailable";
-
-    return;
-
-  }
-
-  gpsKpi.textContent=
-    "ACTIVE";
-
-  gpsNote.textContent=
-    "Requesting location";
-
-  navigator.geolocation.getCurrentPosition(
-
-    async position=>{
-
-      const lat=
-        position.coords.latitude;
-
-      const lng=
-        position.coords.longitude;
-
-      const accuracy=
-        position.coords.accuracy;
-
-      if(gpsMarker)
-        map.removeLayer(
-          gpsMarker
-        );
-
-      if(gpsAccuracy)
-        map.removeLayer(
-          gpsAccuracy
-        );
-
-      gpsMarker=
-        L.marker(
-          [lat,lng],
-          {
-            icon:L.divIcon({
-              className:"",
-              html:
-                '<div class="gps-marker"></div>',
-              iconSize:[18,18],
-              iconAnchor:[9,9]
-            })
-          }
-        ).addTo(map);
-
-      gpsAccuracy=
-        L.circle(
-          [lat,lng],
-          {
-            radius:accuracy,
-
-            color:"#368bff",
-
-            weight:1,
-
-            fillColor:"#368bff",
-
-            fillOpacity:.08
-          }
-        ).addTo(map);
-
-      map.flyTo(
-        [lat,lng],
-        Math.max(
-          map.getZoom(),
-          12
-        ),
-        {
-          duration:1.2
-        }
-      );
-
-      gpsKpi.textContent=
-        "ACTIVE";
-
-      gpsNote.textContent=
-        `±${Math.round(accuracy)} m`;
-
-      try{
-
-        const url=
-          "https://nominatim.openstreetmap.org/reverse?"+
-          new URLSearchParams({
-            lat,
-            lon:lng,
-            format:"json",
-            zoom:"18"
+        const response =
+          await fetch(url, {
+            headers: {
+              "Accept": "application/json"
+            }
           });
 
-        const response=
-          await fetch(url);
-
-        const data=
+        const data =
           await response.json();
 
-        openSmartAnalysis(
-          lat,
-          lng,
-          data.display_name||
-          "Current GPS location"
+        if (!data.length) {
+
+          searchResults.innerHTML =
+            `<div class="search-result">
+              No location found.
+            </div>`;
+
+          return;
+        }
+
+        searchResults.innerHTML = "";
+
+        data.forEach(place => {
+
+          const item =
+            document.createElement("div");
+
+          item.className =
+            "search-result";
+
+          item.textContent =
+            place.display_name;
+
+          item.onclick = () => {
+
+            const lat =
+              Number(place.lat);
+
+            const lon =
+              Number(place.lon);
+
+            map.flyTo(
+              [lat, lon],
+              12,
+              {
+                duration: 1.4
+              }
+            );
+
+            searchInput.value =
+              place.display_name;
+
+            searchResults.classList.remove("show");
+
+            setTimeout(() => {
+
+              map.fire("click", {
+                latlng: L.latLng(lat, lon)
+              });
+
+            }, 900);
+
+          };
+
+          searchResults.appendChild(item);
+
+        });
+
+      } catch (error) {
+
+        searchResults.innerHTML =
+          `<div class="search-result">
+            Search unavailable. Check your connection.
+          </div>`;
+      }
+    }
+
+    searchBtn.onclick =
+      searchLocation;
+
+    searchInput.addEventListener(
+      "keydown",
+      e => {
+
+        if (e.key === "Enter") {
+          searchLocation();
+        }
+
+      }
+    );
+
+    document.addEventListener(
+      "click",
+      e => {
+
+        if (
+          !e.target.closest(".search-wrap")
+        ) {
+          searchResults.classList.remove("show");
+        }
+
+      }
+    );
+
+    /* =========================================================
+       GPS
+    ========================================================= */
+
+    let gpsMarker = null;
+    let gpsCircle = null;
+
+    function locateUser() {
+
+      const gpsKpi =
+        document.getElementById("gpsKpi");
+
+      gpsKpi.textContent =
+        "ACTIVE";
+
+      if (!navigator.geolocation) {
+
+        gpsKpi.textContent =
+          "DENIED";
+
+        alert(
+          "Geolocation is not supported by this browser."
         );
 
-      }catch(error){
+        return;
+      }
 
-        openSmartAnalysis(
-          lat,
-          lng,
-          "Current GPS location"
+      navigator.geolocation.getCurrentPosition(
+
+        async position => {
+
+          const lat =
+            position.coords.latitude;
+
+          const lng =
+            position.coords.longitude;
+
+          const accuracy =
+            position.coords.accuracy;
+
+          if (gpsMarker) {
+            map.removeLayer(gpsMarker);
+          }
+
+          if (gpsCircle) {
+            map.removeLayer(gpsCircle);
+          }
+
+          const icon =
+            L.divIcon({
+              className: "",
+              html: `<div class="gps-marker"></div>`,
+              iconSize: [18, 18],
+              iconAnchor: [9, 9]
+            });
+
+          gpsMarker =
+            L.marker(
+              [lat, lng],
+              { icon }
+            ).addTo(map);
+
+          gpsCircle =
+            L.circle(
+              [lat, lng],
+              {
+                radius: accuracy,
+                color: "#2b8cff",
+                weight: 1.5,
+                fillColor: "#2b8cff",
+                fillOpacity: 0.10
+              }
+            ).addTo(map);
+
+          map.flyTo(
+            [lat, lng],
+            14,
+            {
+              duration: 1.4
+            }
+          );
+
+          let locationName =
+            "Current device location";
+
+          try {
+
+            const reverseUrl =
+              "https://nominatim.openstreetmap.org/reverse" +
+              "?format=json" +
+              "&lat=" + lat +
+              "&lon=" + lng;
+
+            const response =
+              await fetch(reverseUrl, {
+                headers: {
+                  "Accept": "application/json"
+                }
+              });
+
+            const data =
+              await response.json();
+
+            if (data.display_name) {
+              locationName =
+                data.display_name;
+            }
+
+          } catch (error) {}
+
+          document.getElementById(
+            "analysisLocation"
+          ).textContent =
+            locationName;
+
+          document.getElementById(
+            "analysisCoordinates"
+          ).textContent =
+            `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+
+          document.getElementById(
+            "analysisCard"
+          ).classList.remove("hidden");
+
+          setTimeout(() => {
+
+            map.fire("click", {
+              latlng: L.latLng(lat, lng)
+            });
+
+          }, 700);
+
+        },
+
+        error => {
+
+          gpsKpi.textContent =
+            "DENIED";
+
+          alert(
+            "Location permission was not granted. Please enable GPS permission in your browser."
+          );
+
+        },
+
+        {
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 0
+        }
+
+      );
+    }
+
+    document.getElementById(
+      "locationBtn"
+    ).onclick = locateUser;
+
+    document.getElementById(
+      "gpsBtn"
+    ).onclick = locateUser;
+
+    /* =========================================================
+       FULLSCREEN
+    ========================================================= */
+
+    document.getElementById(
+      "fullscreenBtn"
+    ).onclick = () => {
+
+      if (!document.fullscreenElement) {
+
+        document.documentElement.requestFullscreen?.();
+
+      } else {
+
+        document.exitFullscreen?.();
+
+      }
+
+    };
+
+    /* =========================================================
+       PRESENTATION MODE
+    ========================================================= */
+
+    document.getElementById(
+      "presentationBtn"
+    ).onclick = () => {
+
+      document.body.classList.toggle(
+        "presentation"
+      );
+
+    };
+
+    /* =========================================================
+       ZOOM
+    ========================================================= */
+
+    document.getElementById(
+      "zoomInBtn"
+    ).onclick = () => map.zoomIn();
+
+    document.getElementById(
+      "zoomOutBtn"
+    ).onclick = () => map.zoomOut();
+
+    /* =========================================================
+       BASEMAP
+    ========================================================= */
+
+    let satelliteMode = false;
+
+    document.getElementById(
+      "basemapBtn"
+    ).onclick = () => {
+
+      if (!satelliteMode) {
+
+        map.removeLayer(osm);
+        satellite.addTo(map);
+
+        satelliteMode = true;
+
+      } else {
+
+        map.removeLayer(satellite);
+        osm.addTo(map);
+
+        satelliteMode = false;
+
+      }
+
+    };
+
+    /* =========================================================
+       PRESSURE TOGGLE
+    ========================================================= */
+
+    function togglePressure() {
+
+      pressureVisible =
+        !pressureVisible;
+
+      const btn =
+        document.getElementById(
+          "pressureBtn"
+        );
+
+      const legend =
+        document.getElementById(
+          "legend"
+        );
+
+      if (pressureVisible) {
+
+        btn.classList.add("active");
+        legend.classList.remove("hidden");
+
+        canvas.classList.remove("hidden");
+
+      } else {
+
+        btn.classList.remove("active");
+        legend.classList.add("hidden");
+
+        canvas.classList.add("hidden");
+
+      }
+
+      drawPressureSurface();
+    }
+
+    document.getElementById(
+      "pressureBtn"
+    ).onclick =
+      togglePressure;
+
+    /* =========================================================
+       LAYERS
+    ========================================================= */
+
+    document.getElementById(
+      "layersBtn"
+    ).onclick = () => {
+
+      darkSkyVisible =
+        !darkSkyVisible;
+
+      if (darkSkyVisible) {
+
+        darkSkyLayer.addTo(map);
+
+      } else {
+
+        map.removeLayer(
+          darkSkyLayer
         );
 
       }
 
-    },
+    };
 
-    error=>{
+    /* =========================================================
+       PILL NAVIGATION
+    ========================================================= */
 
-      gpsKpi.textContent=
-        "DENIED";
+    document.querySelectorAll(
+      ".nav-pill"
+    ).forEach(button => {
 
-      gpsNote.textContent=
-        "Location unavailable";
+      button.addEventListener(
+        "click",
+        () => {
 
-    },
-
-    {
-      enableHighAccuracy:true,
-      timeout:15000,
-      maximumAge:0
-    }
-
-  );
-
-}
-
-document
-  .getElementById(
-    "locationBtn"
-  )
-  .addEventListener(
-    "click",
-    startGPS
-  );
-
-/* =========================================================
-   FULLSCREEN
-========================================================= */
-
-document
-  .getElementById(
-    "fullscreenBtn"
-  )
-  .addEventListener(
-    "click",
-    async()=>{
-
-      try{
-
-        if(!document.fullscreenElement){
-
-          await document.documentElement
-            .requestFullscreen();
-
-        }else{
-
-          await document
-            .exitFullscreen();
-
-        }
-
-      }catch(error){}
-
-    }
-  );
-
-/* =========================================================
-   PRESENTATION MODE
-========================================================= */
-
-const presentationOverlay=
-  document.querySelector(
-    ".presentation-overlay"
-  );
-
-document
-  .getElementById(
-    "presentationBtn"
-  )
-  .addEventListener(
-    "click",
-    ()=>{
-
-      const active=
-        presentationOverlay
-          .classList.toggle(
-            "show"
+          document.querySelectorAll(
+            ".nav-pill"
+          ).forEach(b =>
+            b.classList.remove("active")
           );
 
-      document.querySelector(
-        ".topbar"
-      ).style.display=
-        active
-          ? "none"
-          : "flex";
+          button.classList.add("active");
 
-      document.querySelector(
-        ".search-box"
-      ).style.display=
-        active
-          ? "none"
-          : "flex";
+          const action =
+            button.dataset.action;
 
-      document.querySelector(
-        ".legend"
-      ).style.display=
-        active
-          ? "none"
-          : "";
+          if (action === "pressure") {
 
-      document.querySelector(
-        ".kpi-bar"
-      ).style.display=
-        active
-          ? "none"
-          : "grid";
+            if (!pressureVisible) {
+              togglePressure();
+            }
 
-      document.querySelectorAll(
-        ".control-stack"
-      ).forEach(el=>{
-        el.style.display=
-          active
-            ? "none"
-            : "flex";
+          }
+
+          if (action === "layers") {
+
+            darkSkyVisible =
+              !darkSkyVisible;
+
+            if (darkSkyVisible) {
+              darkSkyLayer.addTo(map);
+            } else {
+              map.removeLayer(
+                darkSkyLayer
+              );
+            }
+
+          }
+
+          if (action === "ai") {
+
+            document.getElementById(
+              "aiModal"
+            ).classList.add("show");
+
+          }
+
+          if (action === "science") {
+
+            document.getElementById(
+              "scienceModal"
+            ).classList.add("show");
+
+          }
+
+          if (action === "sky") {
+
+            map.setView(
+              [10.85, 78.65],
+              7,
+              {
+                animate: true,
+                duration: 1
+              }
+            );
+
+          }
+
+        }
+      );
+
+    });
+
+    /* =========================================================
+       MODAL CLOSE
+    ========================================================= */
+
+    document.querySelectorAll(
+      "[data-close]"
+    ).forEach(btn => {
+
+      btn.onclick = () => {
+
+        document.getElementById(
+          btn.dataset.close
+        ).classList.remove("show");
+
+      };
+
+    });
+
+    document.querySelectorAll(
+      ".modal"
+    ).forEach(modal => {
+
+      modal.addEventListener(
+        "click",
+        e => {
+
+          if (e.target === modal) {
+            modal.classList.remove("show");
+          }
+
+        }
+      );
+
+    });
+
+    /* =========================================================
+       MITIGATION SIMULATOR
+    ========================================================= */
+
+    let simulatorVisible = false;
+
+    function openSimulator() {
+
+      simulatorVisible =
+        !simulatorVisible;
+
+      document.getElementById(
+        "scenarioPanel"
+      ).classList.toggle(
+        "show",
+        simulatorVisible
+      );
+
+    }
+
+    /*
+      Double click Pressure button
+      to open simulator.
+    */
+
+    document.getElementById(
+      "pressureBtn"
+    ).addEventListener(
+      "dblclick",
+      openSimulator
+    );
+
+    document.querySelectorAll(
+      ".scenario-btn"
+    ).forEach(btn => {
+
+      btn.addEventListener(
+        "click",
+        () => {
+
+          document.querySelectorAll(
+            ".scenario-btn"
+          ).forEach(b =>
+            b.classList.remove("active")
+          );
+
+          btn.classList.add("active");
+
+          drawPressureSurface();
+
+        }
+      );
+
+    });
+
+    document.getElementById(
+      "timeSlider"
+    ).addEventListener(
+      "input",
+      function() {
+
+        const hour =
+          Number(this.value);
+
+        document.getElementById(
+          "timeValue"
+        ).textContent =
+          `${String(hour).padStart(2, "0")}:00`;
+
+        drawPressureSurface();
+
+      }
+    );
+
+    /* =========================================================
+       PRESSURE BUTTON LONGER ACCESS
+    ========================================================= */
+
+    document.getElementById(
+      "pressureBtn"
+    ).addEventListener(
+      "contextmenu",
+      e => {
+
+        e.preventDefault();
+        openSimulator();
+
+      }
+    );
+
+    /* =========================================================
+       DEFAULT ANALYSIS
+    ========================================================= */
+
+    setTimeout(() => {
+
+      map.fire("click", {
+        latlng: L.latLng(
+          11.0168,
+          76.9558
+        )
       });
 
-      closeAllPanels();
+    }, 1200);
 
-    }
-  );
+    /* =========================================================
+       INITIAL DRAW
+    ========================================================= */
 
-/* =========================================================
-   INITIAL LOAD
-========================================================= */
+    setTimeout(() => {
 
-/*
-  Important:
-  No Smart Sky Analysis panel is opened automatically.
-*/
+      resizeCanvas();
 
-setTimeout(()=>{
+    }, 600);
 
-  map.invalidateSize();
+    /*
+      Keep canvas aligned when map moves.
+    */
 
-  map.fitBounds(
-    tamilNaduBounds,
-    {
-      paddingTopLeft:[15,95],
-      paddingBottomRight:[15,125]
-    }
-  );
+    map.on(
+      "moveend",
+      drawPressureSurface
+    );
 
-  drawPressureSurface();
+    map.on(
+      "zoomend",
+      drawPressureSurface
+    );
 
-},500);
-
-</script>
+  </script>
 
 </body>
 </html>
