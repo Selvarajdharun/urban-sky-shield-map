@@ -12,526 +12,1217 @@
 
 <style>
 *{
-  box-sizing:border-box;
   margin:0;
   padding:0;
+  box-sizing:border-box;
 }
 
-html,body{
+html,
+body{
   width:100%;
   height:100%;
   overflow:hidden;
-  font-family:Arial,Helvetica,sans-serif;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+  background:#6fd0eb;
 }
 
 #map{
+  position:absolute;
+  inset:0;
   width:100%;
   height:100%;
-  background:#79d5ed;
+  background:#72d1eb;
 }
 
-/* MAP */
+/* =====================================================
+   MAP
+===================================================== */
+
+.leaflet-container{
+  background:#72d1eb;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
 .leaflet-tile{
-  filter:saturate(1.08) brightness(1.04);
+  filter:
+    saturate(1.18)
+    brightness(1.08)
+    contrast(.94);
 }
 
 .leaflet-control-attribution{
-  font-size:8px!important;
+  font-size:7px !important;
+  opacity:.45;
 }
 
-/* TOP HEADER */
+/* =====================================================
+   LIGHT POLLUTION OVERLAY
+===================================================== */
+
+.heat{
+  position:absolute;
+  z-index:350;
+  pointer-events:none;
+  border-radius:50%;
+  filter:blur(34px);
+  mix-blend-mode:multiply;
+}
+
+.heat1{
+  width:330px;
+  height:390px;
+  left:57%;
+  top:22%;
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(255,65,35,.82) 0%,
+      rgba(255,105,30,.72) 17%,
+      rgba(255,185,25,.62) 34%,
+      rgba(255,229,55,.48) 51%,
+      rgba(93,220,100,.25) 68%,
+      transparent 82%
+    );
+
+  opacity:.72;
+}
+
+.heat2{
+  width:370px;
+  height:430px;
+  left:42%;
+  top:38%;
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(255,91,38,.72) 0%,
+      rgba(255,158,28,.65) 22%,
+      rgba(255,216,38,.55) 42%,
+      rgba(121,222,88,.30) 64%,
+      transparent 83%
+    );
+
+  opacity:.64;
+}
+
+.heat3{
+  width:290px;
+  height:370px;
+  left:30%;
+  top:56%;
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(255,159,32,.62) 0%,
+      rgba(255,207,39,.52) 28%,
+      rgba(123,222,92,.30) 60%,
+      transparent 82%
+    );
+
+  opacity:.58;
+}
+
+.heat4{
+  width:250px;
+  height:300px;
+  left:49%;
+  top:65%;
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(255,173,34,.52),
+      rgba(255,220,45,.42) 35%,
+      rgba(99,218,102,.22) 68%,
+      transparent 84%
+    );
+
+  opacity:.55;
+}
+
+/* =====================================================
+   HEADER
+===================================================== */
+
 .topbar{
   position:absolute;
-  z-index:1000;
+  z-index:2000;
+
   top:20px;
-  left:24px;
-  right:24px;
+  left:20px;
+  right:20px;
+
   height:84px;
-  border-radius:25px;
-  background:rgba(3,39,69,.96);
+
+  border-radius:24px;
+
+  background:
+    linear-gradient(
+      110deg,
+      rgba(2,38,68,.98),
+      rgba(3,48,82,.96)
+    );
+
   display:flex;
   align-items:center;
+
   padding:12px 18px;
-  box-shadow:0 10px 35px rgba(0,0,0,.25);
+
+  box-shadow:
+    0 10px 32px rgba(0,0,0,.24);
 }
 
+/* BRAND */
+
 .brand{
-  width:360px;
+  width:365px;
+
   display:flex;
   align-items:center;
+
   gap:14px;
+
   color:white;
 }
 
 .logo{
-  width:52px;
-  height:52px;
+  width:54px;
+  height:54px;
+
   border-radius:16px;
+
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:29px;
-  background:linear-gradient(145deg,#0b75d1,#35c8ff);
-  border:2px solid #65dcff;
+
+  background:
+    linear-gradient(
+      145deg,
+      #0874cc,
+      #29c8ff
+    );
+
+  border:2px solid #6ce1ff;
+
+  box-shadow:
+    inset 0 0 14px rgba(255,255,255,.16);
+}
+
+.logo-shield{
+  font-size:31px;
+  filter:drop-shadow(0 2px 2px rgba(0,0,0,.25));
 }
 
 .brand h1{
   font-size:25px;
-  letter-spacing:.3px;
+  line-height:27px;
+  letter-spacing:.2px;
+  white-space:nowrap;
 }
 
 .brand h1 span{
-  color:#19c7ff;
+  color:#19c8ff;
 }
 
 .brand p{
   margin-top:4px;
   font-size:13px;
-  color:#d6e8f4;
+  color:#d7eaf4;
 }
 
-/* GOOGLE STYLE SEARCH */
+/* SEARCH */
+
 .searchbox{
-  height:52px;
+  height:54px;
+
   flex:1;
-  max-width:430px;
-  background:#fff;
+  max-width:450px;
+
+  background:#ffffff;
+
   border-radius:30px;
+
   display:flex;
   align-items:center;
-  padding:0 20px;
-  gap:14px;
-  color:#6d8496;
-  font-size:17px;
+
+  padding:0 21px;
+
+  gap:13px;
+
+  color:#7c91a2;
+
+  font-size:18px;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(0,0,0,.04);
 }
 
-.search-pin{
-  font-size:24px;
+.search-icon{
+  width:25px;
+  height:25px;
+
+  border:4px solid #087fd8;
+
+  border-radius:50%;
+
+  position:relative;
+
+  flex-shrink:0;
 }
 
-.search-mic{
+.search-icon::after{
+  content:"";
+
+  position:absolute;
+
+  width:9px;
+  height:4px;
+
+  background:#087fd8;
+
+  right:-7px;
+  bottom:-3px;
+
+  transform:rotate(45deg);
+
+  border-radius:3px;
+}
+
+.search-text{
+  white-space:nowrap;
+}
+
+.mic{
   margin-left:auto;
-  color:#062e50;
-  font-size:22px;
+
+  width:20px;
+  height:27px;
+
+  position:relative;
+
+  border:4px solid #063b66;
+
+  border-top-left-radius:12px;
+  border-top-right-radius:12px;
+
+  border-bottom:none;
 }
+
+.mic::after{
+  content:"";
+
+  position:absolute;
+
+  left:50%;
+  bottom:-9px;
+
+  width:17px;
+  height:10px;
+
+  transform:translateX(-50%);
+
+  border:3px solid #063b66;
+
+  border-top:none;
+
+  border-radius:0 0 12px 12px;
+}
+
+.mic::before{
+  content:"";
+
+  position:absolute;
+
+  left:50%;
+  bottom:-14px;
+
+  width:3px;
+  height:8px;
+
+  transform:translateX(-50%);
+
+  background:#063b66;
+}
+
+/* PROFILE */
 
 .profile{
-  width:54px;
-  height:54px;
+  width:55px;
+  height:55px;
+
   border-radius:50%;
-  margin-left:18px;
-  background:#7d56df;
-  border:4px solid white;
+
+  margin-left:22px;
+
+  background:#7b55df;
+
+  border:4px solid rgba(255,255,255,.9);
+
   display:flex;
   align-items:center;
   justify-content:center;
+
   color:white;
+
   font-size:22px;
-  box-shadow:0 0 15px rgba(133,80,255,.6);
+
+  box-shadow:
+    0 0 18px rgba(124,82,225,.55);
 }
 
-/* TOP NAV */
+/* =====================================================
+   TOP NAV
+===================================================== */
+
 .nav{
   position:absolute;
-  z-index:1000;
-  top:122px;
-  left:28px;
+  z-index:2000;
+
+  top:121px;
+  left:25px;
+
   display:flex;
   gap:14px;
 }
 
 .nav button{
-  border:0;
-  border-radius:30px;
-  padding:14px 25px;
-  background:rgba(255,255,255,.94);
-  color:#073b65;
+  height:51px;
+
+  border:none;
+
+  border-radius:28px;
+
+  padding:0 22px;
+
+  background:rgba(255,255,255,.95);
+
+  color:#083d67;
+
   font-size:15px;
+
   font-weight:500;
-  box-shadow:0 5px 18px rgba(0,0,0,.14);
+
+  box-shadow:
+    0 5px 18px rgba(0,0,0,.14);
+
+  display:flex;
+  align-items:center;
+  gap:9px;
+
+  white-space:nowrap;
 }
 
 .nav button.active{
-  background:#0879dc;
-  color:white;
+  background:#087edc;
+  color:#fff;
 }
 
-/* LEFT MAP TOOLS */
+.nav-icon{
+  font-size:21px;
+  font-weight:bold;
+}
+
+/* =====================================================
+   LEFT CONTROLS
+===================================================== */
+
 .left-tools{
   position:absolute;
-  z-index:1000;
-  left:25px;
-  top:220px;
+  z-index:2000;
+
+  left:24px;
+  top:190px;
+
   display:flex;
   flex-direction:column;
+
   gap:10px;
 }
 
 .tool{
-  width:52px;
-  height:52px;
+  width:53px;
+  height:53px;
+
   border-radius:16px;
-  background:white;
+
+  background:rgba(255,255,255,.96);
+
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:24px;
+
   color:#073c66;
-  box-shadow:0 5px 16px rgba(0,0,0,.18);
+
+  box-shadow:
+    0 5px 17px rgba(0,0,0,.18);
+
+  font-size:24px;
+
+  cursor:pointer;
+}
+
+.fullscreen-icon{
+  width:22px;
+  height:22px;
+
+  position:relative;
+}
+
+.fullscreen-icon::before,
+.fullscreen-icon::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border:3px solid #073c66;
+}
+
+.fullscreen-icon::before{
+  clip-path:polygon(
+    0 0,
+    35% 0,
+    35% 12%,
+    12% 12%,
+    12% 35%,
+    0 35%,
+    0 0,
+
+    100% 0,
+    100% 35%,
+    88% 35%,
+    88% 12%,
+    65% 12%,
+    65% 0,
+    100% 0,
+
+    0 100%,
+    35% 100%,
+    35% 88%,
+    12% 88%,
+    12% 65%,
+    0 65%,
+    0 100%,
+
+    100% 100%,
+    65% 100%,
+    65% 88%,
+    88% 88%,
+    88% 65%,
+    100% 65%,
+    100% 100%
+  );
+}
+
+.location-arrow{
+  font-size:26px;
+  transform:rotate(-45deg);
 }
 
 .zoom{
   height:108px;
+
   overflow:hidden;
+
   display:flex;
   flex-direction:column;
+
+  padding:0;
 }
 
 .zoom div{
   height:54px;
+
   display:flex;
   align-items:center;
   justify-content:center;
-  border-bottom:1px solid #ddd;
+
+  font-size:26px;
+
+  border-bottom:1px solid #d9d9d9;
+
+  cursor:pointer;
 }
 
-/* RIGHT TOOLS */
+.zoom div:last-child{
+  border:none;
+}
+
+/* =====================================================
+   RIGHT CONTROLS
+===================================================== */
+
 .right-tools{
   position:absolute;
-  z-index:1000;
-  right:25px;
-  top:135px;
+  z-index:2000;
+
+  right:24px;
+  top:136px;
+
   display:flex;
   flex-direction:column;
+
   gap:12px;
 }
 
 .right-tool{
-  width:54px;
-  height:54px;
+  width:55px;
+  height:55px;
+
   border-radius:50%;
-  background:rgba(255,255,255,.96);
+
+  background:rgba(255,255,255,.97);
+
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:25px;
+
   color:#073c66;
-  box-shadow:0 5px 17px rgba(0,0,0,.17);
+
+  box-shadow:
+    0 5px 17px rgba(0,0,0,.17);
+
+  cursor:pointer;
 }
 
-/* HEATMAP */
-.heat{
+.layers-icon{
+  width:25px;
+  height:20px;
+
+  position:relative;
+}
+
+.layers-icon::before,
+.layers-icon::after{
+  content:"";
   position:absolute;
-  z-index:300;
-  pointer-events:none;
+
+  width:19px;
+  height:12px;
+
+  left:3px;
+
+  border:3px solid #073c66;
+
+  transform:skewY(-28deg);
+}
+
+.layers-icon::before{
+  top:0;
+}
+
+.layers-icon::after{
+  top:8px;
+}
+
+.pressure-icon{
+  font-size:27px;
+  font-weight:bold;
+}
+
+.sun-icon{
+  font-size:27px;
+}
+
+.pin-icon{
+  width:23px;
+  height:23px;
+
+  border:4px solid #073c66;
+
+  border-radius:50% 50% 50% 0;
+
+  transform:rotate(-45deg);
+
+  position:relative;
+}
+
+.pin-icon::after{
+  content:"";
+
+  width:6px;
+  height:6px;
+
+  background:#073c66;
+
   border-radius:50%;
-  filter:blur(30px);
-  opacity:.58;
-  mix-blend-mode:multiply;
+
+  position:absolute;
+
+  top:5px;
+  left:5px;
 }
 
-.heat1{
-  width:300px;
-  height:350px;
-  left:43%;
-  top:31%;
-  background:radial-gradient(
-    ellipse,
-    rgba(255,83,50,.75) 0%,
-    rgba(255,170,30,.62) 30%,
-    rgba(255,239,75,.45) 52%,
-    rgba(87,221,104,.18) 72%,
-    transparent 100%
-  );
-}
+/* =====================================================
+   CITY MARKERS
+===================================================== */
 
-.heat2{
-  width:280px;
-  height:330px;
-  left:48%;
-  top:45%;
-  background:radial-gradient(
-    ellipse,
-    rgba(255,116,45,.67) 0%,
-    rgba(255,208,40,.53) 34%,
-    rgba(91,220,93,.22) 67%,
-    transparent 100%
-  );
-}
-
-.heat3{
-  width:230px;
-  height:250px;
-  left:35%;
-  top:55%;
-  background:radial-gradient(
-    ellipse,
-    rgba(255,180,40,.48),
-    rgba(100,224,100,.22),
-    transparent 72%
-  );
-}
-
-/* MARKERS */
 .marker{
   position:absolute;
-  z-index:500;
+
+  z-index:800;
+
   width:30px;
   height:30px;
+
   border-radius:50% 50% 50% 0;
+
   transform:rotate(-45deg);
-  display:flex;
-  align-items:center;
-  justify-content:center;
+
   border:3px solid white;
-  box-shadow:0 3px 10px rgba(0,0,0,.25);
+
+  box-shadow:
+    0 3px 10px rgba(0,0,0,.28);
 }
 
-.marker span{
-  transform:rotate(45deg);
-  width:9px;
-  height:9px;
+.marker::after{
+  content:"";
+
+  position:absolute;
+
+  width:8px;
+  height:8px;
+
   border-radius:50%;
-  background:white;
+
+  background:#fff;
+
+  left:8px;
+  top:8px;
 }
 
-.green{background:#19a95c;}
-.yellow{background:#ffb400;}
-.red{background:#ef4d38;}
+.green{
+  background:#19a95d;
+}
 
-/* MARKER POSITIONS */
-.m-chennai{left:75%;top:25%;}
-.m-vellore{left:54%;top:30%;}
-.m-salem{left:45%;top:39%;}
-.m-coimbatore{left:27%;top:47%;}
-.m-trichy{left:45%;top:51%;}
-.m-kumbakonam{left:63%;top:49%;}
-.m-thanjavur{left:61%;top:54%;}
-.m-madurai{left:42%;top:60%;}
-.m-tirunelveli{left:36%;top:72%;}
-.m-ramanathapuram{left:55%;top:70%;}
-.m-kanyakumari{left:34%;top:81%;}
+.blue{
+  background:#119be5;
+}
 
-/* CITY LABEL */
+.yellow{
+  background:#ffb400;
+}
+
+.red{
+  background:#ed4938;
+}
+
+/* POSITIONS */
+
+.m-chennai{
+  left:75.2%;
+  top:24.8%;
+}
+
+.m-vellore{
+  left:53.7%;
+  top:29.8%;
+}
+
+.m-salem{
+  left:43.5%;
+  top:38.8%;
+}
+
+.m-coimbatore{
+  left:26.5%;
+  top:47.0%;
+}
+
+.m-trichy{
+  left:44.5%;
+  top:50.3%;
+}
+
+.m-kumbakonam{
+  left:62.0%;
+  top:48.2%;
+}
+
+.m-thanjavur{
+  left:60.0%;
+  top:53.2%;
+}
+
+.m-madurai{
+  left:41.8%;
+  top:59.7%;
+}
+
+.m-tirunelveli{
+  left:35.0%;
+  top:71.3%;
+}
+
+.m-ramanathapuram{
+  left:54.5%;
+  top:69.0%;
+}
+
+.m-kanyakumari{
+  left:33.2%;
+  top:80.0%;
+}
+
+/* =====================================================
+   CITY LABELS
+===================================================== */
+
 .city{
   position:absolute;
-  z-index:510;
+
+  z-index:850;
+
   color:#123c59;
+
   font-size:15px;
+
   line-height:18px;
-  text-shadow:0 1px 2px white;
+
   font-weight:500;
+
+  text-shadow:
+    0 1px 2px white,
+    0 0 3px rgba(255,255,255,.75);
 }
 
 .city b{
   font-size:16px;
 }
 
-.c-chennai{left:78%;top:24%;}
-.c-vellore{left:56%;top:29%;}
-.c-salem{left:47%;top:38%;}
-.c-coimbatore{left:29%;top:46%;}
-.c-trichy{left:47%;top:50%;}
-.c-kumbakonam{left:65%;top:48%;}
-.c-thanjavur{left:63%;top:53%;}
-.c-madurai{left:44%;top:59%;}
-.c-tirunelveli{left:38%;top:71%;}
-.c-ramanathapuram{left:57%;top:69%;}
-.c-kanyakumari{left:36%;top:80%;}
-
-/* ANALYSIS CARD */
-.analysis{
-  position:absolute;
-  z-index:1000;
-  right:28px;
-  bottom:105px;
-  width:375px;
-  border-radius:22px;
-  background:rgba(2,37,63,.95);
-  color:white;
-  padding:22px;
-  box-shadow:0 12px 30px rgba(0,0,0,.25);
+.c-chennai{
+  left:78.5%;
+  top:24%;
 }
 
-.analysis h2{
-  color:#42caff;
-  font-size:18px;
-  margin-bottom:5px;
+.c-vellore{
+  left:55.8%;
+  top:29%;
 }
 
-.analysis small{
-  color:#b9d0df;
+.c-salem{
+  left:46%;
+  top:37.8%;
 }
 
-.analysis-row{
-  display:flex;
-  justify-content:space-between;
-  margin-top:15px;
-  font-size:14px;
+.c-coimbatore{
+  left:28.7%;
+  top:46%;
 }
 
-.analysis-tip{
-  margin-top:17px;
-  padding:13px;
-  border:1px solid #2c759e;
-  border-radius:14px;
-  color:#dcecf5;
-  line-height:18px;
+.c-trichy{
+  left:46.8%;
+  top:49.3%;
 }
 
-/* LEGEND */
+.c-kumbakonam{
+  left:64%;
+  top:47.3%;
+}
+
+.c-thanjavur{
+  left:62%;
+  top:52.2%;
+}
+
+.c-madurai{
+  left:43.8%;
+  top:59%;
+}
+
+.c-tirunelveli{
+  left:37.3%;
+  top:70.5%;
+}
+
+.c-ramanathapuram{
+  left:56.7%;
+  top:68.2%;
+}
+
+.c-kanyakumari{
+  left:35.3%;
+  top:79.3%;
+}
+
+/* =====================================================
+   LEGEND
+===================================================== */
+
 .legend{
   position:absolute;
-  z-index:1000;
+
+  z-index:1800;
+
   left:25px;
   bottom:105px;
-  width:320px;
-  padding:18px;
+
+  width:325px;
+
+  padding:17px 18px;
+
   border-radius:18px;
+
   background:rgba(255,255,255,.96);
-  box-shadow:0 8px 25px rgba(0,0,0,.18);
+
+  box-shadow:
+    0 8px 25px rgba(0,0,0,.18);
 }
 
 .legend h3{
   color:#073d65;
+
   font-size:14px;
-  margin-bottom:14px;
+
+  margin-bottom:13px;
 }
 
 .gradient{
   width:100%;
-  height:14px;
+  height:15px;
+
   border-radius:10px;
-  background:linear-gradient(
-    90deg,
-    #38c69c,
-    #8fe75b,
-    #ffe14d,
-    #ff9d32,
-    #ed315c
-  );
+
+  background:
+    linear-gradient(
+      90deg,
+      #38c69c 0%,
+      #8fe75b 25%,
+      #ffe14d 50%,
+      #ff9d32 75%,
+      #ed315c 100%
+    );
 }
 
 .legend-labels{
   display:flex;
   justify-content:space-between;
+
   margin-top:8px;
+
   font-size:9px;
+
   color:#31566c;
 }
 
 .legend p{
   margin-top:13px;
+
   font-size:10px;
+
+  line-height:14px;
+
   color:#617786;
 }
 
-/* BOTTOM STATUS */
+/* =====================================================
+   ANALYSIS CARD
+===================================================== */
+
+.analysis{
+  position:absolute;
+
+  z-index:1800;
+
+  right:27px;
+  bottom:105px;
+
+  width:377px;
+
+  border-radius:22px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(2,43,72,.98),
+      rgba(1,35,60,.96)
+    );
+
+  color:#fff;
+
+  padding:20px 22px;
+
+  box-shadow:
+    0 12px 30px rgba(0,0,0,.26);
+}
+
+.analysis-title{
+  display:flex;
+  align-items:center;
+
+  gap:10px;
+}
+
+.analysis-pin{
+  width:24px;
+  height:24px;
+
+  border:4px solid white;
+
+  border-radius:50% 50% 50% 0;
+
+  transform:rotate(-45deg);
+
+  position:relative;
+}
+
+.analysis-pin::after{
+  content:"";
+
+  position:absolute;
+
+  width:6px;
+  height:6px;
+
+  background:white;
+
+  border-radius:50%;
+
+  left:5px;
+  top:5px;
+}
+
+.analysis h2{
+  color:#35c9ff;
+
+  font-size:18px;
+
+  margin:0;
+}
+
+.analysis small{
+  display:block;
+
+  color:#b9d0df;
+
+  margin-top:4px;
+}
+
+.analysis-line{
+  height:1px;
+
+  background:rgba(255,255,255,.15);
+
+  margin-top:13px;
+}
+
+.analysis-row{
+  display:flex;
+
+  justify-content:space-between;
+
+  margin-top:13px;
+
+  font-size:14px;
+}
+
+.analysis-row span:last-child{
+  text-align:right;
+}
+
+.analysis-tip{
+  margin-top:16px;
+
+  padding:13px;
+
+  border:1px solid #2d759d;
+
+  border-radius:14px;
+
+  color:#e0edf4;
+
+  line-height:18px;
+
+  background:rgba(20,91,132,.28);
+
+  font-size:13px;
+}
+
+/* =====================================================
+   BOTTOM STATUS
+===================================================== */
+
 .status{
   position:absolute;
-  z-index:1000;
+
+  z-index:1900;
+
   left:25px;
   right:25px;
+
   bottom:18px;
+
   height:70px;
+
   border-radius:20px;
-  background:rgba(2,37,63,.96);
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(2,39,67,.98),
+      rgba(2,43,72,.96)
+    );
+
   display:grid;
-  grid-template-columns:repeat(4,1fr);
+
+  grid-template-columns:
+    repeat(4,1fr);
+
   color:white;
-  box-shadow:0 8px 30px rgba(0,0,0,.25);
+
+  box-shadow:
+    0 8px 30px rgba(0,0,0,.25);
 }
 
 .stat{
   display:flex;
+
   align-items:center;
   justify-content:center;
+
   gap:13px;
-  border-right:1px solid rgba(255,255,255,.2);
+
+  border-right:
+    1px solid rgba(255,255,255,.18);
 }
 
 .stat:last-child{
-  border:0;
+  border:none;
 }
 
 .stat-icon{
   width:44px;
   height:44px;
+
   border-radius:50%;
+
   background:#123e61;
+
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:20px;
+
+  font-size:21px;
 }
 
 .stat-number{
   color:#19c7ff;
+
   font-size:21px;
+
   font-weight:bold;
 }
 
 .stat-title{
   font-size:10px;
+
   color:#d6e6ef;
+
   margin-top:2px;
 }
 
-/* RESPONSIVE */
-@media(max-width:800px){
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media(max-width:900px){
 
   .topbar{
     left:12px;
     right:12px;
-    height:68px;
+
     top:10px;
+
+    height:70px;
+
     padding:8px 10px;
+
+    border-radius:20px;
   }
 
   .brand{
     width:auto;
+
+    gap:8px;
+  }
+
+  .logo{
+    width:42px;
+    height:42px;
+
+    border-radius:13px;
+  }
+
+  .logo-shield{
+    font-size:23px;
   }
 
   .brand h1{
     font-size:15px;
+    line-height:18px;
   }
 
   .brand p{
     font-size:8px;
   }
 
-  .logo{
-    width:40px;
-    height:40px;
-    font-size:20px;
-  }
-
   .searchbox{
     margin-left:auto;
+
     max-width:none;
-    height:45px;
-    font-size:12px;
+
+    height:46px;
+
+    padding:0 15px;
+
+    font-size:13px;
+  }
+
+  .search-icon{
+    width:20px;
+    height:20px;
+
+    border-width:3px;
+  }
+
+  .mic{
+    transform:scale(.75);
   }
 
   .profile{
-    width:42px;
-    height:42px;
+    width:43px;
+    height:43px;
+
+    margin-left:8px;
+
     font-size:18px;
-    margin-left:7px;
   }
 
   .nav{
-    top:90px;
+    top:92px;
+
     left:12px;
-    gap:7px;
-    overflow:hidden;
     right:12px;
+
+    gap:7px;
+
+    overflow:hidden;
   }
 
   .nav button{
-    padding:10px 14px;
+    height:43px;
+
+    padding:0 13px;
+
     font-size:11px;
-    white-space:nowrap;
+  }
+
+  .nav-icon{
+    font-size:16px;
   }
 
   .left-tools{
@@ -541,45 +1232,82 @@ html,body{
 
   .right-tools{
     right:12px;
-    top:145px;
+    top:142px;
   }
 
   .tool,
   .right-tool{
-    width:42px;
-    height:42px;
-    font-size:19px;
+    width:43px;
+    height:43px;
   }
 
   .analysis{
     width:290px;
+
     right:12px;
-    bottom:92px;
-    padding:16px;
+    bottom:91px;
+
+    padding:15px;
+
+    border-radius:18px;
+  }
+
+  .analysis h2{
+    font-size:15px;
+  }
+
+  .analysis-row{
+    font-size:11px;
+    margin-top:9px;
+  }
+
+  .analysis-tip{
+    font-size:10px;
+    line-height:14px;
+    padding:10px;
   }
 
   .legend{
     left:12px;
-    bottom:92px;
-    width:180px;
+    bottom:91px;
+
+    width:205px;
+
     padding:12px;
+  }
+
+  .legend h3{
+    font-size:11px;
+  }
+
+  .legend-labels{
+    font-size:7px;
+  }
+
+  .legend p{
+    font-size:8px;
   }
 
   .status{
     left:12px;
     right:12px;
+
     bottom:8px;
+
     height:62px;
+
+    border-radius:17px;
   }
 
   .stat{
-    gap:4px;
+    gap:5px;
   }
 
   .stat-icon{
-    width:30px;
-    height:30px;
-    font-size:13px;
+    width:31px;
+    height:31px;
+
+    font-size:14px;
   }
 
   .stat-number{
@@ -589,98 +1317,312 @@ html,body{
   .stat-title{
     font-size:7px;
   }
+
+  .city{
+    font-size:11px;
+    line-height:13px;
+  }
+
+  .city b{
+    font-size:12px;
+  }
+
+  .marker{
+    width:25px;
+    height:25px;
+  }
+
+  .marker::after{
+    width:6px;
+    height:6px;
+
+    left:7px;
+    top:7px;
+  }
+}
+
+@media(max-width:600px){
+
+  .brand p{
+    display:none;
+  }
+
+  .brand h1{
+    font-size:13px;
+  }
+
+  .brand{
+    min-width:130px;
+  }
+
+  .searchbox{
+    height:43px;
+    padding:0 12px;
+  }
+
+  .search-text{
+    font-size:12px;
+  }
+
+  .profile{
+    width:38px;
+    height:38px;
+    border-width:2px;
+  }
+
+  .nav button{
+    padding:0 10px;
+  }
+
+  .nav button:nth-child(n+5){
+    display:none;
+  }
+
+  .analysis{
+    width:255px;
+  }
+
+  .legend{
+    width:175px;
+  }
 }
 </style>
 </head>
 
 <body>
 
+<!-- =====================================================
+     MAP
+===================================================== -->
+
 <div id="map"></div>
 
-<!-- HEAT REFLECTION -->
+<!-- LIGHT POLLUTION -->
+
 <div class="heat heat1"></div>
 <div class="heat heat2"></div>
 <div class="heat heat3"></div>
+<div class="heat heat4"></div>
 
-<!-- HEADER -->
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
 <div class="topbar">
 
   <div class="brand">
-    <div class="logo">🛡</div>
+
+    <div class="logo">
+      <div class="logo-shield">🛡</div>
+    </div>
 
     <div>
-      <h1>URBAN <span>SKY SHIELD</span></h1>
-      <p>Safer Skies&nbsp; • &nbsp;Smarter Planning</p>
+      <h1>
+        URBAN <span>SKY SHIELD</span>
+      </h1>
+
+      <p>
+        Safer Skies&nbsp; • &nbsp;Smarter Planning
+      </p>
     </div>
+
   </div>
+
 
   <div class="searchbox">
-    <span class="search-pin">📍</span>
-    <span>Search here</span>
-    <span class="search-mic">🎙</span>
+
+    <div class="search-icon"></div>
+
+    <div class="search-text">
+      Search here
+    </div>
+
+    <div class="mic"></div>
+
   </div>
 
-  <div class="profile">D</div>
+
+  <div class="profile">
+    D
+  </div>
 
 </div>
 
-<!-- TOP OPTIONS -->
+
+<!-- =====================================================
+     TOP NAV
+===================================================== -->
+
 <div class="nav">
-  <button class="active">✦ &nbsp; Sky Shield</button>
-  <button>▱ &nbsp; Layers</button>
-  <button>≋ &nbsp; Pressure</button>
-  <button>♧ &nbsp; AI Planning</button>
-  <button>▥ &nbsp; Data &amp; Science</button>
+
+  <button class="active">
+    <span class="nav-icon">✦</span>
+    Sky Shield
+  </button>
+
+  <button>
+    <span class="nav-icon">▱</span>
+    Layers
+  </button>
+
+  <button>
+    <span class="nav-icon">≋</span>
+    Pressure
+  </button>
+
+  <button>
+    <span class="nav-icon">♧</span>
+    AI Planning
+  </button>
+
+  <button>
+    <span class="nav-icon">▥</span>
+    Data &amp; Science
+  </button>
+
 </div>
 
-<!-- LEFT CONTROLS -->
+
+<!-- =====================================================
+     LEFT MAP CONTROLS
+===================================================== -->
+
 <div class="left-tools">
-  <div class="tool">⛶</div>
-  <div class="tool">➤</div>
+
+  <div class="tool">
+    <div class="fullscreen-icon"></div>
+  </div>
+
+  <div class="tool">
+    <div class="location-arrow">➤</div>
+  </div>
 
   <div class="tool zoom">
-    <div>＋</div>
-    <div>−</div>
+
+    <div id="zoomIn">
+      ＋
+    </div>
+
+    <div id="zoomOut">
+      −
+    </div>
+
   </div>
+
 </div>
 
-<!-- RIGHT CONTROLS -->
+
+<!-- =====================================================
+     RIGHT MAP CONTROLS
+===================================================== -->
+
 <div class="right-tools">
-  <div class="right-tool">▱</div>
-  <div class="right-tool">≋</div>
-  <div class="right-tool">☀</div>
-  <div class="right-tool">📍</div>
+
+  <div class="right-tool">
+    <div class="layers-icon"></div>
+  </div>
+
+  <div class="right-tool">
+    <div class="pressure-icon">≋</div>
+  </div>
+
+  <div class="right-tool">
+    <div class="sun-icon">☀</div>
+  </div>
+
+  <div class="right-tool">
+    <div class="pin-icon"></div>
+  </div>
+
 </div>
 
-<!-- CITY MARKERS -->
-<div class="marker green m-chennai"><span></span></div>
-<div class="marker green m-vellore"><span></span></div>
-<div class="marker green m-salem"><span></span></div>
-<div class="marker green m-coimbatore"><span></span></div>
-<div class="marker yellow m-trichy"><span></span></div>
-<div class="marker green m-kumbakonam"><span></span></div>
-<div class="marker yellow m-thanjavur"><span></span></div>
-<div class="marker red m-madurai"><span></span></div>
-<div class="marker green m-tirunelveli"><span></span></div>
-<div class="marker green m-ramanathapuram"><span></span></div>
-<div class="marker green m-kanyakumari"><span></span></div>
 
-<!-- CITY LABELS -->
-<div class="city c-chennai"><b>Chennai</b><br>சென்னை</div>
-<div class="city c-vellore"><b>Vellore</b><br>வேலூர்</div>
-<div class="city c-salem"><b>Salem</b><br>சேலம்</div>
-<div class="city c-coimbatore"><b>Coimbatore</b><br>கோயம்புத்தூர்</div>
-<div class="city c-trichy"><b>Tiruchirappalli</b><br>திருச்சிராப்பள்ளி</div>
-<div class="city c-kumbakonam"><b>Kumbakonam</b><br>கும்பகோணம்</div>
-<div class="city c-thanjavur"><b>Thanjavur</b><br>தஞ்சாவூர்</div>
-<div class="city c-madurai"><b>Madurai</b><br>மதுரை</div>
-<div class="city c-tirunelveli"><b>Tirunelveli</b><br>திருநெல்வேலி</div>
-<div class="city c-ramanathapuram"><b>Ramanathapuram</b><br>இராமநாதபுரம்</div>
-<div class="city c-kanyakumari"><b>Kanyakumari</b><br>கன்னியாகுமரி</div>
+<!-- =====================================================
+     CITY MARKERS
+===================================================== -->
 
-<!-- LEGEND -->
+<div class="marker green m-chennai"></div>
+<div class="marker blue m-vellore"></div>
+<div class="marker blue m-salem"></div>
+<div class="marker blue m-coimbatore"></div>
+<div class="marker blue m-trichy"></div>
+<div class="marker blue m-kumbakonam"></div>
+<div class="marker blue m-thanjavur"></div>
+<div class="marker red m-madurai"></div>
+<div class="marker blue m-tirunelveli"></div>
+<div class="marker blue m-ramanathapuram"></div>
+<div class="marker blue m-kanyakumari"></div>
+
+
+<!-- =====================================================
+     CITY LABELS
+===================================================== -->
+
+<div class="city c-chennai">
+  <b>Chennai</b><br>
+  சென்னை
+</div>
+
+<div class="city c-vellore">
+  <b>Vellore</b><br>
+  வேலூர்
+</div>
+
+<div class="city c-salem">
+  <b>Salem</b><br>
+  சேலம்
+</div>
+
+<div class="city c-coimbatore">
+  <b>Coimbatore</b><br>
+  கோயம்புத்தூர்
+</div>
+
+<div class="city c-trichy">
+  <b>Tiruchirappalli</b><br>
+  திருச்சிராப்பள்ளி
+</div>
+
+<div class="city c-kumbakonam">
+  <b>Kumbakonam</b><br>
+  கும்பகோணம்
+</div>
+
+<div class="city c-thanjavur">
+  <b>Thanjavur</b><br>
+  தஞ்சாவூர்
+</div>
+
+<div class="city c-madurai">
+  <b>Madurai</b><br>
+  மதுரை
+</div>
+
+<div class="city c-tirunelveli">
+  <b>Tirunelveli</b><br>
+  திருநெல்வேலி
+</div>
+
+<div class="city c-ramanathapuram">
+  <b>Ramanathapuram</b><br>
+  இராமநாதபுரம்
+</div>
+
+<div class="city c-kanyakumari">
+  <b>Kanyakumari</b><br>
+  கன்னியாகுமரி
+</div>
+
+
+<!-- =====================================================
+     LEGEND
+===================================================== -->
+
 <div class="legend">
-  <h3>LIGHT-POLLUTION PRESSURE</h3>
+
+  <h3>
+    LIGHT-POLLUTION PRESSURE
+  </h3>
 
   <div class="gradient"></div>
 
@@ -696,13 +1638,32 @@ html,body{
     Conceptual spatial planning visualization.<br>
     Not a direct sky-brightness measurement.
   </p>
+
 </div>
 
-<!-- ANALYSIS -->
+
+<!-- =====================================================
+     SMART SKY ANALYSIS
+===================================================== -->
+
 <div class="analysis">
 
-  <h2>📍 SMART SKY ANALYSIS</h2>
-  <small>Selected planning point</small>
+  <div class="analysis-title">
+
+    <div class="analysis-pin"></div>
+
+    <h2>
+      SMART SKY ANALYSIS
+    </h2>
+
+  </div>
+
+  <small>
+    Selected planning point
+  </small>
+
+  <div class="analysis-line"></div>
+
 
   <div class="analysis-row">
     <span>Coordinates</span>
@@ -729,82 +1690,256 @@ html,body{
     <span>LOW</span>
   </div>
 
+
   <div class="analysis-tip">
-    💡 &nbsp; Consider targeted shielding, adaptive lighting
+    💡 &nbsp;
+    Consider targeted shielding, adaptive lighting
     and infrastructure-aware mitigation.
   </div>
 
 </div>
 
-<!-- STATUS BAR -->
+
+<!-- =====================================================
+     BOTTOM STATUS
+===================================================== -->
+
 <div class="status">
 
   <div class="stat">
-    <div class="stat-icon">📍</div>
-    <div>
-      <div class="stat-number">22</div>
-      <div class="stat-title">PLANNING ZONES</div>
+
+    <div class="stat-icon">
+      📍
     </div>
+
+    <div>
+      <div class="stat-number">
+        22
+      </div>
+
+      <div class="stat-title">
+        PLANNING ZONES
+      </div>
+    </div>
+
   </div>
 
-  <div class="stat">
-    <div class="stat-icon">✦</div>
-    <div>
-      <div class="stat-number">04</div>
-      <div class="stat-title">DARK-SKY CANDIDATES</div>
-    </div>
-  </div>
 
   <div class="stat">
-    <div class="stat-icon">▥</div>
-    <div>
-      <div class="stat-number">05</div>
-      <div class="stat-title">MITIGATION SCENARIOS</div>
+
+    <div class="stat-icon">
+      ✦
     </div>
+
+    <div>
+      <div class="stat-number">
+        04
+      </div>
+
+      <div class="stat-title">
+        DARK-SKY CANDIDATES
+      </div>
+    </div>
+
   </div>
 
+
   <div class="stat">
-    <div class="stat-icon">◎</div>
-    <div>
-      <div class="stat-number">READY</div>
-      <div class="stat-title">GPS STATUS</div>
+
+    <div class="stat-icon">
+      ▥
     </div>
+
+    <div>
+      <div class="stat-number">
+        05
+      </div>
+
+      <div class="stat-title">
+        MITIGATION SCENARIOS
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="stat">
+
+    <div class="stat-icon">
+      ◎
+    </div>
+
+    <div>
+      <div class="stat-number">
+        READY
+      </div>
+
+      <div class="stat-title">
+        GPS STATUS
+      </div>
+    </div>
+
   </div>
 
 </div>
 
+
+<!-- =====================================================
+     LEAFLET
+===================================================== -->
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-const map = L.map('map',{
-  zoomControl:false,
-  attributionControl:true,
-  minZoom:6,
-  maxZoom:10
-}).setView([10.8,78.3],7);
 
-L.tileLayer(
-  'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+/* =====================================================
+   MAP INITIALIZATION
+===================================================== */
+
+const map = L.map("map", {
+
+  zoomControl:false,
+
+  attributionControl:true,
+
+  minZoom:6,
+
+  maxZoom:10,
+
+  zoomSnap:0.1
+
+});
+
+
+/* =====================================================
+   CARTO MAP
+===================================================== */
+
+const tiles = L.tileLayer(
+
+  "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+
   {
-    subdomains:'abcd',
+
+    subdomains:"abcd",
+
     maxZoom:20,
-    attribution:'© OpenStreetMap contributors © CARTO'
+
+    attribution:
+      "© OpenStreetMap contributors © CARTO"
+
   }
+
 ).addTo(map);
 
-/* keep Tamil Nadu / South India framing */
-setTimeout(()=>{
+
+/* =====================================================
+   INITIAL SOUTH INDIA VIEW
+===================================================== */
+
+map.setView(
+
+  [10.78, 78.15],
+
+  7.15
+
+);
+
+
+/* =====================================================
+   KEEP MAP CORRECT AFTER UI LOAD
+===================================================== */
+
+setTimeout(() => {
+
   map.invalidateSize();
-},300);
 
-/* custom zoom */
-document.querySelectorAll('.zoom div')[0].onclick=()=>{
-  map.zoomIn();
-};
+  map.setView(
+    [10.78,78.15],
+    7.15
+  );
 
-document.querySelectorAll('.zoom div')[1].onclick=()=>{
-  map.zoomOut();
-};
+},500);
+
+
+/* =====================================================
+   ZOOM BUTTONS
+===================================================== */
+
+document
+  .getElementById("zoomIn")
+  .addEventListener(
+    "click",
+    () => map.zoomIn()
+  );
+
+document
+  .getElementById("zoomOut")
+  .addEventListener(
+    "click",
+    () => map.zoomOut()
+  );
+
+
+/* =====================================================
+   FULLSCREEN BUTTON
+===================================================== */
+
+document
+  .querySelector(".fullscreen-icon")
+  .parentElement
+  .addEventListener(
+    "click",
+    () => {
+
+      if(!document.fullscreenElement){
+
+        document.documentElement.requestFullscreen();
+
+      }else{
+
+        document.exitFullscreen();
+
+      }
+
+    }
+  );
+
+
+/* =====================================================
+   LOCATION BUTTON
+===================================================== */
+
+document
+  .querySelector(".location-arrow")
+  .parentElement
+  .addEventListener(
+    "click",
+    () => {
+
+      map.setView(
+        [13.0827,80.2707],
+        8
+      );
+
+    }
+  );
+
+
+/* =====================================================
+   PREVENT MAP FROM MOVING WHEN CLICKING UI
+===================================================== */
+
+document
+  .querySelectorAll(
+    ".topbar,.nav,.left-tools,.right-tools,.legend,.analysis,.status"
+  )
+  .forEach(el => {
+
+    L.DomEvent.disableClickPropagation(el);
+
+  });
+
 </script>
 
 </body>
